@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VehicleInfo</title>
+</head>
+
+<body>
+
+<table border="1">
+	<tr>
+		<th>Регистрационный номер</th>
+		<th>Год выпуска</th>
+		<th>Стоимость, руб</th>
+		<th>Пробег, км</th>
+	</tr>
+	
+	<td>
+		<p th:utext="${vehicle.getRegistrationNumber()}">
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getYearOfProduction()}">
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getPrice()}">
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getMileage()}">
+	</td>
+
+</table>
+
+</body>
+</html>

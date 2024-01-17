@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Autopark</title>
+</head>
+<body>
+
+<b>Текущий автопарк:</b>
+
+<div th:each="vehicle : ${vehicles}">
+	<br/>
+    <a th:href="@{/vehicles/{id}(id=${vehicle.getId()})}"
+       th:text="${vehicle.getRegistrationNumber() + ', ' + vehicle.getYearOfProduction()}">vehicle</a>
+</div>
+
+</body>
+</html>
