@@ -11,7 +11,7 @@
 <div th:each="vehicle : ${vehicles}">
 	<br/>
     <a th:href="@{/vehicles/{id}(id=${vehicle.getId()})}"
-       th:text="${vehicle.getRegistrationNumber() + ', ' + vehicle.getYearOfProduction()}">vehicle</a>
+       th:text="${vehicle.getId() + '. ' + vehicle.getRegistrationNumber() + ', ' + vehicle.getYearOfProduction()}">vehicle</a>
 </div>
 
 </body>

@@ -10,11 +10,16 @@
 
 <table border="1">
 	<tr>
+		<th>Id</th>
 		<th>Регистрационный номер</th>
 		<th>Год выпуска</th>
 		<th>Стоимость, руб</th>
 		<th>Пробег, км</th>
 	</tr>
+	
+	<td>
+		<p th:utext="${vehicle.getId()}">
+	</td>
 	
 	<td>
 		<p th:utext="${vehicle.getRegistrationNumber()}">
