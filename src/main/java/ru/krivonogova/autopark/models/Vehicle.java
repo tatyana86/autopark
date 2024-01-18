@@ -22,6 +22,10 @@ public class Vehicle {
     @Column(name = "mileage")
     private double mileage;
     
+    @ManyToOne
+    @JoinColumn(name = "brand_id", referencedColumnName = "id")
+    private Brand brand;
+    
 	public Vehicle() {
 	}
 
@@ -71,5 +75,13 @@ public class Vehicle {
 	public void setMileage(double mileage) {
 		this.mileage = mileage;
 	}
-	
+
+	public Brand getBrand() {
+		return brand;
+	}
+
+	public void setBrand(Brand brand) {
+		this.brand = brand;
+	}
+		
 }
