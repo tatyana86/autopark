@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>BrandInfo</title>
+</head>
+
+<body>
+
+<table border="1">
+	<tr>
+		<th>Id</th>
+		<th>Бренд</th>
+		<th>Тип ТС</th>
+		<th>Объем топливного бака, л</th>
+		<th>Грузоподъемность, т</th>
+		<th>Пассажировместимость, чел</th>
+		<th>Мощность двигателя, л.с.</th>
+	</tr>
+	
+	<td>
+		<p th:utext="${brand.getId()}">
+	</td>
+	
+	<td>
+		<p th:utext="${brand.getName()}">
+	</td>
+	
+	<td>
+		<p th:utext="${brand.getTypeVehicle().getTitle()}">
+	</td>
+	
+	<td>
+		<p th:utext="${brand.getTankCapacity()}">
+	</td>
+	
+	<td>
+		<p th:utext="${brand.getLoadCapacity()}">
+	</td>
+	
+	<td>
+		<p th:utext="${brand.getPassengerCapacity()}">
+	</td>
+	
+	<td>
+		<p th:utext="${brand.getEnginePower()}">
+	</td>
+
+</table>
+
+</body>
+</html>

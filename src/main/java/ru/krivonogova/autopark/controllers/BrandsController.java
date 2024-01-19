@@ -8,34 +8,32 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ru.krivonogova.autopark.models.Vehicle;
-import ru.krivonogova.autopark.services.VehiclesService;
+import ru.krivonogova.autopark.models.Brand;
+import ru.krivonogova.autopark.services.BrandsServices;
 
 @Controller
-@RequestMapping("/vehicles")
-public class VehicleController {
+@RequestMapping("/brands")
+public class BrandsController {
 	
-	private final VehiclesService vehiclesService;
+	private final BrandsServices brandsServices;
 
 	@Autowired
-	public VehicleController(VehiclesService vehiclesService) {
-		this.vehiclesService = vehiclesService;
+	public BrandsController(BrandsServices brandsServices) {
+		this.brandsServices = brandsServices;
 	}
 	
 	@GetMapping
 	public String index(Model model) {
-		model.addAttribute("vehicles", vehiclesService.findAll());
-        return "vehicles/index";
+		model.addAttribute("brands", brandsServices.findAll());
+        return "brands/index";
 	}
 	
 	@GetMapping("/{id}")
 	public String show(@PathVariable("id") int id, Model model, 
-						@ModelAttribute("vehicle") Vehicle vehicle) {
-		model.addAttribute("vehicle", vehiclesService.findOne(id));
+						@ModelAttribute("vehicle") Brand brand) {
+		model.addAttribute("brand", brandsServices.findOne(id));
 		
-		return "vehicles/show";
-	}
-	
-	
+		return "brands/show";
+	}	
 
 }

@@ -12,6 +12,9 @@ public class Brand {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
+	@Column(name = "name")
+	private String name;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type_vehicle")
 	private TypeVehicle typeVehicle;
@@ -34,14 +37,15 @@ public class Brand {
 	public Brand() {
 	}
 
-	public Brand(int id, TypeVehicle typeVehicle, double tankCapacity, double loadCapacity, int passengerCapacity,
-			double enginePower) {
-		this.id = id;
+	public Brand(String name, TypeVehicle typeVehicle, double tankCapacity, double loadCapacity, int passengerCapacity,
+			double enginePower, List<Vehicle> vehicles) {
+		this.name = name;
 		this.typeVehicle = typeVehicle;
 		this.tankCapacity = tankCapacity;
 		this.loadCapacity = loadCapacity;
 		this.passengerCapacity = passengerCapacity;
 		this.enginePower = enginePower;
+		this.vehicles = vehicles;
 	}
 
 	public int getId() {
@@ -50,6 +54,14 @@ public class Brand {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public TypeVehicle getTypeVehicle() {
