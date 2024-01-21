@@ -3,6 +3,7 @@ package ru.krivonogova.autopark.models;
 import java.util.List;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "brand")
@@ -13,6 +14,7 @@ public class Brand {
 	private int id;
 	
 	@Column(name = "name")
+	@NotEmpty()
 	private String name;
 	
 	@Enumerated(EnumType.STRING)

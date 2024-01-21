@@ -30,5 +30,10 @@ public class VehiclesService {
 		
 		return foundVehicle.orElse(null);
 	}
+	
+	@Transactional
+	public void save(Vehicle vehicle) {
+		vehiclesRepository.save(vehicle);
+	}
 		
 }

@@ -1,6 +1,8 @@
 package ru.krivonogova.autopark.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "vehicle")
@@ -11,15 +13,19 @@ public class Vehicle {
     private int id;
 	
     @Column(name = "registration_number")
+    @NotEmpty(message = "Обязательное поле")
     private String registrationNumber;
     
     @Column(name = "year_of_production")
+    @Min(value = 1950, message = "Допускается добавление ТС старше 1950 г.")
     private int yearOfProduction;
 	
     @Column(name = "price")
+    @Min(value = 0)
     private double price;
 
     @Column(name = "mileage")
+    @Min(value = 0)
     private double mileage;
     
     @ManyToOne

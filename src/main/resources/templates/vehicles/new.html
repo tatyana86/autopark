@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Add new vehicle</title>
+</head>
+<body>
+
+<b>Новое транспортное средство</b>
+
+<form th:method="POST" th:action="@{/vehicles}" th:object="${vehicle}">
+	
+	<br/>
+	
+	<label for="brand">Бренд и ТХ:</label>
+	  <select id="brand" th:name="brandId">
+	    <option th:each="brand : ${brands}" th:value="${brand.getId()}">
+		    <span th:text="${brand.getName}"></span>,
+	        <span th:text="${brand.getTypeVehicle.getTitle}"></span>,
+	        объем топливного бака: <span th:text="${brand.getTankCapacity}"></span>,
+	        грузоподъемность: <span th:text="${brand.getLoadCapacity}"></span>,
+	        пассажировместимость: <span th:text="${brand.getPassengerCapacity}"></span>,
+	        мощность двигателя: <span th:text="${brand.getEnginePower}"></span>
+	    </option>
+	  </select>
+
+    <br/>
+	
+    <label for="registrationNumber">Регистрационный номер: </label>
+    <input type="text" th:field="*{registrationNumber}" id="registrationNumber"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('registrationNumber')}" th:errors="*{registrationNumber}">registrationNumber error</div>
+    
+    <br/>
+    
+    <label for="yearOfProduction">Год производства: </label>
+    <input type="text" th:field="*{yearOfProduction}" id="yearOfProduction"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('yearOfProduction')}" th:errors="*{yearOfProduction}">yearOfProduction error</div>
+ 
+    <br/>
+    
+    <label for="price">Цена: </label>
+    <input type="text" th:field="*{price}" id="price"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price error</div>
+    
+    <br/>
+    
+    <label for="mileage">Пробег: </label>
+    <input type="text" th:field="*{mileage}" id="mileage"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('mileage')}" th:errors="*{mileage}">mileage error</div>
+    
+    <br/>
+    <br/>
+    
+    <input type="submit" value="Сохранить ТС"/>
+</form>
+
+</body>
+</html>

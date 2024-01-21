@@ -11,6 +11,7 @@
 <table border="1">
 	<tr>
 		<th>Id</th>
+		<th>Бренд</th>
 		<th>Регистрационный номер</th>
 		<th>Год выпуска</th>
 		<th>Стоимость, руб</th>
@@ -19,6 +20,11 @@
 	
 	<td>
 		<p th:utext="${vehicle.getId()}">
+	</td>
+	
+	<td>
+		<a th:href="@{/brands/{id}(id=${vehicle.getBrand().getId()})}"
+			th:utext="${vehicle.getBrand().getName()}">
 	</td>
 	
 	<td>
