@@ -2,16 +2,13 @@
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Add new vehicle</title>
+<title>Edit vehicle</title>
 </head>
 <body>
 
-<b>Новое транспортное средство</b>
+<b>Редактировать транспортное средство</b>
 
-<form th:method="POST" th:action="@{/vehicles}" th:object="${vehicle}">
-	
-	<br/>
-	
+<form th:method="PATCH" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}" th:object="${vehicle}">
 	<label for="brand">Бренд и ТХ:</label>
 	  <select id="brand" th:name="brandId">
 	    <option th:each="brand : ${brands}" th:value="${brand.getId()}">
@@ -51,8 +48,13 @@
     <br/>
     <br/>
     
-    <input type="submit" value="Сохранить ТС"/>
+    <input type="submit" value="Сохранить изменения"/>
 </form>
+
+<form th:method="GET" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}">
+    <input type="submit" value="Назад"/>
+</form>
+
 
 </body>
 </html>

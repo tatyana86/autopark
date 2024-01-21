@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +50,6 @@ public class VehiclesController {
 	@GetMapping("/new")
 	public String newVehicle(@ModelAttribute("vehicle") Vehicle vehicle,
 							Model model) {
-//							@ModelAttribute("brand") Brand brand) {
 		
 		model.addAttribute("brands", brandsServices.findAll());
 		
@@ -65,12 +66,41 @@ public class VehiclesController {
     		model.addAttribute("brands", brandsServices.findAll());
     		return "vehicles/new";
     	}
-		    	
-    	vehicle.setBrand(brandsServices.findOne(brandId));
-    	
-		vehiclesService.save(vehicle);
+		    	    	
+		vehiclesService.save(vehicle, brandId);
 		
 		return "redirect:/vehicles";
 	}
 	
+	@GetMapping("/{id}/edit")
+	public String edit(Model model, @PathVariable("id") int id) {
+		model.addAttribute("vehicle", vehiclesService.findOne(id));
+		model.addAttribute("brands", brandsServices.findAll());
+		
+		return "vehicles/edit";
+	}
+	
+	@PatchMapping("/{id}")
+	public String update(@RequestParam("brandId") int brandId,
+						Model model,
+						@ModelAttribute("vehicle") @Valid Vehicle vehicle,
+						BindingResult bindingResult,
+						@PathVariable("id") int id) {
+		
+		if(bindingResult.hasErrors()) {
+			model.addAttribute("brands", brandsServices.findAll());
+			return "vehicles/edit";
+		}
+		
+		vehiclesService.update(id, vehicle, brandId);
+		
+		return "redirect:/vehicles";
+	}
+	
+	@DeleteMapping("/{id}")
+	public String delete(@PathVariable("id") int id) {
+		vehiclesService.delete(id);
+		
+		return "redirect:/vehicles";
+	}
 }

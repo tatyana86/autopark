@@ -16,6 +16,7 @@
 		<th>Год выпуска</th>
 		<th>Стоимость, руб</th>
 		<th>Пробег, км</th>
+		<th>Действия</th>
 	</tr>
 	
 	<td>
@@ -42,8 +43,20 @@
 	<td>
 		<p th:utext="${vehicle.getMileage()}">
 	</td>
+	
+	<td>
+		<form th:method="GET" th:action="@{/vehicles/{id}/edit(id=${vehicle.getId()})}">
+		    <input type="submit" value="Редактировать"/>
+		</form>
+		
+		<form th:method="DELETE" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}">
+    		<input type="submit" value="Удалить"/>
+		</form>
+	</td>
 
 </table>
+
+<a href="/vehicles">Вернуться в автопарк</a>
 
 </body>
 </html>

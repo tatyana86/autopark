@@ -15,10 +15,12 @@ import ru.krivonogova.autopark.repositories.VehiclesRepository;
 public class VehiclesService {
 
 	private final VehiclesRepository vehiclesRepository;
+	private final BrandsServices brandsServices;
 
 	@Autowired
-	public VehiclesService(VehiclesRepository vehiclesRepository) {
+	public VehiclesService(VehiclesRepository vehiclesRepository, BrandsServices brandsServices) {
 		this.vehiclesRepository = vehiclesRepository;
+		this.brandsServices = brandsServices;
 	}
 	
 	public List<Vehicle> findAll() {
@@ -32,8 +34,22 @@ public class VehiclesService {
 	}
 	
 	@Transactional
-	public void save(Vehicle vehicle) {
+	public void save(Vehicle vehicle, int brandId) {
+		vehicle.setBrand(brandsServices.findOne(brandId));
 		vehiclesRepository.save(vehicle);
+	}
+	
+	@Transactional
+	public void update(int id, Vehicle updatedVehicle, int updatedBrandId) {
+		updatedVehicle.setId(id);
+		updatedVehicle.setBrand(brandsServices.findOne(updatedBrandId));
+		
+		vehiclesRepository.save(updatedVehicle);		
+	}
+	
+	@Transactional
+	public void delete(int id) {
+		vehiclesRepository.deleteById(id);
 	}
 		
 }
