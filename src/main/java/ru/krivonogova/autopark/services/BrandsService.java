@@ -12,12 +12,12 @@ import ru.krivonogova.autopark.repositories.BrandsRepository;
 
 @Service
 @Transactional(readOnly = true)
-public class BrandsServices {
+public class BrandsService {
 	
 	private final BrandsRepository brandsRepository;
 
 	@Autowired
-	public BrandsServices(BrandsRepository brandsRepository) {
+	public BrandsService(BrandsRepository brandsRepository) {
 		this.brandsRepository = brandsRepository;
 	}
 	
@@ -29,5 +29,21 @@ public class BrandsServices {
 		Optional<Brand> foundBrand = brandsRepository.findById(id);
 		return foundBrand.orElse(null);
 	}
-
+	
+	@Transactional
+	public void save(Brand brand) {
+		brandsRepository.save(brand);
+	}
+	
+	@Transactional
+	public void update(int id, Brand updatedBrand) {
+		updatedBrand.setId(id);
+		brandsRepository.save(updatedBrand);
+	}
+	
+	@Transactional
+	public void delete(int id) {
+		brandsRepository.deleteById(id);
+	}
+	
 }

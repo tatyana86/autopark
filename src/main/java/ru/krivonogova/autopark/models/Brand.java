@@ -14,7 +14,7 @@ public class Brand {
 	private int id;
 	
 	@Column(name = "name")
-	@NotEmpty()
+	@NotEmpty(message = "Обязательное поле")
 	private String name;
 	
 	@Enumerated(EnumType.STRING)

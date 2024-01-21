@@ -24,8 +24,16 @@
 	</td>
 	
 	<td>
+	
+		<div style="color:red" th:if="${vehicle.getBrand() == null}">
+    		<p>Бренд был удален. Назначьте новый.</p>
+		</div>
+		
+		<div th:if="${vehicle.getBrand() != null}">
 		<a th:href="@{/brands/{id}(id=${vehicle.getBrand().getId()})}"
 			th:utext="${vehicle.getBrand().getName()}">
+		</div>
+	
 	</td>
 	
 	<td>
@@ -55,6 +63,8 @@
 	</td>
 
 </table>
+
+<br/>
 
 <a href="/vehicles">Вернуться в автопарк</a>
 

@@ -17,6 +17,7 @@
 		<th>Грузоподъемность, т</th>
 		<th>Пассажировместимость, чел</th>
 		<th>Мощность двигателя, л.с.</th>
+		<th>Действия</th>
 	</tr>
 	
 	<td>
@@ -46,8 +47,22 @@
 	<td>
 		<p th:utext="${brand.getEnginePower()}">
 	</td>
+	
+	<td>
+		<form th:method="GET" th:action="@{/brands/{id}/edit(id=${brand.getId()})}">
+		    <input type="submit" value="Редактировать"/>
+		</form>
+		
+		<form th:method="DELETE" th:action="@{/brands/{id}(id=${brand.getId()})}">
+    		<input type="submit" value="Удалить"/>
+		</form>
+	</td>
 
 </table>
+
+<br/>
+
+<a href="/brands">Вернуться к списку брендов</a>
 
 </body>
 </html>

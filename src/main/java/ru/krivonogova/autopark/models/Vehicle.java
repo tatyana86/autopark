@@ -1,6 +1,7 @@
 package ru.krivonogova.autopark.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -18,6 +19,7 @@ public class Vehicle {
     
     @Column(name = "year_of_production")
     @Min(value = 1950, message = "Допускается добавление ТС старше 1950 г.")
+    @Max(value = 2024, message = "Недопустимое значение")
     private int yearOfProduction;
 	
     @Column(name = "price")

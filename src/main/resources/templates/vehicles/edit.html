@@ -8,16 +8,18 @@
 
 <b>Редактировать транспортное средство</b>
 
+<br/>
+
 <form th:method="PATCH" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}" th:object="${vehicle}">
 	<label for="brand">Бренд и ТХ:</label>
 	  <select id="brand" th:name="brandId">
 	    <option th:each="brand : ${brands}" th:value="${brand.getId()}">
 		    <span th:text="${brand.getName()}"></span>,
 	        <span th:text="${brand.getTypeVehicle.getTitle()}"></span>,
-	        объем топливного бака: <span th:text="${brand.getTankCapacity()}"></span>,
-	        грузоподъемность: <span th:text="${brand.getLoadCapacity()}"></span>,
-	        пассажировместимость: <span th:text="${brand.getPassengerCapacity()}"></span>,
-	        мощность двигателя: <span th:text="${brand.getEnginePower()}"></span>
+	        объем топливного бака, л: <span th:text="${brand.getTankCapacity()}"></span>,
+	        грузоподъемность, т: <span th:text="${brand.getLoadCapacity()}"></span>,
+	        пассажировместимость, чел: <span th:text="${brand.getPassengerCapacity()}"></span>,
+	        мощность двигателя, л.с.: <span th:text="${brand.getEnginePower()}"></span>
 	    </option>
 	  </select>
 
@@ -35,13 +37,13 @@
  
     <br/>
     
-    <label for="price">Цена: </label>
+    <label for="price">Цена, руб: </label>
     <input type="text" th:field="*{price}" id="price"/>
     <div style="color:darkred" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price error</div>
     
     <br/>
     
-    <label for="mileage">Пробег: </label>
+    <label for="mileage">Пробег, км: </label>
     <input type="text" th:field="*{mileage}" id="mileage"/>
     <div style="color:darkred" th:if="${#fields.hasErrors('mileage')}" th:errors="*{mileage}">mileage error</div>
     

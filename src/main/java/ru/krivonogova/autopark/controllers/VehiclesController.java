@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
-import ru.krivonogova.autopark.models.Brand;
 import ru.krivonogova.autopark.models.Vehicle;
-import ru.krivonogova.autopark.repositories.BrandsRepository;
-import ru.krivonogova.autopark.services.BrandsServices;
+import ru.krivonogova.autopark.services.BrandsService;
 import ru.krivonogova.autopark.services.VehiclesService;
 
 @Controller
@@ -25,12 +23,12 @@ import ru.krivonogova.autopark.services.VehiclesService;
 public class VehiclesController {
 	
 	private final VehiclesService vehiclesService;
-	private final BrandsServices brandsServices;
+	private final BrandsService brandsService;
 
 	@Autowired
-	public VehiclesController(VehiclesService vehiclesService, BrandsServices brandsServices) {
+	public VehiclesController(VehiclesService vehiclesService, BrandsService brandsService) {
 		this.vehiclesService = vehiclesService;
-		this.brandsServices = brandsServices;
+		this.brandsService = brandsService;
 	}
 	
 	@GetMapping
@@ -51,7 +49,7 @@ public class VehiclesController {
 	public String newVehicle(@ModelAttribute("vehicle") Vehicle vehicle,
 							Model model) {
 		
-		model.addAttribute("brands", brandsServices.findAll());
+		model.addAttribute("brands", brandsService.findAll());
 		
 		return "vehicles/new";
 	}
@@ -63,7 +61,7 @@ public class VehiclesController {
 						BindingResult bindingResult) {
 				
     	if(bindingResult.hasErrors()) {
-    		model.addAttribute("brands", brandsServices.findAll());
+    		model.addAttribute("brands", brandsService.findAll());
     		return "vehicles/new";
     	}
 		    	    	
@@ -75,7 +73,7 @@ public class VehiclesController {
 	@GetMapping("/{id}/edit")
 	public String edit(Model model, @PathVariable("id") int id) {
 		model.addAttribute("vehicle", vehiclesService.findOne(id));
-		model.addAttribute("brands", brandsServices.findAll());
+		model.addAttribute("brands", brandsService.findAll());
 		
 		return "vehicles/edit";
 	}
@@ -88,7 +86,7 @@ public class VehiclesController {
 						@PathVariable("id") int id) {
 		
 		if(bindingResult.hasErrors()) {
-			model.addAttribute("brands", brandsServices.findAll());
+			model.addAttribute("brands", brandsService.findAll());
 			return "vehicles/edit";
 		}
 		

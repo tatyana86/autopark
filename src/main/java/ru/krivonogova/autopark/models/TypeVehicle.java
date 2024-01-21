@@ -19,4 +19,5 @@ public enum TypeVehicle {
 	public String getTitle() {
 		return type;
 	}
+	
 }
