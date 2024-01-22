@@ -2,6 +2,8 @@ package ru.krivonogova.autopark.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -34,6 +36,7 @@ public class Brand {
 	private double enginePower;
 	
 	@OneToMany(mappedBy = "brand")
+	@JsonIgnore
 	private List<Vehicle> vehicles;
 
 	public Brand() {
@@ -109,7 +112,7 @@ public class Brand {
 	public List<Vehicle> getVehicles() {
 		return vehicles;
 	}
-
+	
 	public void setVehicles(List<Vehicle> vehicles) {
 		this.vehicles = vehicles;
 	}
