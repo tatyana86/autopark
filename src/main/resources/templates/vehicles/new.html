@@ -12,15 +12,15 @@
 	
 	<br/>
 	
-	<label for="brand">Бренд и ТХ:</label>
+	<label for="brand">Бренд:</label>
 	  <select id="brand" th:name="brandId">
 	    <option th:each="brand : ${brands}" th:value="${brand.getId()}">
-		    <span th:text="${brand.getName()}"></span>,
-	        <span th:text="${brand.getTypeVehicle.getTitle()}"></span>,
+		    <span th:text="${brand.getName()}"></span>
+	        <!-- <span th:text="${brand.getTypeVehicle.getTitle()}"></span>,
 	        объем топливного бака, л: <span th:text="${brand.getTankCapacity()}"></span>,
 	        грузоподъемность, т: <span th:text="${brand.getLoadCapacity()}"></span>,
 	        пассажировместимость, чел: <span th:text="${brand.getPassengerCapacity()}"></span>,
-	        мощность двигателя, л.с.: <span th:text="${brand.getEnginePower()}"></span>
+	        мощность двигателя, л.с.: <span th:text="${brand.getEnginePower()}"></span> -->
 	    </option>
 	  </select>
 
