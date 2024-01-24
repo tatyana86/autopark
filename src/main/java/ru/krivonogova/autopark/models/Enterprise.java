@@ -1,0 +1,95 @@
+package ru.krivonogova.autopark.models;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+
+@Entity
+@Table(name = "enterprise")
+public class Enterprise {
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+	
+	@Column(name = "name")
+	@NotEmpty(message = "Обязательное поле")
+	private String name;
+	
+    @Column(name = "city")
+    @NotEmpty(message = "Обязательное поле")
+    private String city;
+    
+    @Column(name = "phone")
+    @NotEmpty(message = "Обязательное поле")
+    private String phone;
+
+	@OneToMany(mappedBy = "vehicle")
+	@JsonIgnore
+    private List<Vehicle> vehicles;
+	
+	@OneToMany(mappedBy = "driver")
+	@JsonIgnore
+    private List<Driver> drivers;
+    
+	public Enterprise() {
+	}
+
+	public Enterprise(@NotEmpty(message = "Обязательное поле") String name,
+			@NotEmpty(message = "Обязательное поле") String city, @NotEmpty(message = "Обязательное поле") String phone,
+			List<Vehicle> vehicles) {
+		this.name = name;
+		this.city = city;
+		this.phone = phone;
+		this.vehicles = vehicles;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public List<Vehicle> getVehicles() {
+		return vehicles;
+	}
+
+	public void setVehicles(List<Vehicle> vehicles) {
+		this.vehicles = vehicles;
+	}
+}
