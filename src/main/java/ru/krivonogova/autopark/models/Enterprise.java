@@ -33,25 +33,30 @@ public class Enterprise {
     @NotEmpty(message = "Обязательное поле")
     private String phone;
 
-	@OneToMany(mappedBy = "vehicle")
+	@OneToMany(mappedBy = "enterprise")
 	@JsonIgnore
     private List<Vehicle> vehicles;
 	
-	@OneToMany(mappedBy = "driver")
+	@OneToMany(mappedBy = "enterprise")
 	@JsonIgnore
     private List<Driver> drivers;
     
 	public Enterprise() {
 	}
 
+
+
 	public Enterprise(@NotEmpty(message = "Обязательное поле") String name,
 			@NotEmpty(message = "Обязательное поле") String city, @NotEmpty(message = "Обязательное поле") String phone,
-			List<Vehicle> vehicles) {
+			List<Vehicle> vehicles, List<Driver> drivers) {
 		this.name = name;
 		this.city = city;
 		this.phone = phone;
 		this.vehicles = vehicles;
+		this.drivers = drivers;
 	}
+
+
 
 	public int getId() {
 		return id;
@@ -92,4 +97,13 @@ public class Enterprise {
 	public void setVehicles(List<Vehicle> vehicles) {
 		this.vehicles = vehicles;
 	}
+
+	public List<Driver> getDrivers() {
+		return drivers;
+	}
+
+	public void setDrivers(List<Driver> drivers) {
+		this.drivers = drivers;
+	}
+	
 }

@@ -20,7 +20,6 @@ import jakarta.validation.constraints.NotEmpty;
 @Entity
 @Table(name = "driver")
 public class Driver {
-
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +41,7 @@ public class Driver {
 	@JoinTable(name = "driver_vehicle",
 				joinColumns = @JoinColumn(name = "driver_id"),
 				inverseJoinColumns = @JoinColumn(name = "vehicle_id"))
+	
 	@JsonIgnore
     private List<Vehicle> vehicles;
 	
@@ -55,12 +55,17 @@ public class Driver {
 	}
 
 	public Driver(@NotEmpty(message = "Обязательное поле") String name,
-			@NotEmpty(message = "Обязательное поле") String salary, List<Vehicle> vehicles, boolean isActive) {
+			@NotEmpty(message = "Обязательное поле") String salary, Enterprise enterprise, List<Vehicle> vehicles,
+			boolean isActive, Vehicle activeVehicle) {
 		this.name = name;
 		this.salary = salary;
+		this.enterprise = enterprise;
 		this.vehicles = vehicles;
 		this.isActive = isActive;
+		this.activeVehicle = activeVehicle;
 	}
+
+
 
 	public int getId() {
 		return id;
@@ -101,4 +106,21 @@ public class Driver {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}
+
+	public Vehicle getActiveVehicle() {
+		return activeVehicle;
+	}
+
+	public void setActiveVehicle(Vehicle activeVehicle) {
+		this.activeVehicle = activeVehicle;
+	}
+	
 }
