@@ -26,7 +26,9 @@ public class VehicleDTO {
     private double mileage;
     
     private BrandDTO brand;
-
+    
+    private EnterpriseDTO enterprise;
+    
 	public int getId() {
 		return id;
 	}
@@ -73,6 +75,14 @@ public class VehicleDTO {
 
 	public void setBrand(BrandDTO brand) {
 		this.brand = brand;
+	}
+
+	public EnterpriseDTO getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(EnterpriseDTO enterprise) {
+		this.enterprise = enterprise;
 	}
     
 }

@@ -41,7 +41,6 @@ public class Driver {
 	@JoinTable(name = "driver_vehicle",
 				joinColumns = @JoinColumn(name = "driver_id"),
 				inverseJoinColumns = @JoinColumn(name = "vehicle_id"))
-	
 	@JsonIgnore
     private List<Vehicle> vehicles;
 	

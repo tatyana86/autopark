@@ -110,5 +110,12 @@ public class Vehicle {
 	public void setBrand(Brand brand) {
 		this.brand = brand;
 	}
-		
+
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}		
 }
