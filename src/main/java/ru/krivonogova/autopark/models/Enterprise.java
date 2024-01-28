@@ -64,8 +64,6 @@ public class Enterprise {
 		this.drivers = drivers;
 	}
 
-
-
 	public int getId() {
 		return id;
 	}

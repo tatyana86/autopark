@@ -50,5 +50,10 @@ public class ManagerDetails implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
+	
+	// чтобы получать данные аутентифицированного менеджера
+	public Manager getManager() {
+		return this.manager;
+	}
 
 }

@@ -30,4 +30,8 @@ public class EnterprisesService {
 		return foundEnterprise.orElse(null);
 	}
 	
+	public List<Enterprise> findAllForManager(int id) {
+		return enterprisesRepository.findEnterprisesByManagers_id(id);
+	}
+	
 }

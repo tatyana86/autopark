@@ -1,12 +1,15 @@
 package ru.krivonogova.autopark.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.repositories.VehiclesRepository;
 
@@ -16,11 +19,14 @@ public class VehiclesService {
 
 	private final VehiclesRepository vehiclesRepository;
 	private final BrandsService brandsService;
+	
+	private final EnterprisesService enterprisesService;
 
 	@Autowired
-	public VehiclesService(VehiclesRepository vehiclesRepository, BrandsService brandsService) {
+	public VehiclesService(VehiclesRepository vehiclesRepository, BrandsService brandsService, EnterprisesService enterprisesService) {
 		this.vehiclesRepository = vehiclesRepository;
 		this.brandsService = brandsService;
+		this.enterprisesService = enterprisesService;
 	}
 	
 	public List<Vehicle> findAll() {
@@ -50,6 +56,19 @@ public class VehiclesService {
 	@Transactional
 	public void delete(int id) {
 		vehiclesRepository.deleteById(id);
+	}
+	
+	public List<Vehicle> findAllForManager(int managerId) {
+		
+		List<Enterprise> enterprises = enterprisesService.findAllForManager(managerId);
+		
+		List<Vehicle> vehicles = new ArrayList<Vehicle>();
+		
+		for(Enterprise enterprise : enterprises) {
+			vehicles.addAll(vehiclesRepository.findVehiclesByEnterprise_id(enterprise.getId()));
+		}
+		
+		return vehicles;
 	}
 		
 }
