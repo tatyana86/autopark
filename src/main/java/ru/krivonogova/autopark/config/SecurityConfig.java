@@ -8,9 +8,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import ru.krivonogova.autopark.services.ManagerDetailsService;
 
@@ -39,6 +42,8 @@ public class SecurityConfig {
 		
 		//http.csrf(AbstractHttpConfigurer::disable);
 		
+		http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+		
         http.authenticationManager(authenticationManager)
         .authorizeHttpRequests((authz) -> authz
                 .requestMatchers("/auth/login", "/auth/registration").permitAll()
@@ -58,7 +63,7 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/auth/login")
         		);
-		
+        		
 		return http.build();
 	}
 	
