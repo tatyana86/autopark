@@ -21,12 +21,15 @@ public class VehiclesService {
 	private final BrandsService brandsService;
 	
 	private final EnterprisesService enterprisesService;
+	
+	private final ManagersService managersService;
 
 	@Autowired
-	public VehiclesService(VehiclesRepository vehiclesRepository, BrandsService brandsService, EnterprisesService enterprisesService) {
+	public VehiclesService(VehiclesRepository vehiclesRepository, BrandsService brandsService, EnterprisesService enterprisesService, ManagersService managersService) {
 		this.vehiclesRepository = vehiclesRepository;
 		this.brandsService = brandsService;
 		this.enterprisesService = enterprisesService;
+		this.managersService = managersService;
 	}
 	
 	public List<Vehicle> findAll() {
@@ -43,6 +46,17 @@ public class VehiclesService {
 	public void save(Vehicle vehicle, int brandId) {
 		vehicle.setBrand(brandsService.findOne(brandId));
 		vehiclesRepository.save(vehicle);
+	}
+	
+	@Transactional
+	public void save(Vehicle vehicle) {
+		enrichVehicle(vehicle);
+		//vehicle.setBrand(brandsService.findOne(brandId));
+		vehiclesRepository.save(vehicle);
+	}
+	
+	private void enrichVehicle(Vehicle vehicle) {
+		vehicle.setEnterprise(null);
 	}
 	
 	@Transactional

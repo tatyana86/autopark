@@ -92,3 +92,5 @@ SELECT * FROM enterprise;
 SELECT * FROM manager;
 SELECT * FROM enterprise_manager;
 
+SELECT * FROM vehicle;
+

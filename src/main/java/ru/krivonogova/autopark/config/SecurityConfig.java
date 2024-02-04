@@ -40,9 +40,9 @@ public class SecurityConfig {
 		
 		AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 		
-		//http.csrf(AbstractHttpConfigurer::disable);
+		http.csrf(AbstractHttpConfigurer::disable);
 		
-		http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+		//http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 		
         http.authenticationManager(authenticationManager)
         .authorizeHttpRequests((authz) -> authz

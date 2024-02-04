@@ -5,15 +5,23 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import jakarta.validation.Valid;
 import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.models.Driver;
@@ -23,6 +31,9 @@ import ru.krivonogova.autopark.security.ManagerDetails;
 import ru.krivonogova.autopark.services.DriversService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.VehiclesService;
+import ru.krivonogova.autopark.util.VehicleErrorResponse;
+import ru.krivonogova.autopark.util.VehicleNotCreatedException;
+import ru.krivonogova.autopark.util.VehicleNotFoundException;
 
 @RestController
 @RequestMapping("/api/managers")
@@ -77,5 +88,54 @@ public class ApiManagersController {
 	private DriverDTO convertToDriverDTO(Driver driver) {
 		return modelMapper.map(driver, DriverDTO.class);
 	}
+	
+	@PostMapping("/{id}/vehicles")
+	public ResponseEntity<HttpStatus> create(@RequestBody @Valid VehicleDTO vehicle,
+											BindingResult bindingResult,
+											@PathVariable("id") int id) {
+		
+		if(bindingResult.hasErrors()) {
+    		StringBuilder errorMsg = new StringBuilder();
+    		
+    		List<FieldError> errors = bindingResult.getFieldErrors();
+    		
+    		for(FieldError error : errors) {
+    			errorMsg.append(error.getField())
+    					.append(" - ")
+    					.append(error.getDefaultMessage())
+    					.append(";");
+    		}
+    		
+    		throw new VehicleNotCreatedException(errorMsg.toString());
+    	}
+		
+		vehiclesService.save(convertToVehicle(vehicle));
+		
+		return ResponseEntity.ok(HttpStatus.OK);
+	}
+	
+	private Vehicle convertToVehicle(VehicleDTO vehicleDTO) {
+		return modelMapper.map(vehicleDTO, Vehicle.class);
+	}
+	
+	@ExceptionHandler
+    private ResponseEntity<VehicleErrorResponse> handlerException(VehicleNotFoundException e) {
+    	VehicleErrorResponse response = new VehicleErrorResponse(
+    			"Vehicle with this id wasn't found", 
+    			System.currentTimeMillis()
+    	);
+    	
+    	return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // статус 404
+    }	
+	
+    @ExceptionHandler
+    private ResponseEntity<VehicleErrorResponse> handlerException(VehicleNotCreatedException e) {
+    	VehicleErrorResponse response = new VehicleErrorResponse(
+    			e.getMessage(), 
+    			System.currentTimeMillis()
+    	);
+    	
+    	return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // статус 400
+    }
 
 }
