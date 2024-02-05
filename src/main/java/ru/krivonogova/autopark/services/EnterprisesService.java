@@ -34,4 +34,19 @@ public class EnterprisesService {
 		return enterprisesRepository.findEnterprisesByManagers_id(id);
 	}
 	
+	@Transactional
+	public void save(Enterprise enterprise) {
+		enterprisesRepository.save(enterprise);
+	}
+	
+	@Transactional
+	public void update(int id, Enterprise updatedEnterprise) {
+		updatedEnterprise.setId(id);
+		enterprisesRepository.save(updatedEnterprise);
+	}
+	
+	public void delete(int id) {
+		enterprisesRepository.deleteById(id);
+	}
+	
 }

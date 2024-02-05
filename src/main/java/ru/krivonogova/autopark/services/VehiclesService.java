@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.repositories.VehiclesRepository;
+import ru.krivonogova.autopark.util.VehicleNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,14 +23,11 @@ public class VehiclesService {
 	
 	private final EnterprisesService enterprisesService;
 	
-	private final ManagersService managersService;
-
 	@Autowired
 	public VehiclesService(VehiclesRepository vehiclesRepository, BrandsService brandsService, EnterprisesService enterprisesService, ManagersService managersService) {
 		this.vehiclesRepository = vehiclesRepository;
 		this.brandsService = brandsService;
 		this.enterprisesService = enterprisesService;
-		this.managersService = managersService;
 	}
 	
 	public List<Vehicle> findAll() {
@@ -39,7 +37,7 @@ public class VehiclesService {
 	public Vehicle findOne(int id) {
 		Optional<Vehicle> foundVehicle = vehiclesRepository.findById(id);
 		
-		return foundVehicle.orElse(null);
+		return foundVehicle.orElseThrow(VehicleNotFoundException::new);
 	}
 	
 	@Transactional
@@ -50,21 +48,21 @@ public class VehiclesService {
 	
 	@Transactional
 	public void save(Vehicle vehicle) {
-		enrichVehicle(vehicle);
-		//vehicle.setBrand(brandsService.findOne(brandId));
 		vehiclesRepository.save(vehicle);
 	}
-	
-	private void enrichVehicle(Vehicle vehicle) {
-		vehicle.setEnterprise(null);
-	}
-	
+		
 	@Transactional
 	public void update(int id, Vehicle updatedVehicle, int updatedBrandId) {
 		updatedVehicle.setId(id);
 		updatedVehicle.setBrand(brandsService.findOne(updatedBrandId));
 		
 		vehiclesRepository.save(updatedVehicle);		
+	}
+	
+	@Transactional
+	public void update(int id, Vehicle updatedVehicle) {
+		updatedVehicle.setId(id);
+		vehiclesRepository.save(updatedVehicle);	
 	}
 	
 	@Transactional
