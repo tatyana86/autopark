@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ru.krivonogova.autopark.models.Manager;
-import ru.krivonogova.autopark.security.JWTUtil;
 import ru.krivonogova.autopark.services.RegistrationService;
 
 
@@ -26,14 +25,12 @@ public class AuthController {
 	
 	private final RegistrationService registrationService;
 	
-	private final JWTUtil jwtUtil;
     private final ModelMapper modelMapper;
     //private final AuthenticationManager authenticationManager;
 	
 	@Autowired
-	public AuthController(RegistrationService registrationService, JWTUtil jwtUtil, ModelMapper modelMapper) {
+	public AuthController(RegistrationService registrationService, ModelMapper modelMapper) {
 		this.registrationService = registrationService;
-		this.jwtUtil = jwtUtil;
 		this.modelMapper = modelMapper;
 		//this.authenticationManager = authenticationManager;
 	}

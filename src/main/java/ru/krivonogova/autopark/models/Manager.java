@@ -61,6 +61,12 @@ public class Manager {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
+	public List<Enterprise> getEnterprises() {
+		return enterprises;
+	}
+
+	public void setEnterprises(List<Enterprise> enterprises) {
+		this.enterprises = enterprises;
+	}
 }

@@ -121,7 +121,8 @@ public class ApiManagersController {
 	
 	@PostMapping("/{id}/enterprises")
 	public ResponseEntity<HttpStatus> create(@RequestBody @Valid Enterprise enterprise,
-											BindingResult bindingResult) {
+											BindingResult bindingResult,
+											@PathVariable("id") int id) {
 		
 		if(bindingResult.hasErrors()) {
     		StringBuilder errorMsg = new StringBuilder();
@@ -138,7 +139,7 @@ public class ApiManagersController {
     		throw new EnterpriseNotCreatedException(errorMsg.toString());
     	}
 		
-		enterprisesService.save(enterprise);
+		enterprisesService.save(enterprise, id);
 		
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
@@ -199,7 +200,7 @@ public class ApiManagersController {
 	}
 	
 	@DeleteMapping("/{id}/enterprises/{idEnterprise}")
-	public ResponseEntity<HttpStatus> deleteEnterprise(@PathVariable("idEnterprise") int id) {
+	public ResponseEntity<HttpStatus> delete(@PathVariable("idEnterprise") int id) {
 		enterprisesService.delete(id);
 		
 		return ResponseEntity.ok(HttpStatus.OK);

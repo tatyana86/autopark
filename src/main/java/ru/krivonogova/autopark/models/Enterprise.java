@@ -56,13 +56,16 @@ public class Enterprise {
 
 	public Enterprise(@NotEmpty(message = "Обязательное поле") String name,
 			@NotEmpty(message = "Обязательное поле") String city, @NotEmpty(message = "Обязательное поле") String phone,
-			List<Vehicle> vehicles, List<Driver> drivers) {
+			List<Vehicle> vehicles, List<Driver> drivers, List<Manager> managers) {
 		this.name = name;
 		this.city = city;
 		this.phone = phone;
 		this.vehicles = vehicles;
 		this.drivers = drivers;
+		this.managers = managers;
 	}
+
+
 
 	public int getId() {
 		return id;
@@ -110,6 +113,14 @@ public class Enterprise {
 
 	public void setDrivers(List<Driver> drivers) {
 		this.drivers = drivers;
+	}
+
+	public List<Manager> getManagers() {
+		return managers;
+	}
+
+	public void setManagers(List<Manager> managers) {
+		this.managers = managers;
 	}
 	
 }
