@@ -30,8 +30,10 @@ import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.ManagerDetails;
+import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.DriversService;
 import ru.krivonogova.autopark.services.EnterprisesService;
+import ru.krivonogova.autopark.services.ManagersService;
 import ru.krivonogova.autopark.services.VehiclesService;
 import ru.krivonogova.autopark.util.EnterpriseErrorResponse;
 import ru.krivonogova.autopark.util.EnterpriseNotCreatedException;
@@ -50,22 +52,32 @@ public class ApiManagersController {
 	private final DriversService driversService;
 	private final ModelMapper modelMapper;
 	
+	private final ManagersService managersService; //new
+	
 	@Autowired
-	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService, ModelMapper modelMapper, DriversService driversService) {
+	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService, ModelMapper modelMapper, DriversService driversService, ManagersService managersService) {
 		this.enterprisesService = enterprisesService;
 		this.vehiclesService = vehiclesService;
 		this.driversService = driversService;
 		this.modelMapper = modelMapper;
+		this.managersService = managersService;
 	}
 
 	@GetMapping
 	public ModelAndView start(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		ManagerDetails managerDetails = (ManagerDetails) authentication.getPrincipal();
+		//ManagerDetails managerDetails = (ManagerDetails) authentication.getPrincipal();
 		
 		//System.out.println(managerDetails.getManager().getUsername());
 		
-		model.addAttribute("manager", managerDetails.getManager());
+		//model.addAttribute("manager", managerDetails.getManager());
+		
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+		
+		String username = personDetails.getPerson().getUsername();
+		System.out.println(username);
+		
+		model.addAttribute("manager", managersService.findByUsername(username));
 		
 		return new ModelAndView("start"); 
 	}

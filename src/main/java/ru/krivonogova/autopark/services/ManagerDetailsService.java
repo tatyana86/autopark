@@ -12,6 +12,7 @@ import ru.krivonogova.autopark.models.Manager;
 import ru.krivonogova.autopark.repositories.ManagersRepository;
 import ru.krivonogova.autopark.security.ManagerDetails;
 
+//depricated
 @Service
 public class ManagerDetailsService implements UserDetailsService {
 	

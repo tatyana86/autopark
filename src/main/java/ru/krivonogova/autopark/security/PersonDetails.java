@@ -1,35 +1,36 @@
 package ru.krivonogova.autopark.security;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import ru.krivonogova.autopark.models.Manager;
+import ru.krivonogova.autopark.models.Person;
 
-// depricated
-public class ManagerDetails implements UserDetails {
+public class PersonDetails implements UserDetails {
 	
-	private final Manager manager;
+	private final Person person;
 
-	public ManagerDetails(Manager manager) {
-		this.manager = manager;
+	public PersonDetails(Person person) {
+		this.person = person;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println(person.getRole());
+		return Collections.singletonList(new SimpleGrantedAuthority(person.getRole()));
 	}
 
 	@Override
 	public String getPassword() {
-		return this.manager.getPassword();
+		return this.person.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		return this.manager.getUsername();
+		return this.person.getUsername();
 	}
 
 	@Override
@@ -53,8 +54,12 @@ public class ManagerDetails implements UserDetails {
 	}
 	
 	// чтобы получать данные аутентифицированного менеджера
-	public Manager getManager() {
-		return this.manager;
+//	public Manager getManager() {
+//		return this.manager;
+//	}
+	
+	public Person getPerson() {
+		return this.person;
 	}
 
 }

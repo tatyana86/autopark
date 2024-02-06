@@ -22,5 +22,10 @@ public class ManagersService {
 		Optional<Manager> foundManager = managersRepository.findById(id);
 		return foundManager.orElse(null);
 	}
+	
+	public Manager findByUsername(String username) {
+		Optional<Manager> foundManager = managersRepository.findByUsername(username);
+		return foundManager.orElse(null);
+	}
 
 }
