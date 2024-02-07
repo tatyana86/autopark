@@ -12,6 +12,8 @@ import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Manager;
 import ru.krivonogova.autopark.repositories.EnterprisesRepository;
 import ru.krivonogova.autopark.repositories.ManagersRepository;
+import ru.krivonogova.autopark.util.EnterpriseNotDeletedException;
+import ru.krivonogova.autopark.util.EnterpriseNotUpdatedException;
 
 @Service
 @Transactional(readOnly = true)
@@ -53,27 +55,40 @@ public class EnterprisesService {
 	}
 	
 	@Transactional
-	public void update(int id, Enterprise updatedEnterprise) {
-		List<Manager> managers = enterprisesRepository.findById(id).get().getManagers();
+	public void update(int idManager, int idEnterprise, Enterprise updatedEnterprise) {
+		
+		Enterprise enterprise = enterprisesRepository.findById(idEnterprise).get();
+		List<Enterprise> managerEnterprises = managersRepository.findById(idManager).get().getEnterprises();
+		
+		if(!managerEnterprises.contains(enterprise)) {
+			throw new EnterpriseNotUpdatedException("Нет доступа к данному предприятию");
+		}
+		
+		List<Manager> managers = enterprisesRepository.findById(idEnterprise).get().getManagers();
 		
 		updatedEnterprise.setManagers(managers);
-		updatedEnterprise.setId(id);
+		updatedEnterprise.setId(idEnterprise);
 		
 		enterprisesRepository.save(updatedEnterprise);
 	}
 	
 	@Transactional
-	public void delete(int id) {
-		//enterprisesRepository.deleteById(id);
-		System.out.print("tut");
-		Enterprise enterprise = enterprisesRepository.findById(id).get();
+	public void delete(int idManager, int idEnterprise) {
+
+		//System.out.print("tut");
+		Enterprise enterprise = enterprisesRepository.findById(idEnterprise).get();
+		List<Enterprise> managerEnterprises = managersRepository.findById(idManager).get().getEnterprises();
+		
+		if(!managerEnterprises.contains(enterprise)) {
+			throw new EnterpriseNotDeletedException("Нет доступа к данному предприятию");
+		}
 		        
         // Удаление предприятия из списка у всех менеджеров, у которых оно есть
         for (Manager manager : enterprise.getManagers()) {
             manager.getEnterprises().remove(enterprise);
         }
 
-        enterprisesRepository.deleteById(id);
+        enterprisesRepository.deleteById(idEnterprise);
 	}
 	
 }

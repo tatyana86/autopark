@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -37,6 +38,7 @@ import ru.krivonogova.autopark.services.ManagersService;
 import ru.krivonogova.autopark.services.VehiclesService;
 import ru.krivonogova.autopark.util.EnterpriseErrorResponse;
 import ru.krivonogova.autopark.util.EnterpriseNotCreatedException;
+import ru.krivonogova.autopark.util.EnterpriseNotDeletedException;
 import ru.krivonogova.autopark.util.EnterpriseNotUpdatedException;
 import ru.krivonogova.autopark.util.VehicleErrorResponse;
 import ru.krivonogova.autopark.util.VehicleNotCreatedException;
@@ -181,9 +183,10 @@ public class ApiManagersController {
 	}
 	
 	@PutMapping("/{id}/enterprises/{idEnterprise}")
-	public ResponseEntity<HttpStatus> update(@RequestBody @Valid Enterprise enterprise,
+	public ResponseEntity<HttpStatus> update(@PathVariable("id") int idManager,
+											@RequestBody @Valid Enterprise enterprise,
 											BindingResult bindingResult,
-											@PathVariable("idEnterprise") int id) {
+											@PathVariable("idEnterprise") int idEnterprise) {
 		if(bindingResult.hasErrors()) {
 			StringBuilder errorMsg = new StringBuilder();
     		
@@ -199,7 +202,7 @@ public class ApiManagersController {
     		throw new EnterpriseNotUpdatedException(errorMsg.toString());
 		}
 		
-		enterprisesService.update(id, enterprise);
+		enterprisesService.update(idManager, idEnterprise, enterprise);
 		
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
@@ -212,8 +215,10 @@ public class ApiManagersController {
 	}
 	
 	@DeleteMapping("/{id}/enterprises/{idEnterprise}")
-	public ResponseEntity<HttpStatus> delete(@PathVariable("idEnterprise") int id) {
-		enterprisesService.delete(id);
+	public ResponseEntity<HttpStatus> delete(@PathVariable("id") int idManager,
+											@PathVariable("idEnterprise") int idEnterprise) {
+		
+		enterprisesService.delete(idManager, idEnterprise);
 		
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
@@ -269,7 +274,17 @@ public class ApiManagersController {
     			System.currentTimeMillis()
     	);
     	
-    	return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // статус 400
+    	return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // статус 403
+    }
+    
+    @ExceptionHandler
+    private ResponseEntity<EnterpriseErrorResponse> handlerException(EnterpriseNotDeletedException e) {
+    	EnterpriseErrorResponse response = new EnterpriseErrorResponse(
+    			e.getMessage(), 
+    			System.currentTimeMillis()
+    	);
+    	
+    	return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); // статус 403
     }
 
 }
