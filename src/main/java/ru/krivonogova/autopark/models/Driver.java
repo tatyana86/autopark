@@ -31,7 +31,7 @@ public class Driver {
 	
 	@Column(name = "salary")
 	@NotEmpty(message = "Обязательное поле")
-	private String salary;
+	private double salary;
 	
 	@ManyToOne
     @JoinColumn(name = "enterprise_id", referencedColumnName = "id")
@@ -54,7 +54,7 @@ public class Driver {
 	}
 
 	public Driver(@NotEmpty(message = "Обязательное поле") String name,
-			@NotEmpty(message = "Обязательное поле") String salary, Enterprise enterprise, List<Vehicle> vehicles,
+			@NotEmpty(message = "Обязательное поле") double salary, Enterprise enterprise, List<Vehicle> vehicles,
 			boolean isActive, Vehicle activeVehicle) {
 		this.name = name;
 		this.salary = salary;
@@ -82,11 +82,11 @@ public class Driver {
 		this.name = name;
 	}
 
-	public String getSalary() {
+	public double getSalary() {
 		return salary;
 	}
 
-	public void setSalary(String salary) {
+	public void setSalary(double salary) {
 		this.salary = salary;
 	}
 

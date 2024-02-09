@@ -117,5 +117,22 @@ public class Vehicle {
 
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
+	}
+
+	public List<Driver> getDrivers() {
+		return drivers;
+	}
+
+	public void setDrivers(List<Driver> drivers) {
+		this.drivers = drivers;
+	}
+
+	public Driver getActiveDriver() {
+		return activeDriver;
+	}
+
+	public void setActiveDriver(Driver activeDriver) {
+		this.activeDriver = activeDriver;
 	}		
+	
 }

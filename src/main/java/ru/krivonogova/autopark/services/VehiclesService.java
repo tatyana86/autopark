@@ -3,8 +3,6 @@ package ru.krivonogova.autopark.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +47,11 @@ public class VehiclesService {
 	@Transactional
 	public void save(Vehicle vehicle) {
 		vehiclesRepository.save(vehicle);
+	}
+	
+	@Transactional
+	public void saveAll(List<Vehicle> vehicles) {
+		vehiclesRepository.saveAll(vehicles);
 	}
 		
 	@Transactional

@@ -14,7 +14,7 @@ public class DriverDTO {
 	private String name;
 
 	@NotEmpty(message = "Обязательное поле")
-	private String salary;
+	private double salary;
 	
 	private EnterpriseDTO enterprise;
 
@@ -34,11 +34,11 @@ public class DriverDTO {
 		this.name = name;
 	}
 
-	public String getSalary() {
+	public double getSalary() {
 		return salary;
 	}
 
-	public void setSalary(String salary) {
+	public void setSalary(double salary) {
 		this.salary = salary;
 	}
 

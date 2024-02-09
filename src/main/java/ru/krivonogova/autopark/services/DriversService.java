@@ -46,4 +46,9 @@ public class DriversService {
 
 		return drivers;
 	}
+	
+	@Transactional
+	public void saveAll(List<Driver> drivers) {
+		driversRepository.saveAll(drivers);
+	}
 }
