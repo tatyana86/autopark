@@ -30,6 +30,7 @@ public class DataGenerationService {
 		this.vehiclesService = vehiclesService;
 	}
 
+	@Transactional
 	public void generate(DataGenerationDTO request) {
 		
 		for(Integer enterpriseId : request.getEnterprisesID()) {
@@ -38,11 +39,10 @@ public class DataGenerationService {
 			List<Vehicle> vehicles = generateVehicles(enterprise, request.getNumberOfVehicle());
 			
 			List<Driver> drivers = generateDrivers(enterprise, request.getNumberOfDriver());
-		
-			driversService.saveAll(drivers);
-			
+					
 			assignVehicleWithDriver(vehicles, drivers, request.getIndicatorOfActiveVehicle());
 			
+			driversService.saveAll(drivers);
 			vehiclesService.saveAll(vehicles);		
 			
 		}
@@ -52,10 +52,12 @@ public class DataGenerationService {
 				List<Driver> drivers, int indicatorOfActiveVehicle) {
 		
 		int numberActiveVehicles = vehicles.size() / indicatorOfActiveVehicle;
-		
+		System.out.println("1");
 		for(int i = 0; i < numberActiveVehicles; i++) {
 			Driver driver = findDisactiveDriver(drivers);
+			System.out.println(i);
 			if(driver != null) {
+				System.out.println("zzzzzz");
 				Vehicle vehicle = vehicles.get(i * indicatorOfActiveVehicle);
 				vehicle.setActiveDriver(driver);
 				driver.setActive(true);
@@ -67,7 +69,7 @@ public class DataGenerationService {
 	
 	private Driver findDisactiveDriver(List<Driver> drivers) {
 		for(Driver driver : drivers) {
-			if(driver.isActive()) {
+			if(! driver.isActive()) {
 				return driver;
 			}
 		}
@@ -139,14 +141,19 @@ public class DataGenerationService {
 		double minPrice = 50000;
 		
 		Random random = new Random();
+		double salary = random.nextDouble(maxPrice - minPrice + 1) + minPrice;
 		
-		return random.nextDouble(maxPrice + minPrice + 1) - minPrice;
+		return Math.round(salary);
 	}
 	
 	private double generateMileage() {
 		double maxMileage = 400000;
+		double minMileage = 1;
 		
-		return new Random().nextDouble(maxMileage + 1);
+		Random random = new Random();
+		double mileage = random.nextDouble(maxMileage - minMileage + 1) + minMileage;
+		
+		return Math.round(mileage);
 	}
 	
 	private double generatePrice() {
@@ -154,8 +161,9 @@ public class DataGenerationService {
 		double minPrice = 100000;
 		
 		Random random = new Random();
+		double price = random.nextDouble(maxPrice - minPrice + 1) + minPrice;
 		
-		return random.nextDouble(maxPrice + minPrice + 1) - minPrice;
+		return Math.round(price);
 	}
 	
 	private String generateRegistrationNumber() {
@@ -168,9 +176,9 @@ public class DataGenerationService {
         char secondChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
         char thirdChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
         int number = random.nextInt(1000);
+        String formattedNumber = String.format("%03d", number);
         int region = random.nextInt(MAX_REGION) + 1;
-        
-        return String.format("%c%03d%c%c%c%02d", firstChar, number, secondChar, thirdChar, region);
+        return String.format("%c%s%c%c%02d", firstChar, number, secondChar, thirdChar, region);
 	}
 	
 	private int generateYearOfProduction() {

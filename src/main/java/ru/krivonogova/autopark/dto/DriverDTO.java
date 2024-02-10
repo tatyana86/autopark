@@ -13,10 +13,13 @@ public class DriverDTO {
 	@NotEmpty(message = "Обязательное поле")
 	private String name;
 
-	@NotEmpty(message = "Обязательное поле")
 	private double salary;
 	
 	private EnterpriseDTO enterprise;
+	
+	private boolean isActive;
+	
+	private VehicleIdDTO activeVehicle;
 
 	public int getId() {
 		return id;
@@ -49,5 +52,20 @@ public class DriverDTO {
 	public void setEnterprise(EnterpriseDTO enterprise) {
 		this.enterprise = enterprise;
 	}
+	
+	public boolean isActive() {
+		return isActive;
+	}
 
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public VehicleIdDTO getActiveVehicle() {
+		return activeVehicle;
+	}
+
+	public void setActiveVehicle(VehicleIdDTO activeVehicle) {
+		this.activeVehicle = activeVehicle;
+	}
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
@@ -30,7 +31,6 @@ public class Driver {
 	private String name;
 	
 	@Column(name = "salary")
-	@NotEmpty(message = "Обязательное поле")
 	private double salary;
 	
 	@ManyToOne
@@ -44,10 +44,13 @@ public class Driver {
 	@JsonIgnore
     private List<Vehicle> vehicles;
 	
-	@Transient
+	@Column(name = "is_active")
 	private boolean isActive;
 	
-	@Transient
+	
+	//@Column(name = "active_vehicle_id")
+	@OneToOne
+	@JoinColumn(name = "active_vehicle_id", referencedColumnName = "id")
 	private Vehicle activeVehicle;
 
 	public Driver() {

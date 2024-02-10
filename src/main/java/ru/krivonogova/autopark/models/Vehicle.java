@@ -46,7 +46,7 @@ public class Vehicle {
 	@JsonIgnore
     private List<Driver> drivers;
     
-    @Transient
+    @OneToOne(mappedBy = "activeVehicle")
     private Driver activeDriver;
     
 	public Vehicle() {

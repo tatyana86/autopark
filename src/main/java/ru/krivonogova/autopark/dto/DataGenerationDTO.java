@@ -8,6 +8,7 @@ public class DataGenerationDTO {
 	private int numberOfVehicle;
 	private int numberOfDriver;
 	private int indicatorOfActiveVehicle;
+	
 	public List<Integer> getEnterprisesID() {
 		return enterprisesID;
 	}
