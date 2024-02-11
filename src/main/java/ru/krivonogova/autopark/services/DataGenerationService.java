@@ -52,12 +52,9 @@ public class DataGenerationService {
 				List<Driver> drivers, int indicatorOfActiveVehicle) {
 		
 		int numberActiveVehicles = vehicles.size() / indicatorOfActiveVehicle;
-		System.out.println("1");
 		for(int i = 0; i < numberActiveVehicles; i++) {
 			Driver driver = findDisactiveDriver(drivers);
-			System.out.println(i);
 			if(driver != null) {
-				System.out.println("zzzzzz");
 				Vehicle vehicle = vehicles.get(i * indicatorOfActiveVehicle);
 				vehicle.setActiveDriver(driver);
 				driver.setActive(true);

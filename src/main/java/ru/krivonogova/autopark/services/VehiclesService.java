@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,6 +88,28 @@ public class VehiclesService {
 		}
 		
 		return vehicles;
+	}
+	
+	//new
+	public Page<Vehicle> findAllForManager(int managerId, Integer page, Integer itemsPerPage) {
+		
+		List<Enterprise> enterprises = enterprisesService.findAllForManager(managerId);
+		
+		List<Vehicle> vehicles = new ArrayList<Vehicle>();
+		
+		for(Enterprise enterprise : enterprises) {
+			vehicles.addAll(vehiclesRepository.findVehiclesByEnterprise_id(enterprise.getId()));
+		}
+		
+		int pageNumber = (page != null) ? Math.max(page - 1, 0) : 0; 
+	    Pageable pageable = PageRequest.of(pageNumber, itemsPerPage);
+	    
+	    int pageSize = (itemsPerPage != null) ? itemsPerPage : vehicles.size(); // Установим размер страницы равным количеству результатов, если itemsPerPage = null
+	    
+	    int start = (int)pageable.getOffset();
+	    int end = Math.min((start + pageable.getPageSize()), vehicles.size());
+		
+	    return new PageImpl<Vehicle>(vehicles.subList(start, end), pageable, vehicles.size());
 	}
 		
 }

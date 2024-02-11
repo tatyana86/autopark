@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -89,20 +91,56 @@ public class ApiManagersController {
 		return enterprisesService.findAllForManager(id);
 	}
 	
+// так было	
+//	@GetMapping("/{id}/vehicles")
+//	public List<VehicleDTO> indexVehicles(@PathVariable("id") int id) {
+//		return vehiclesService.findAllForManager(id).stream().map(this::convertToVehicleDTO)
+//        		.collect(Collectors.toList());
+//	}
+	
 	@GetMapping("/{id}/vehicles")
-	public List<VehicleDTO> indexVehicles(@PathVariable("id") int id) {
-		return vehiclesService.findAllForManager(id).stream().map(this::convertToVehicleDTO)
-        		.collect(Collectors.toList());
+	public List<VehicleDTO> indexVehicles(@PathVariable("id") int id,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "itemsPerPage", required = false) Integer itemsPerPage) {
+		
+		if(page == null || itemsPerPage == null) {
+			return vehiclesService.findAllForManager(id).stream().map(this::convertToVehicleDTO)
+	        		.collect(Collectors.toList());
+		}
+		
+		Page<Vehicle> vehiclePage = vehiclesService.findAllForManager(id, page, itemsPerPage);
+		List<VehicleDTO> vehicleDTOList = vehiclePage.getContent().stream().map(this::convertToVehicleDTO)
+				.collect(Collectors.toList());
+		
+		return vehicleDTOList;
 	}
 	
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
 		return modelMapper.map(vehicle, VehicleDTO.class);
 	}
 	
+// так было	
+//	@GetMapping("/{id}/drivers")
+//	public List<DriverDTO> indexDrivers(@PathVariable("id") int id) {
+//		return driversService.findAllForManager(id).stream().map(this::convertToDriverDTO)
+//        		.collect(Collectors.toList());
+//	}
+	
 	@GetMapping("/{id}/drivers")
-	public List<DriverDTO> indexDrivers(@PathVariable("id") int id) {
-		return driversService.findAllForManager(id).stream().map(this::convertToDriverDTO)
-        		.collect(Collectors.toList());
+	public List<DriverDTO> indexDrivers(@PathVariable("id") int id,
+					@RequestParam(value = "page", required = false) Integer page,
+					@RequestParam(value = "itemsPerPage", required = false) Integer itemsPerPage) {
+		
+		if(page == null || itemsPerPage == null) {
+			return driversService.findAllForManager(id).stream().map(this::convertToDriverDTO)
+	        		.collect(Collectors.toList());			
+		}
+		
+		Page<Driver> driverPage = driversService.findAllForManager(id, page, itemsPerPage);
+		List<DriverDTO> driverDTOList = driverPage.getContent().stream().map(this::convertToDriverDTO)
+	                .collect(Collectors.toList());
+		
+	    return driverDTOList;
 	}
 	
 	private DriverDTO convertToDriverDTO(Driver driver) {
