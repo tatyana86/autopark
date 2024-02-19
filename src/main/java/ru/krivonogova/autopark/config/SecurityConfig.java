@@ -70,7 +70,8 @@ public class SecurityConfig {
         formLogin
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/process_login")
-                .defaultSuccessUrl("/vehicles", true)
+//                .defaultSuccessUrl("/vehicles", true)
+                .defaultSuccessUrl("/api/managers/enterprises", true)
                 .failureUrl("/auth/login?error")
         		);
         

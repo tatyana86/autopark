@@ -91,6 +91,21 @@ public class ApiManagersController {
 		return enterprisesService.findAllForManager(id);
 	}
 	
+	@GetMapping("/enterprises")
+	public ModelAndView indexEnterprisesWOid() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+		String username = personDetails.getPerson().getUsername();
+		
+		Integer id = managersService.findByUsername(username).getId();
+		
+		ModelAndView enterprises = new ModelAndView("enterprises/index");
+		
+		enterprises.addObject("enterprises", enterprisesService.findAllForManager(id));
+		
+		return enterprises;
+	}
+	
 // так было	
 //	@GetMapping("/{id}/vehicles")
 //	public List<VehicleDTO> indexVehicles(@PathVariable("id") int id) {

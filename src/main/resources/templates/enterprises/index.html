@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Предприятия</title>
+</head>
+<body>
+
+<b>Мои предприятия:</b>
+
+<div th:each="enterprise : ${enterprises}">
+	<br/>
+    <a th:text="${enterprise.getId() + '. ' + enterprise.getName()}">enterprise</a>
+</div>
+
+<hr/>
+
+<form th:action="@{/logout}" th:method="POST">
+    <input type="submit" value="Выйти" />
+</form>
+
+</body>
+</html>
