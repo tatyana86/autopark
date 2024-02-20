@@ -61,7 +61,7 @@ public class SecurityConfig {
         		.requestMatchers("api/managers/1/**").hasRole("MANAGER1")
         		.requestMatchers("api/managers/2/**").hasRole("MANAGER2")
         		.requestMatchers("api/managers", "api/**").hasAnyRole("MANAGER1", "MANAGER2")
-                .requestMatchers("/auth/login", "/auth/registration").permitAll()
+                .requestMatchers("/auth/login", "/auth/registration", "/css/main").permitAll()
                 .anyRequest().authenticated()
         	);
 
