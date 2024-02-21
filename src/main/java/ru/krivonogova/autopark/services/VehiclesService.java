@@ -90,7 +90,15 @@ public class VehiclesService {
 		return vehicles;
 	}
 	
-	//new
+	public List<Vehicle> findForManagerByEnterpriseId(int managerId, int enterpriseId) {
+		
+		List<Vehicle> vehicles = new ArrayList<Vehicle>();
+		
+		vehicles.addAll(vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId));
+		
+		return vehicles;
+	}
+	
 	public Page<Vehicle> findAllForManager(int managerId, Integer page, Integer itemsPerPage) {
 		
 		List<Enterprise> enterprises = enterprisesService.findAllForManager(managerId);

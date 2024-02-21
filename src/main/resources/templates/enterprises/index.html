@@ -29,7 +29,8 @@
 		            <div class="col">
 		                <div th:each="enterprise : ${enterprises}">
 		                    <div style="font-size: 20px;">
-		                        <span th:text="${enterprise.getId() + '. ' + enterprise.getName()}" class="custom-text"></span>
+		                        <a	th:href="@{/managers/enterprises/{id}/vehicles(id=${enterprise.getId()})}"
+		                        	th:text="${enterprise.getId() + '. ' + enterprise.getName()}" class="custom-text"></a>
 		                    </div>
 		                </div>
 		            </div>

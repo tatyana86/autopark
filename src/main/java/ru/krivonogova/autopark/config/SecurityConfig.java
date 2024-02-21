@@ -60,8 +60,8 @@ public class SecurityConfig {
         	.authorizeHttpRequests((authz) -> authz
         		.requestMatchers("api/managers/1/**").hasRole("MANAGER1")
         		.requestMatchers("api/managers/2/**").hasRole("MANAGER2")
-        		.requestMatchers("api/managers", "api/**").hasAnyRole("MANAGER1", "MANAGER2")
-                .requestMatchers("/auth/login", "/auth/registration", "/css/main").permitAll()
+        		.requestMatchers("api/managers", "api/**", "managers/**").hasAnyRole("MANAGER1", "MANAGER2")
+                .requestMatchers("/auth/login", "/auth/registration").permitAll()
                 .anyRequest().authenticated()
         	);
 
@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/process_login")
 //                .defaultSuccessUrl("/vehicles", true)
-                .defaultSuccessUrl("/api/managers/enterprises", true)
+                .defaultSuccessUrl("/managers/enterprises", true)
                 .failureUrl("/auth/login?error")
         		);
         
