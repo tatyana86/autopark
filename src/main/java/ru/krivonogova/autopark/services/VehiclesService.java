@@ -112,12 +112,23 @@ public class VehiclesService {
 		int pageNumber = (page != null) ? Math.max(page - 1, 0) : 0; 
 	    Pageable pageable = PageRequest.of(pageNumber, itemsPerPage);
 	    
-	    int pageSize = (itemsPerPage != null) ? itemsPerPage : vehicles.size(); // Установим размер страницы равным количеству результатов, если itemsPerPage = null
+	    //int pageSize = (itemsPerPage != null) ? itemsPerPage : vehicles.size(); // Установим размер страницы равным количеству результатов, если itemsPerPage = null
 	    
 	    int start = (int)pageable.getOffset();
 	    int end = Math.min((start + pageable.getPageSize()), vehicles.size());
 		
 	    return new PageImpl<Vehicle>(vehicles.subList(start, end), pageable, vehicles.size());
+	}
+	
+	// now
+	public Page<Vehicle> findForManagerByEnterpriseId(int managerId, 
+													int enterpriseId,
+													Integer page,
+													Integer itemsPerPage) {
+				
+		Pageable pageable = PageRequest.of(page - 1, itemsPerPage);	
+		
+	    return vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId, pageable);
 	}
 		
 }

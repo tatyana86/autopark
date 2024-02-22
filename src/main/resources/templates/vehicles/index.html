@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Autopark</title>
-</head>
-<body>
-
-<b>Текущий автопарк:</b>
-
-<div th:each="vehicle : ${vehicles}">
-	<br/>
-    <a th:href="@{/vehicles/{id}(id=${vehicle.getId()})}"
-       th:text="${vehicle.getId() + '. ' + vehicle.getRegistrationNumber() + ', ' + vehicle.getYearOfProduction()}">vehicle</a>
-</div>
-
-<hr/>
-
-<b> <a href="/vehicles/new">Добавить транспортное средство</a> </b>
-
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<title>Автопарк</title>
+	</head>
+	<body>
+	
+	<b>Текущий автопарк:</b>
+	
+	<div th:each="vehicle : ${vehicles}">
+		<br/>
+	    <a th:href="@{/vehicles/{id}(id=${vehicle.getId()})}"
+	       th:text="${vehicle.getId() + '. ' + vehicle.getRegistrationNumber() + ', ' + vehicle.getYearOfProduction()}">vehicle</a>
+	</div>
+	
+	<div>
+		<a 	th:if="${hasPrevious}" th:href="@{'/managers/enterprises/' + ${id} + '/vehicles?page=' + ${currentPage - 1}}"
+			th:text="${currentPage - 1}">Предыдущая страница</a>
+		
+		<span th:text="${currentPage}"></span>
+		<a 	th:if="${hasNext}" th:href="@{'/managers/enterprises/' + ${id} + '/vehicles?page=' + ${currentPage + 1}}"
+			th:text="${currentPage + 1}">Следующая страница</a>
+	</div>
+	
+	
+	<hr/>
+	
+	<b> <a href="/vehicles/new">Добавить транспортное средство</a> </b>
+	
+	</body>
 </html>

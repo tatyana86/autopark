@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ru.krivonogova.autopark.dto.VehicleDTO;
@@ -53,18 +55,24 @@ public class ManagersController {
 	}
 	
 	@GetMapping("/enterprises/{id}/vehicles")
-	public String indexVehicles(@PathVariable("id") int idEnterprise,
+	public String indexVehicles(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+								@RequestParam(value = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
+								@PathVariable("id") int idEnterprise,
 								Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
 		String username = personDetails.getPerson().getUsername();
 		
 		Integer idManager = managersService.findByUsername(username).getId();
+				
+		Page<Vehicle> vehiclesPage = vehiclesService.findForManagerByEnterpriseId(idManager, idEnterprise, page, itemsPerPage);
+	    model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(this::convertToVehicleDTO).collect(Collectors.toList()));
+	    model.addAttribute("currentPage", vehiclesPage.getNumber() + 1);
+	    model.addAttribute("totalPages", vehiclesPage.getTotalPages());
+	    model.addAttribute("hasNext", vehiclesPage.hasNext());
+	    model.addAttribute("hasPrevious", vehiclesPage.hasPrevious());
 		
-		model.addAttribute("vehicles", vehiclesService.findForManagerByEnterpriseId(idManager, idEnterprise).stream().map(this::convertToVehicleDTO)
-        		.collect(Collectors.toList()));
-		
-        return "vehicles/index";		
+        return "vehicles/index";
 	}
 	
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
