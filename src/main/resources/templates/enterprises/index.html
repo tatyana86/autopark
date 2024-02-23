@@ -27,14 +27,15 @@
 		        <h1>Мои предприятия:</h1>
 		        <div class="row">
 		            <div class="col">
-		                <div th:each="enterprise : ${enterprises}">
-		                    <div style="font-size: 20px;">
-		                        <a	th:href="@{/managers/enterprises/{id}/vehicles(id=${enterprise.getId()})}"
-		                        	th:text="${enterprise.getId() + '. ' + enterprise.getName()}" class="custom-text"></a>
-		                    </div>
+		                <div th:each="enterprise : ${enterprises}" style="font-size: 20px; margin-bottom: 10px;">
+		                        <a	style="text-decoration: none;" 
+		                			class="custom-text" 
+		                			th:href="@{/managers/enterprises/{id}/vehicles(id=${enterprise.getId()})}"
+		                        	th:text="${enterprise.getId() + '. ' + enterprise.getName()}"></a>
 		                </div>
 		            </div>
 		        </div>
+		        
 		        <hr>
 		        
 		        <form th:action="@{/logout}" th:method="POST">

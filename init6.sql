@@ -105,3 +105,6 @@ SELECT * FROM vehicle;
 SELECT * FROM driver;
 SELECT * FROM driver_vehicle;
 
+SELECT last_value FROM vehicle_id_seq;
+ALTER SEQUENCE vehicle_id_seq RESTART WITH 12000;
+

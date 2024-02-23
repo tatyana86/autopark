@@ -49,6 +49,14 @@ public class VehiclesService {
 	}
 	
 	@Transactional
+	public void save(Vehicle vehicle, int brandId, int idEnterprise) {
+		System.out.println("tutochki");
+		vehicle.setBrand(brandsService.findOne(brandId));
+		vehicle.setEnterprise(enterprisesService.findOne(idEnterprise));
+		vehiclesRepository.save(vehicle);
+	}
+	
+	@Transactional
 	public void save(Vehicle vehicle) {
 		vehiclesRepository.save(vehicle);
 	}
