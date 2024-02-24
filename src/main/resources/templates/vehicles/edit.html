@@ -1,62 +1,89 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Edit vehicle</title>
-</head>
-<body>
-
-<b>Редактировать транспортное средство</b>
-
-<br/>
-
-<form th:method="PATCH" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}" th:object="${vehicle}">
-	<label for="brand">Бренд:</label>
-	  <select id="brand" th:name="brandId">
-	    <option th:each="brand : ${brands}" th:value="${brand.getId()}">
-		    <span th:text="${brand.getName()}"></span>
-	        <!-- <span th:text="${brand.getTypeVehicle.getTitle()}"></span>,
-	        объем топливного бака, л: <span th:text="${brand.getTankCapacity()}"></span>,
-	        грузоподъемность, т: <span th:text="${brand.getLoadCapacity()}"></span>,
-	        пассажировместимость, чел: <span th:text="${brand.getPassengerCapacity()}"></span>,
-	        мощность двигателя, л.с.: <span th:text="${brand.getEnginePower()}"></span> -->
-	    </option>
-	  </select>
-
-    <br/>
+	<head>
+		<meta charset="UTF-8">
+		<title>Редактирование</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	</head>
 	
-    <label for="registrationNumber">Регистрационный номер: </label>
-    <input type="text" th:field="*{registrationNumber}" id="registrationNumber"/>
-    <div style="color:darkred" th:if="${#fields.hasErrors('registrationNumber')}" th:errors="*{registrationNumber}">registrationNumber error</div>
-    
-    <br/>
-    
-    <label for="yearOfProduction">Год производства: </label>
-    <input type="text" th:field="*{yearOfProduction}" id="yearOfProduction"/>
-    <div style="color:darkred" th:if="${#fields.hasErrors('yearOfProduction')}" th:errors="*{yearOfProduction}">yearOfProduction error</div>
- 
-    <br/>
-    
-    <label for="price">Цена, руб: </label>
-    <input type="text" th:field="*{price}" id="price"/>
-    <div style="color:darkred" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price error</div>
-    
-    <br/>
-    
-    <label for="mileage">Пробег, км: </label>
-    <input type="text" th:field="*{mileage}" id="mileage"/>
-    <div style="color:darkred" th:if="${#fields.hasErrors('mileage')}" th:errors="*{mileage}">mileage error</div>
-    
-    <br/>
-    <br/>
-    
-    <input type="submit" value="Сохранить изменения"/>
-</form>
-
-<form th:method="GET" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}">
-    <input type="submit" value="Назад"/>
-</form>
-
-
-</body>
+	<body>
+	
+		<div class="container">
+		
+			<h1>Редактировать транспортное средство</h1>
+			
+			<div th:if="${errorMsg}" class="alert alert-danger" role="alert">
+			    <p th:text="${errorMsg}"></p>
+			</div>
+						
+			<form 	th:method="PUT" 
+					th:action="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${enterprise.getId()}, idVehicle=${vehicle.getId()})}" 
+					th:object="${vehicle}" class="mt-4">
+					
+			        <div class="form-group mb-3">
+			            <label for="brand">Бренд:</label>
+			            <select id="brand" th:name="brandId" class="form-control mb-2">
+			                <option th:each="brand : ${brands}" th:value="${brand.getId()}" th:text="${brand.getName()}"></option>
+			            </select>
+			        </div>
+			
+			        <div class="form-group mb-3">
+			            <label for="registrationNumber">Регистрационный номер: </label>
+			            <input type="text" th:field="*{registrationNumber}" class="form-control" id="registrationNumber"/>
+			            <div style="color:darkred" th:if="${#fields.hasErrors('registrationNumber')}" th:errors="*{registrationNumber}">registrationNumber error</div>
+			        </div>
+			        
+					<div class="form-group mb-3">
+					    <label for="yearOfProduction">Год производства: </label>
+					    <input 	type="text" 
+					    		th:field="*{yearOfProduction}" 
+					    		id="yearOfProduction" 
+					    		class="form-control" 
+					    		placeholder="Введите год производства" required/>
+					    <p 	th:if="${#fields.hasErrors('yearOfProduction')}" 
+    						th:errors="*{yearOfProduction}" 
+    						class="text-danger">Год производства некорректен</p>
+					</div>
+										
+					<div class="form-group mb-3">
+					    <label for="price">Цена, руб: </label>
+					    <input 	type="text" 
+					    		th:field="*{price}" 
+					    		id="price" 
+					    		class="form-control" 
+					    		placeholder="Введите цену в рублях" required/>
+					    <p 	th:if="${#fields.hasErrors('price')}" 
+	                		th:errors="*{price}" 
+	                		class="text-danger">Цена указана некорректно</p>
+					</div>
+					
+					<div class="form-group mb-3">
+					    <label for="mileage">Пробег, км: </label>
+					    <input 	type="text" 
+					    		th:field="*{mileage}"
+					    		id="mileage"
+					    		class="form-control" 
+					    		placeholder="Введите пробег в км" required/>
+					    		
+						<p 	th:if="${#fields.hasErrors('mileage')}" 
+	                		th:errors="*{mileage}" 
+	                		class="text-danger">Пробег указан некорректно</p>
+					</div>
+			        
+			
+			        <input 	style="margin-bottom: 10px;"
+			        		type="submit"
+			        		value="Сохранить изменения" 
+			        		class="btn btn-primary"/>
+			        		
+			</form>
+			
+			<div>
+			    <b> <a	th:href="@{/managers/enterprises/{id}/vehicles?page=1(id=${enterprise.getId()})}" 
+			    		class="btn btn-secondary">Назад</a> </b>
+			</div>
+	
+		</div>
+	
+	</body>
 </html>

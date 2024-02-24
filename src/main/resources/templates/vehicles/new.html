@@ -11,7 +11,7 @@
         	<h1>Новое транспортное средство</h1>
 		
 			<form 	th:method="POST" 
-					th:action="@{/managers/enterprises/{id}/vehicles/new(id=${enterprise.getId()})}" 
+					th:action="@{/managers/enterprises/{idEnterprise}/vehicles/new(idEnterprise=${enterprise.getId()})}" 
 					th:object="${vehicle}" class="needs-validation">
 					
 				<div class="form-group mb-3">
@@ -29,33 +29,54 @@
 				   
 	            <div class="form-group mb-3">
 	                <label for="yearOfProduction">Год производства: </label>
-	                <input type="text" th:field="*{yearOfProduction}" id="yearOfProduction" class="form-control" required/>
-	                <div class="invalid-feedback" th:if="${#fields.hasErrors('yearOfProduction')}" th:errors="*{yearOfProduction}">yearOfProduction error</div>
+	                <input 	type="text" 
+					    	th:field="*{yearOfProduction}" 
+					    	id="yearOfProduction" 
+					    	class="form-control" 
+					    	placeholder="Введите год производства" required/>
+
+    				<p 	th:if="${#fields.hasErrors('yearOfProduction')}" 
+    					th:errors="*{yearOfProduction}" 
+    					class="text-danger">Год производства некорректен</p>
 	            </div>
 	            
 	            <div class="form-group mb-3">
 	                <label for="price">Цена, руб: </label>
-	                <input type="text" th:field="*{price}" id="price" class="form-control" required/>
-	                <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price error</div>
+				    <input 	type="text" 
+				    		th:field="*{price}" 
+				    		id="price" 
+				    		class="form-control" 
+				    		placeholder="Введите цену в рублях" 
+				    		th:value="${price}" required/>
+	                <p 	th:if="${#fields.hasErrors('price')}" 
+	                	th:errors="*{price}" 
+	                	class="text-danger">Цена указана некорректно</p>
 	            </div>
 	            
 	            <div class="form-group mb-3">
 	                <label for="price">Пробег, км: </label>
-	                <input type="text" th:field="*{mileage}" id="mileage" class="form-control" required/>
-	                <div class="invalid-feedback" th:if="${#fields.hasErrors('mileage')}" th:errors="*{mileage}">mileage error</div>
+              		<input 	type="text" 
+			    			th:field="*{mileage}"
+			    			id="mileage"
+			    			class="form-control" 
+			    			placeholder="Введите пробег в км" required/>
+	                <p 	th:if="${#fields.hasErrors('mileage')}" 
+	                	th:errors="*{mileage}" 
+	                	class="text-danger">Пробег указан некорректно</p>
 	            </div>
 			    			
 			    <input 	style="margin-bottom: 10px;"
-					type="submit" 
-					value="Сохранить ТС" 
-					class="btn btn-primary"/>    
+						type="submit" 
+						value="Сохранить ТС" 
+						class="btn btn-primary"/>    
 					
 			</form>
 			
 
 			
 			<div>
-			    <b> <a th:href="@{/managers/enterprises/{id}/vehicles?page=1(id=${enterprise.getId()})}" class="btn btn-secondary">Назад</a> </b>
+			    <b> <a 	th:href="@{/managers/enterprises/{id}/vehicles?page=1(id=${enterprise.getId()})}" 
+			    		class="btn btn-secondary">Назад</a> </b>
 			</div>
 		
 		</div>

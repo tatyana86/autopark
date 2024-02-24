@@ -16,7 +16,7 @@ public class VehicleDTO {
     private String registrationNumber;
     
     @Min(value = 1950, message = "Допускается добавление ТС старше 1950 г.")
-    @Max(value = 2024, message = "Недопустимое значение")
+    @Max(value = 2024, message = "Кажется, Вы ошиблись :)")
     private int yearOfProduction;
 	
     @Min(value = 0)

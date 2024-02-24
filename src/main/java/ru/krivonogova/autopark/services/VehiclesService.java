@@ -50,7 +50,6 @@ public class VehiclesService {
 	
 	@Transactional
 	public void save(Vehicle vehicle, int brandId, int idEnterprise) {
-		System.out.println("tutochki");
 		vehicle.setBrand(brandsService.findOne(brandId));
 		vehicle.setEnterprise(enterprisesService.findOne(idEnterprise));
 		vehiclesRepository.save(vehicle);
@@ -70,6 +69,15 @@ public class VehiclesService {
 	public void update(int id, Vehicle updatedVehicle, int updatedBrandId) {
 		updatedVehicle.setId(id);
 		updatedVehicle.setBrand(brandsService.findOne(updatedBrandId));
+		
+		vehiclesRepository.save(updatedVehicle);		
+	}
+	
+	@Transactional
+	public void update(int id, Vehicle updatedVehicle, int updatedBrandId, int idEnterprise) {
+		updatedVehicle.setId(id);
+		updatedVehicle.setBrand(brandsService.findOne(updatedBrandId));
+		updatedVehicle.setEnterprise(enterprisesService.findOne(idEnterprise));
 		
 		vehiclesRepository.save(updatedVehicle);		
 	}

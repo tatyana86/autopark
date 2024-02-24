@@ -10,10 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -61,10 +64,10 @@ public class ManagersController {
 		return enterprises;
 	}
 	
-	@GetMapping("/enterprises/{id}/vehicles")
+	@GetMapping("/enterprises/{idEnterprise}/vehicles")
 	public String indexVehicles(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 								@RequestParam(value = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
-								@PathVariable("id") int idEnterprise,
+								@PathVariable("idEnterprise") int idEnterprise,
 								Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
@@ -80,27 +83,26 @@ public class ManagersController {
 	    model.addAttribute("hasPrevious", vehiclesPage.hasPrevious());
 	    model.addAttribute("idEnterprise", idEnterprise);
 	    
-	    
         return "vehicles/index";
 	}
 	
-	@GetMapping("/enterprises/{id}/vehicles/new")
-	public String newVehicle(@ModelAttribute("vehicle") Vehicle vehicle,
-							@PathVariable("id") int idEnterprise,
+	@GetMapping("/enterprises/{idEnterprise}/vehicles/new")
+	public String newVehicle(@ModelAttribute("vehicle") VehicleDTO vehicle,
+							@PathVariable("idEnterprise") int idEnterprise,
 							Model model) {
 		
 		model.addAttribute("brands", brandsService.findAll());
 		//model.addAttribute("idEnterprise", idEnterprise);
 		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
-		
+			
 		return "vehicles/new";
 	}
 	
-	@PostMapping("/enterprises/{id}/vehicles/new")
+	@PostMapping("/enterprises/{idEnterprise}/vehicles/new")
 	public String create(@RequestParam("brandId") int brandId,
-						@PathVariable("id") int idEnterprise,
+						@PathVariable("idEnterprise") int idEnterprise,
 						Model model,
-						@ModelAttribute("vehicle") @Valid Vehicle vehicle,
+						@ModelAttribute("vehicle") @Valid VehicleDTO vehicle,
 						BindingResult bindingResult) {
 				
     	if(bindingResult.hasErrors()) {
@@ -108,10 +110,56 @@ public class ManagersController {
     		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
     		return "vehicles/new";
     	}
-		    	    	
-		vehiclesService.save(vehicle, brandId, idEnterprise);
+    			    	    	
+		vehiclesService.save(convertToVehicle(vehicle), brandId, idEnterprise);
 		
 		return "redirect:/managers/enterprises/" + idEnterprise + "/vehicles";
+	}
+	
+	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}/edit")
+	public String edit(@PathVariable("idEnterprise") int idEnterprise,
+						@PathVariable("idVehicle") int idVehicle,
+						Model model) {
+		
+		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
+		model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
+		model.addAttribute("brands", brandsService.findAll());
+		
+		return "vehicles/edit";
+	}
+	
+	@PutMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
+	public String update(@PathVariable("idEnterprise") int idEnterprise,
+						@PathVariable("idVehicle") int idVehicle,
+						@RequestParam("brandId") int brandId,
+						Model model,
+						@ModelAttribute("vehicle") @Valid VehicleDTO vehicle,
+						BindingResult bindingResult) {
+		
+		if(bindingResult.hasErrors()) {
+			model.addAttribute("errorMsg", "Введены некорректные данные. Попробуйте еще!");
+			model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
+			model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
+			model.addAttribute("brands", brandsService.findAll());
+			return "vehicles/edit";
+		}
+		
+		vehiclesService.update(idVehicle, convertToVehicle(vehicle), brandId, idEnterprise);
+		
+		return "redirect:/managers/enterprises/" + idEnterprise + "/vehicles";
+	}
+	
+	@DeleteMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
+	public String delete(@PathVariable("idEnterprise") int idEnterprise,
+						@PathVariable("idVehicle") int idVehicle) {
+		
+		vehiclesService.delete(idVehicle);
+		
+		return "redirect:/managers/enterprises/" + idEnterprise + "/vehicles";
+	}
+	
+	private Vehicle convertToVehicle(VehicleDTO vehicleDTO) {
+		return modelMapper.map(vehicleDTO, Vehicle.class);
 	}
 	
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
