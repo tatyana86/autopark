@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VehicleInfo</title>
+</head>
+
+<body>
+
+<table border="1">
+	<tr>
+		<th>Id</th>
+		<th>Бренд</th>
+		<th>Регистрационный номер</th>
+		<th>Год выпуска</th>
+		<th>Стоимость, руб</th>
+		<th>Пробег, км</th>
+		<th>Действия</th>
+	</tr>
+	
+	<td>
+		<p th:utext="${vehicle.getId()}">
+	</td>
+	
+	<td>
+	
+		<div style="color:red" th:if="${vehicle.getBrand() == null}">
+    		<p>Бренд был удален. Назначьте новый.</p>
+		</div>
+		
+		<div th:if="${vehicle.getBrand() != null}">
+		<a th:href="@{/brands/{id}(id=${vehicle.getBrand().getId()})}"
+			th:utext="${vehicle.getBrand().getName()}">
+		</div>
+	
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getRegistrationNumber()}">
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getYearOfProduction()}">
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getPrice()}">
+	</td>
+	
+	<td>
+		<p th:utext="${vehicle.getMileage()}">
+	</td>
+	
+	<td>
+		<form th:method="GET" th:action="@{/vehicles/{id}/edit(id=${vehicle.getId()})}">
+		    <input type="submit" value="Редактировать"/>
+		</form>
+		
+		<form th:method="DELETE" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}">
+    		<input type="submit" value="Удалить"/>
+		</form>
+	</td>
+
+</table>
+
+<br/>
+
+<a href="/vehicles">Вернуться в автопарк</a>
+
+</body>
+</html>

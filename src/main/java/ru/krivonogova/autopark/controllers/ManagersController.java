@@ -86,6 +86,20 @@ public class ManagersController {
         return "vehicles/index";
 	}
 	
+	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
+	public String show(@PathVariable("idEnterprise") int idEnterprise,
+						@PathVariable("idVehicle") int idVehicle,
+						Model model, 
+						@ModelAttribute("vehicle") Vehicle vehicle) {
+		
+		model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
+		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
+		
+		System.out.println("mmm");
+		return "vehicles/show";
+	}
+	
+	
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/new")
 	public String newVehicle(@ModelAttribute("vehicle") VehicleDTO vehicle,
 							@PathVariable("idEnterprise") int idEnterprise,

@@ -43,7 +43,7 @@
 			    <tbody th:each="vehicle : ${vehicles}">
 			        <tr style="border-bottom: 1px solid #ddd;">
 			            <td style="padding: 8px;" th:text="${vehicle.id}"></td>
-			            <td style="padding: 8px;"><a th:href="@{/vehicles/{id}(id=${vehicle.id})}" th:text="${vehicle.registrationNumber}"></a></td>
+			            <td style="padding: 8px;"><a th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" th:text="${vehicle.registrationNumber}"></a></td>
 			        	<td style="padding: 8px;"><a th:text="${vehicle.yearOfProduction}"></a></td>
 						<td style="padding: 8px;">
 						

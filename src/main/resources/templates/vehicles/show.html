@@ -1,72 +1,68 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<html>
-<head>
-<meta charset="UTF-8">
-<title>VehicleInfo</title>
-</head>
+	<head>
+		<meta charset="UTF-8">
+		<title>Подробнее</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	</head>
 
-<body>
+	<body>
+	
+	<div class="container">
 
-<table border="1">
-	<tr>
-		<th>Id</th>
-		<th>Бренд</th>
-		<th>Регистрационный номер</th>
-		<th>Год выпуска</th>
-		<th>Стоимость, руб</th>
-		<th>Пробег, км</th>
-		<th>Действия</th>
-	</tr>
-	
-	<td>
-		<p th:utext="${vehicle.getId()}">
-	</td>
-	
-	<td>
-	
-		<div style="color:red" th:if="${vehicle.getBrand() == null}">
-    		<p>Бренд был удален. Назначьте новый.</p>
-		</div>
+			<h1>Подробная информация:</h1>
+			<table class="table table-bordered">
+				<tr>
+					<th>Id</th>
+					<th>Бренд</th>
+					<th>Регистрационный номер</th>
+					<th>Год выпуска</th>
+					<th>Стоимость, руб</th>
+					<th>Пробег, км</th>
+				</tr>
+				
+				<td>
+					<p th:utext="${vehicle.getId()}">
+				</td>
+				
+				<td>
+				
+					<div style="color:red" th:if="${vehicle.getBrand() == null}">
+			    		<p>Бренд был удален. Назначьте новый.</p>
+					</div>
+					
+					<div th:if="${vehicle.getBrand() != null}">
+					<a th:href="@{/brands/{id}(id=${vehicle.getBrand().getId()})}"
+						th:utext="${vehicle.getBrand().getName()}">
+					</div>
+				
+				</td>
+				
+				<td>
+					<p th:utext="${vehicle.getRegistrationNumber()}">
+				</td>
+				
+				<td>
+					<p th:utext="${vehicle.getYearOfProduction()}">
+				</td>
+				
+				<td>
+					<p th:utext="${vehicle.getPrice()}">
+				</td>
+				
+				<td>
+					<p th:utext="${vehicle.getMileage()}">
+				</td>
+					
+			</table>
+			
+			
 		
-		<div th:if="${vehicle.getBrand() != null}">
-		<a th:href="@{/brands/{id}(id=${vehicle.getBrand().getId()})}"
-			th:utext="${vehicle.getBrand().getName()}">
+			<div>
+			    <b> <a	th:href="@{/managers/enterprises/{idEnterprise}/vehicles?page=1(idEnterprise=${enterprise.getId()})}" 
+			    		class="btn btn-secondary">Назад</a> </b>
+			</div>
 		</div>
 	
-	</td>
-	
-	<td>
-		<p th:utext="${vehicle.getRegistrationNumber()}">
-	</td>
-	
-	<td>
-		<p th:utext="${vehicle.getYearOfProduction()}">
-	</td>
-	
-	<td>
-		<p th:utext="${vehicle.getPrice()}">
-	</td>
-	
-	<td>
-		<p th:utext="${vehicle.getMileage()}">
-	</td>
-	
-	<td>
-		<form th:method="GET" th:action="@{/vehicles/{id}/edit(id=${vehicle.getId()})}">
-		    <input type="submit" value="Редактировать"/>
-		</form>
-		
-		<form th:method="DELETE" th:action="@{/vehicles/{id}(id=${vehicle.getId()})}">
-    		<input type="submit" value="Удалить"/>
-		</form>
-	</td>
-
-</table>
-
-<br/>
-
-<a href="/vehicles">Вернуться в автопарк</a>
-
-</body>
+	</body>
 </html>
