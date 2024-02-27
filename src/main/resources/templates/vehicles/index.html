@@ -37,6 +37,7 @@
 			            <th style="padding: 8px;"><strong>id</strong></th>
 			            <th style="padding: 8px;"><strong>Номер авто</strong></th>
 			            <th style="padding: 8px;"><strong>Год выпуска</strong></th>
+			            <th style="padding: 8px;"><strong>Дата покупки</strong></th>
 			            <th style="padding: 8px;"><strong></strong></th>
 			        </tr>
 			    </thead>
@@ -45,23 +46,25 @@
 			            <td style="padding: 8px;" th:text="${vehicle.id}"></td>
 			            <td style="padding: 8px;"><a th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" th:text="${vehicle.registrationNumber}"></a></td>
 			        	<td style="padding: 8px;"><a th:text="${vehicle.yearOfProduction}"></a></td>
+			        	<td th:text="${vehicle.getDateOfSaleForManager()}"></td>
 						<td style="padding: 8px;">
 						
-						<div class="button-container">
-						    <a	th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}/edit(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" 
-						    	class="icon-link" 
-						    	title="Редактировать" 
-						    	style="margin-right: 10px;">
-						        <i class="fas fa-edit small-icon"></i>
-						    </a>
-						    		
-						    <form th:method="DELETE" th:action="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}">
-						        <button type="submit" class="icon-button" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить этот элемент?')">
-						            <i class="fas fa-trash small-icon"></i>
-						        </button>
-						    </form>
-						    
-						</div>
+							<div class="button-container">
+							    <a	th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}/edit(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" 
+							    	class="icon-link" 
+							    	title="Редактировать" 
+							    	style="margin-right: 10px;">
+							        <i class="fas fa-edit small-icon"></i>
+							    </a>
+							    		
+							    <form th:method="DELETE" th:action="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}">
+							        <button type="submit" class="icon-button" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить этот элемент?')">
+							            <i class="fas fa-trash small-icon"></i>
+							        </button>
+							    </form>
+							    
+							</div>
+							
 						</td>
 			        </tr>
 			    </tbody>

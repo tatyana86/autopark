@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 
-public class VehicleDTO {
+public class VehicleDTO_forAPI {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -26,15 +26,11 @@ public class VehicleDTO {
 
     @Min(value = 0)
     private double mileage;
-    
-    private String dateOfSale;
-    
+        
     private BrandDTO brand;
     
     private EnterpriseDTO enterprise;
-    
-    private String dateOfSaleForManager;
-    
+        
     private String dateOfSaleForEnterprise;
     
 	public int getId() {
@@ -76,14 +72,6 @@ public class VehicleDTO {
 	public void setMileage(double mileage) {
 		this.mileage = mileage;
 	}
-
-	public String getDateOfSale() {
-		return dateOfSale;
-	}
-
-	public void setDateOfSale(String dateOfSale) {
-		this.dateOfSale = dateOfSale;
-	}
 	
 	public BrandDTO getBrand() {
 		return brand;
@@ -99,14 +87,6 @@ public class VehicleDTO {
 
 	public void setEnterprise(EnterpriseDTO enterprise) {
 		this.enterprise = enterprise;
-	}
-
-	public String getDateOfSaleForManager() {
-		return dateOfSaleForManager;
-	}
-
-	public void setDateOfSaleForManager(String dateOfSaleForManager) {
-		this.dateOfSaleForManager = dateOfSaleForManager;
 	}
 
 	public String getDateOfSaleForEnterprise() {

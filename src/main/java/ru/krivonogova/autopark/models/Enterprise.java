@@ -35,6 +35,10 @@ public class Enterprise {
     @Column(name = "phone")
     @NotEmpty(message = "Обязательное поле")
     private String phone;
+    
+    
+    @Column(name = "timezone")
+    private String timezone;
 
 	@OneToMany(mappedBy = "enterprise")
 	@JsonIgnore
@@ -97,6 +101,14 @@ public class Enterprise {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 
 	public List<Vehicle> getVehicles() {

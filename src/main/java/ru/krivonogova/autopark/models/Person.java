@@ -25,6 +25,9 @@ public class Person {
 
     @Column(name = "password")
     private String password;
+    
+	@Column(name = "timezone")
+	private String timezone;
 
     @Column(name = "role")
     private String role;
@@ -45,6 +48,22 @@ public class Person {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 
 	public String getRole() {

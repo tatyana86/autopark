@@ -31,6 +31,9 @@ public class Manager {
 	@Column(name = "password")
 	private String password;
 	
+	@Column(name = "timezone")
+	private String timezone;
+	
     @ManyToMany(mappedBy = "managers")
 	@JsonIgnore
 	private List<Enterprise> enterprises;

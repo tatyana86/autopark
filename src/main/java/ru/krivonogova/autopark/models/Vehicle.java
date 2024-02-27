@@ -34,6 +34,9 @@ public class Vehicle {
     @Min(value = 0)
     private double mileage;
     
+    @Column(name = "date_of_sale")
+    private String dateOfSale;
+    
     @ManyToOne
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;
@@ -101,6 +104,14 @@ public class Vehicle {
 
 	public void setMileage(double mileage) {
 		this.mileage = mileage;
+	}
+
+	public String getDateOfSale() {
+		return dateOfSale;
+	}
+
+	public void setDateOfSale(String dateOfSale) {
+		this.dateOfSale = dateOfSale;
 	}
 
 	public Brand getBrand() {

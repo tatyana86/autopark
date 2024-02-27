@@ -1,10 +1,19 @@
 package ru.krivonogova.autopark.controllers;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -73,15 +82,19 @@ public class ManagersController {
 		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
 		String username = personDetails.getPerson().getUsername();
 		
+	    String timezone = personDetails.getPerson().getTimezone();   
+		
 		Integer idManager = managersService.findByUsername(username).getId();
 				
 		Page<Vehicle> vehiclesPage = vehiclesService.findForManagerByEnterpriseId(idManager, idEnterprise, page, itemsPerPage);
-	    model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(this::convertToVehicleDTO).collect(Collectors.toList()));
+	    model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(vehicle -> convertToVehicleDTO(vehicle, timezone)).collect(Collectors.toList()));
 	    model.addAttribute("currentPage", vehiclesPage.getNumber() + 1);
 	    model.addAttribute("totalPages", vehiclesPage.getTotalPages());
 	    model.addAttribute("hasNext", vehiclesPage.hasNext());
 	    model.addAttribute("hasPrevious", vehiclesPage.hasPrevious());
 	    model.addAttribute("idEnterprise", idEnterprise);
+	   
+
 	    
         return "vehicles/index";
 	}
@@ -95,7 +108,6 @@ public class ManagersController {
 		model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
 		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
 		
-		System.out.println("mmm");
 		return "vehicles/show";
 	}
 	
@@ -178,5 +190,23 @@ public class ManagersController {
 	
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
 		return modelMapper.map(vehicle, VehicleDTO.class);
+	}
+	
+	private VehicleDTO convertToVehicleDTO(Vehicle vehicle, String timezone) {
+	    
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+	    LocalDateTime dateOfSale_UTC = LocalDateTime.parse(vehicle.getDateOfSale(), formatter);
+	    ZoneOffset timeZone = ZoneOffset.of(timezone);
+	    LocalDateTime dateOfSale = dateOfSale_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    String dateOfSaleForManager = dateOfSale.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+
+	    VehicleDTO vehicleDTO = modelMapper.map(vehicle, VehicleDTO.class);
+	    vehicleDTO.setDateOfSaleForManager(dateOfSaleForManager);
+	    
+	    // System.out.println(vehicleDTO.getDateOfSale());
+	    // System.out.println(vehicleDTO.getDateOfSaleForManager());
+	    
+	    return vehicleDTO;
+	    
 	}
 }

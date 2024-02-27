@@ -1,5 +1,8 @@
 package ru.krivonogova.autopark.controllers;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.validation.Valid;
 import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO;
+import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Vehicle;
@@ -101,20 +105,35 @@ public class ApiManagersController {
 //	}
 	
 	@GetMapping("/{id}/vehicles")
-	public List<VehicleDTO> indexVehicles(@PathVariable("id") int id,
+	public List<VehicleDTO_forAPI> indexVehicles(@PathVariable("id") int id,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "itemsPerPage", required = false) Integer itemsPerPage) {
 		
 		if(page == null || itemsPerPage == null) {
-			return vehiclesService.findAllForManager(id).stream().map(this::convertToVehicleDTO)
+			return vehiclesService.findAllForManager(id).stream().map(this::convertToVehicleDTO_forAPI)
 	        		.collect(Collectors.toList());
 		}
 		
 		Page<Vehicle> vehiclePage = vehiclesService.findAllForManager(id, page, itemsPerPage);
-		List<VehicleDTO> vehicleDTOList = vehiclePage.getContent().stream().map(this::convertToVehicleDTO)
+		List<VehicleDTO_forAPI> vehicleDTOList = vehiclePage.getContent().stream().map(this::convertToVehicleDTO_forAPI)
 				.collect(Collectors.toList());
 		
 		return vehicleDTOList;
+	}
+	
+	private VehicleDTO_forAPI convertToVehicleDTO_forAPI(Vehicle vehicle) {
+		
+		String timezone = vehicle.getEnterprise().getTimezone();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+	    LocalDateTime dateOfSale_UTC = LocalDateTime.parse(vehicle.getDateOfSale(), formatter);
+	    ZoneOffset timeZone = ZoneOffset.of(timezone);
+	    LocalDateTime dateOfSale = dateOfSale_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    String dateOfSaleForEntarprise = dateOfSale.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	    
+	    VehicleDTO_forAPI vehicleDTO_forAPI = modelMapper.map(vehicle, VehicleDTO_forAPI.class);
+	    vehicleDTO_forAPI.setDateOfSaleForEnterprise(dateOfSaleForEntarprise);
+	    
+		return vehicleDTO_forAPI;
 	}
 	
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
