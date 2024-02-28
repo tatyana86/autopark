@@ -31,6 +31,7 @@
 		<div class="container">
 
 			<h1>Текущий автопарк:</h1>
+			
 			<table style="border-collapse: collapse; width: 100%;">
 			    <thead>
 			        <tr style="border-bottom: 2px solid black;">
@@ -44,7 +45,8 @@
 			    <tbody th:each="vehicle : ${vehicles}">
 			        <tr style="border-bottom: 1px solid #ddd;">
 			            <td style="padding: 8px;" th:text="${vehicle.id}"></td>
-			            <td style="padding: 8px;"><a th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" th:text="${vehicle.registrationNumber}"></a></td>
+			            <td style="padding: 8px;"><a th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" 
+			            								th:text="${vehicle.registrationNumber}"></a></td>
 			        	<td style="padding: 8px;"><a th:text="${vehicle.yearOfProduction}"></a></td>
 			        	<td th:text="${vehicle.getDateOfSaleForManager()}"></td>
 						<td style="padding: 8px;">

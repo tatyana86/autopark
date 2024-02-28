@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
 import ru.krivonogova.autopark.dto.VehicleDTO;
+import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.BrandsService;
@@ -73,6 +74,36 @@ public class ManagersController {
 		return enterprises;
 	}
 	
+	@GetMapping("/enterprises/{idEnterprise}/edit")
+	public String edit(@PathVariable("idEnterprise") int idEnterprise,
+						Model model) {
+		
+		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
+		
+		return "enterprises/edit";
+	}
+	
+	@PutMapping("/enterprises/{idEnterprise}")
+	public String update(@PathVariable("idEnterprise") int idEnterprise,
+						Model model,
+						@ModelAttribute("enterprise") @Valid Enterprise enterprise,
+						BindingResult bindingResult) {
+		
+		if(bindingResult.hasErrors()) {
+			model.addAttribute("errorMsg", "Введены некорректные данные. Попробуйте еще!");
+			model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
+			return "enterprises/edit";
+		}
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+		Integer idManager = personDetails.getPerson().getId();
+		
+		enterprisesService.update(idManager, idEnterprise, enterprise);
+		
+		return "redirect:/managers/enterprises";
+	}
+	
 	@GetMapping("/enterprises/{idEnterprise}/vehicles")
 	public String indexVehicles(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 								@RequestParam(value = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
@@ -94,8 +125,6 @@ public class ManagersController {
 	    model.addAttribute("hasPrevious", vehiclesPage.hasPrevious());
 	    model.addAttribute("idEnterprise", idEnterprise);
 	   
-
-	    
         return "vehicles/index";
 	}
 	

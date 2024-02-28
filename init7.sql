@@ -66,3 +66,7 @@ ALTER TABLE enterprise ADD COLUMN timezone VARCHAR (20);
 UPDATE enterprise SET timezone = '+03:00' WHERE id = 1;
 UPDATE enterprise SET timezone = '-03:00' WHERE id = 2;
 UPDATE enterprise SET timezone = '+00:00' WHERE id = 3;
+
+так ошибки!
+UPDATE person SET timezone = '00:00' WHERE username = 'manager1'; 
+UPDATE person SET timezone = '+1:00' WHERE username = 'manager2';

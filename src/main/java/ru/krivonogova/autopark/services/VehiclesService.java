@@ -105,16 +105,7 @@ public class VehiclesService {
 		
 		return vehicles;
 	}
-	
-	/*public List<Vehicle> findForManagerByEnterpriseId(int managerId, int enterpriseId) {
 		
-		List<Vehicle> vehicles = new ArrayList<Vehicle>();
-		
-		vehicles.addAll(vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId));
-		
-		return vehicles;
-	}*/ // так было/ пока ничего и не менялось
-	
 	public List<Vehicle> findForManagerByEnterpriseId(int managerId, int enterpriseId) {
 		
 		List<Vehicle> vehicles = new ArrayList<Vehicle>();
