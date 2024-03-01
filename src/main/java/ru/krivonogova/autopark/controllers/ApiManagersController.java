@@ -35,12 +35,14 @@ import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
+import ru.krivonogova.autopark.models.PointGPS;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.ManagerDetails;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.DriversService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.ManagersService;
+import ru.krivonogova.autopark.services.PointsGPSService;
 import ru.krivonogova.autopark.services.VehiclesService;
 import ru.krivonogova.autopark.util.EnterpriseErrorResponse;
 import ru.krivonogova.autopark.util.EnterpriseNotCreatedException;
@@ -59,18 +61,25 @@ public class ApiManagersController {
 	private final VehiclesService vehiclesService;
 	private final DriversService driversService;
 	private final ModelMapper modelMapper;
+	private final ManagersService managersService;
 	
-	private final ManagersService managersService; //new
+	private final PointsGPSService pointsGPSService;
 	
 	@Autowired
-	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService, ModelMapper modelMapper, DriversService driversService, ManagersService managersService) {
+	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService, ModelMapper modelMapper, DriversService driversService, ManagersService managersService, PointsGPSService pointsGPSService) {
 		this.enterprisesService = enterprisesService;
 		this.vehiclesService = vehiclesService;
 		this.driversService = driversService;
 		this.modelMapper = modelMapper;
 		this.managersService = managersService;
+		this.pointsGPSService = pointsGPSService;
 	}
 
+	@GetMapping("/points")
+	public List<PointGPS> indexPointsGPS() {
+		return pointsGPSService.findAll();
+	}
+	
 	@GetMapping
 	public ModelAndView start(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

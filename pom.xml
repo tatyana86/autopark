@@ -70,6 +70,23 @@
 		    <artifactId>hibernate-validator</artifactId>
 		    <version>8.0.1.Final</version>
 		</dependency>
+				
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-spatial -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-spatial</artifactId>
+		    <version>6.4.4.Final</version>
+		    <type>pom</type>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/net.postgis/postgis-jdbc -->
+		<dependency>
+		    <groupId>net.postgis</groupId>
+		    <artifactId>postgis-jdbc</artifactId>
+		    <version>2023.1.0</version>
+		</dependency>
+
+
 
 	</dependencies>
 
