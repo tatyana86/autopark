@@ -1,7 +1,6 @@
 package ru.krivonogova.autopark.models;
 
-import org.hibernate.annotations.Type;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,10 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "track")
-public class PointGPS {
+public class PointGps {
 
 	@Id
 	@Column(name = "id")
@@ -24,16 +24,22 @@ public class PointGPS {
 	@ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     private Vehicle vehicle;
-
-	@Column(name = "location", columnDefinition = "geometry(Point,4326)")
-    private Point location;
+    
+    @Column(name="coordinates")
+    private Point coordinates;
+    
+    @Transient
+    private double longitude; // x
+    
+    @Transient
+    private double latitude; // y
         
-    public PointGPS() {
+    public PointGps() {
 	}
 
-	public PointGPS(Vehicle vehicle, Point location) {
+	public PointGps(Vehicle vehicle, Point coordinates) {
 		this.vehicle = vehicle;
-		this.location = location;
+		this.coordinates = coordinates;
 	}
 
 	public int getId() {
@@ -52,12 +58,28 @@ public class PointGPS {
         this.vehicle = vehicle;
     }
 
-    public Point getLocation() {
-        return location;
-    }
+	public Point getCoordinates() {
+		return coordinates;
+	}
 
-    public void setLocation(Point location) {
-        this.location = location;
-    }
-	
+	public void setCoordinates(Point coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public double getLongitude() {
+		return this.coordinates.getX();
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public double getLatitude() {
+		return this.coordinates.getY();
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
 }

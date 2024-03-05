@@ -1,7 +1,5 @@
 package ru.krivonogova.autopark.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

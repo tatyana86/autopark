@@ -6,12 +6,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -31,18 +31,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
 import ru.krivonogova.autopark.dto.DriverDTO;
+import ru.krivonogova.autopark.dto.PointGpsDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
-import ru.krivonogova.autopark.models.PointGPS;
+import ru.krivonogova.autopark.models.PointGps;
 import ru.krivonogova.autopark.models.Vehicle;
-import ru.krivonogova.autopark.security.ManagerDetails;
+import ru.krivonogova.autopark.repositories.PointsGpsRepository;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.DriversService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.ManagersService;
-import ru.krivonogova.autopark.services.PointsGPSService;
 import ru.krivonogova.autopark.services.VehiclesService;
 import ru.krivonogova.autopark.util.EnterpriseErrorResponse;
 import ru.krivonogova.autopark.util.EnterpriseNotCreatedException;
@@ -62,22 +62,29 @@ public class ApiManagersController {
 	private final DriversService driversService;
 	private final ModelMapper modelMapper;
 	private final ManagersService managersService;
-	
-	private final PointsGPSService pointsGPSService;
+	private final PointsGpsRepository pointsGpsService;
 	
 	@Autowired
-	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService, ModelMapper modelMapper, DriversService driversService, ManagersService managersService, PointsGPSService pointsGPSService) {
+	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService,
+			DriversService driversService, ModelMapper modelMapper, ManagersService managersService,
+			PointsGpsRepository pointsGpsService) {
 		this.enterprisesService = enterprisesService;
 		this.vehiclesService = vehiclesService;
 		this.driversService = driversService;
 		this.modelMapper = modelMapper;
 		this.managersService = managersService;
-		this.pointsGPSService = pointsGPSService;
+		this.pointsGpsService = pointsGpsService;
 	}
 
 	@GetMapping("/points")
-	public List<PointGPS> indexPointsGPS() {
-		return pointsGPSService.findAll();
+	public List<PointGpsDTO> indexPointsGPS() {
+						
+		return pointsGpsService.findAll().stream().map(this::convertToPointGpsDTO)
+				.collect(Collectors.toList());
+	}
+	
+	private PointGpsDTO convertToPointGpsDTO(PointGps pointGps) {
+		return modelMapper.map(pointGps, PointGpsDTO.class);
 	}
 	
 	@GetMapping

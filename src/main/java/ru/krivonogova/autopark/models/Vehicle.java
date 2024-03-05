@@ -55,7 +55,7 @@ public class Vehicle {
     // new
     @OneToMany(mappedBy = "vehicle")
     @JsonIgnore
-    private List<PointGPS> PointsGPS;
+    private List<PointGps> PointsGps;
     
 	public Vehicle() {
 	}
@@ -151,12 +151,14 @@ public class Vehicle {
 		this.activeDriver = activeDriver;
 	}
 
-	public List<PointGPS> getPointsGPS() {
-		return PointsGPS;
+	public List<PointGps> getPointsGps() {
+		return PointsGps;
 	}
 
-	public void setPointsGPS(List<PointGPS> pointsGPS) {
-		PointsGPS = pointsGPS;
-	}		
+	public void setPointsGps(List<PointGps> pointsGps) {
+		PointsGps = pointsGps;
+	}
+
+	
 	
 }
