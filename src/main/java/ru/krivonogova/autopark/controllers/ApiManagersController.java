@@ -76,13 +76,29 @@ public class ApiManagersController {
 		this.pointsGpsService = pointsGpsService;
 	}
 
-	@GetMapping("/points")
-	public List<PointGpsDTO> indexPointsGPS() {
+	@GetMapping("/allpoints")
+	public List<PointGpsDTO> indexAllPointsGPS() {
 						
 		return pointsGpsService.findAll().stream().map(this::convertToPointGpsDTO)
 				.collect(Collectors.toList());
 	}
 	
+	@GetMapping("/points")
+	public List<PointGpsDTO> indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
+											@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+											@RequestParam(value = "dateTo", defaultValue = "") String dateTo) {
+						
+		return pointsGpsService.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo).stream().map(this::convertToPointGpsDTO)
+				.collect(Collectors.toList());
+	}
+	
+	/*@GetMapping("/points")
+	public List<PointGpsDTO> indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId) {
+						
+		return pointsGpsService.findAllByVehicleId(vehicleId).stream().map(this::convertToPointGpsDTO)
+				.collect(Collectors.toList());
+	}*/
+		
 	private PointGpsDTO convertToPointGpsDTO(PointGps pointGps) {
 		return modelMapper.map(pointGps, PointGpsDTO.class);
 	}
@@ -111,6 +127,7 @@ public class ApiManagersController {
 		return enterprisesService.findAllForManager(id);
 	}
 	
+
 
 	
 // так было	

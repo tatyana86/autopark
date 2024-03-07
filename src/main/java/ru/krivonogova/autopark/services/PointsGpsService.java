@@ -22,9 +22,18 @@ public class PointsGpsService {
 	}
 
 	public List<PointGps> findAll() {
-		List<PointGps> res = pointsGpsRepository.findAll();
-		return res;
+		return pointsGpsRepository.findAll();
 	}
+	
+	public List<PointGps> findAllByVehicleAndTimePeriod(int vehicleId, String dateFrom, String dateTo) {
+		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo);
+	}
+	
+	/*public List<PointGps> findAllByVehicleId(int vehicleId) {
+		return pointsGpsRepository.findAllByVehicleId(vehicleId);
+	}*/
+	
+	
 
     public Optional<PointGps> findById(int id) {
         return pointsGpsRepository.findById(id);

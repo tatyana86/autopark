@@ -33,13 +33,19 @@ public class PointGps {
     
     @Transient
     private double latitude; // y
+    
+    @Column(name = "time_point")
+    private String timeOfPointGps;
         
     public PointGps() {
 	}
 
-	public PointGps(Vehicle vehicle, Point coordinates) {
+	public PointGps(Vehicle vehicle, Point coordinates, double longitude, double latitude, String timeOfPointGps) {
 		this.vehicle = vehicle;
 		this.coordinates = coordinates;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.timeOfPointGps = timeOfPointGps;
 	}
 
 	public int getId() {
@@ -80,6 +86,14 @@ public class PointGps {
 
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
+	}
+
+	public String getTimeOfPointGps() {
+		return timeOfPointGps;
+	}
+
+	public void setTimeOfPointGps(String timeOfPointGps) {
+		this.timeOfPointGps = timeOfPointGps;
 	}
 
 }

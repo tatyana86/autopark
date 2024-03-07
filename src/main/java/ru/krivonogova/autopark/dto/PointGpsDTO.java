@@ -15,14 +15,17 @@ public class PointGpsDTO {
     private double longitude; // x
     
     private double latitude; // y
+    
+    private String timeOfPointGps;
         
     public PointGpsDTO() {
 	}
 
-	public PointGpsDTO(VehicleIdDTO vehicleId, double longitude, double latitude) {
+	public PointGpsDTO(VehicleIdDTO vehicleId, double longitude, double latitude, String timeOfPointGps) {
 		this.vehicleId = vehicleId;
 		this.longitude = longitude;
 		this.latitude = latitude;
+		this.timeOfPointGps = timeOfPointGps;
 	}
 
 	public int getId() {
@@ -55,6 +58,16 @@ public class PointGpsDTO {
 
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
+	}
+
+
+
+	public String getTimeOfPointGps() {
+		return timeOfPointGps;
+	}
+
+	public void setTimeOfPointGps(String timeOfPointGps) {
+		this.timeOfPointGps = timeOfPointGps;
 	}
 	
 }
