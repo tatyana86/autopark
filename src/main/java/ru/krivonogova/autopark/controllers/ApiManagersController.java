@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.validation.Valid;
 import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.PointGpsDTO;
+import ru.krivonogova.autopark.dto.PointGpsDTO_forAPI;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
@@ -84,11 +85,11 @@ public class ApiManagersController {
 	}
 	
 	@GetMapping("/points")
-	public List<PointGpsDTO> indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
+	public List<PointGpsDTO_forAPI> indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
 											@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
 											@RequestParam(value = "dateTo", defaultValue = "") String dateTo) {
-						
-		return pointsGpsService.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo).stream().map(this::convertToPointGpsDTO)
+				
+		return pointsGpsService.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo).stream().map(this::convertToPointGpsDTO_forAPI)
 				.collect(Collectors.toList());
 	}
 	
@@ -161,12 +162,28 @@ public class ApiManagersController {
 	    LocalDateTime dateOfSale_UTC = LocalDateTime.parse(vehicle.getDateOfSale(), formatter);
 	    ZoneOffset timeZone = ZoneOffset.of(timezone);
 	    LocalDateTime dateOfSale = dateOfSale_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
-	    String dateOfSaleForEntarprise = dateOfSale.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	    String dateOfSaleForEnterprise = dateOfSale.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 	    
 	    VehicleDTO_forAPI vehicleDTO_forAPI = modelMapper.map(vehicle, VehicleDTO_forAPI.class);
-	    vehicleDTO_forAPI.setDateOfSaleForEnterprise(dateOfSaleForEntarprise);
+	    vehicleDTO_forAPI.setDateOfSaleForEnterprise(dateOfSaleForEnterprise);
 	    
 		return vehicleDTO_forAPI;
+	}
+	
+	private PointGpsDTO_forAPI convertToPointGpsDTO_forAPI(PointGps pointGps) {
+		
+		Vehicle vehicle = pointGps.getVehicle();
+		String timezone = vehicle.getEnterprise().getTimezone();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+	    LocalDateTime timeOfPointGps_UTC = LocalDateTime.parse(pointGps.getTimeOfPointGps(), formatter);
+	    ZoneOffset timeZone = ZoneOffset.of(timezone);
+	    LocalDateTime timeOfPointGps = timeOfPointGps_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    String timeOfPointGpsForEnterprise = timeOfPointGps.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	    
+	    PointGpsDTO_forAPI pointGpsDTO_forAPI = modelMapper.map(pointGps, PointGpsDTO_forAPI.class);
+	    pointGpsDTO_forAPI.setTimeOfPointGpsForEnterprise(timeOfPointGpsForEnterprise);
+	    
+	    return pointGpsDTO_forAPI;
 	}
 	
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
