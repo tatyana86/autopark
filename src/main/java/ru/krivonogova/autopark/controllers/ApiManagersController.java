@@ -3,9 +3,12 @@ package ru.krivonogova.autopark.controllers;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
 import ru.krivonogova.autopark.dto.DriverDTO;
+import ru.krivonogova.autopark.dto.GeoJsonFeature;
 import ru.krivonogova.autopark.dto.PointGpsDTO;
 import ru.krivonogova.autopark.dto.PointGpsDTO_forAPI;
 import ru.krivonogova.autopark.dto.VehicleDTO;
@@ -85,12 +89,43 @@ public class ApiManagersController {
 	}
 	
 	@GetMapping("/points")
-	public List<PointGpsDTO_forAPI> indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
+	public Object indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
 											@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
-											@RequestParam(value = "dateTo", defaultValue = "") String dateTo) {
+											@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
+											@RequestParam(value = "returnGeoJson", defaultValue = "false") boolean returnGeoJson) {
 				
-		return pointsGpsService.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo).stream().map(this::convertToPointGpsDTO_forAPI)
-				.collect(Collectors.toList());
+		List<PointGps> points = pointsGpsService.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo);
+		
+		 if (returnGeoJson) {
+			return points.stream().map(this::convertToPointGpsDTO_forAPI)
+									.map(this::convertToGeoJsonFeature)
+									.collect(Collectors.toList());
+		 }
+		
+		return points.stream().map(this::convertToPointGpsDTO_forAPI)
+								.collect(Collectors.toList());
+	}
+	
+	private GeoJsonFeature convertToGeoJsonFeature(PointGpsDTO_forAPI point) {
+	    GeoJsonFeature feature = new GeoJsonFeature();
+	    feature.setType("Feature");
+
+	    Map<String, Object> geometry = new HashMap<>();
+	    geometry.put("type", "Point");
+        
+        List<Double> coordinates = Arrays.asList(point.getLongitude(), point.getLatitude());
+        geometry.put("coordinates", coordinates);
+        
+        feature.setGeometry(geometry);
+        
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("crs", "EPSG:4326");
+        
+        feature.setProperties(properties);
+        
+        feature.setTimeOfPointGps(point.getTimeOfPointGpsForEnterprise());
+        
+	    return feature;
 	}
 	
 	/*@GetMapping("/points")
