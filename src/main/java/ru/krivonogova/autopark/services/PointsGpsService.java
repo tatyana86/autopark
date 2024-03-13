@@ -33,10 +33,18 @@ public class PointsGpsService {
 		return pointsGpsRepository.findAllByVehicleId(vehicleId);
 	}*/
 	
-	
-
     public Optional<PointGps> findById(int id) {
         return pointsGpsRepository.findById(id);
-    }    
+    }
+    
+    @Transactional
+    public void saveAll(List<PointGps> pointsGps) {
+    	pointsGpsRepository.saveAll(pointsGps);
+    }
+    
+    @Transactional
+    public void save(PointGps pointsGps) {
+    	pointsGpsRepository.save(pointsGps);
+    }
 
 }

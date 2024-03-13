@@ -60,8 +60,6 @@ public class PointGpsDTO_forAPI {
 		this.latitude = latitude;
 	}
 
-
-
 	public String getTimeOfPointGpsForEnterprise() {
 		return timeOfPointGpsForEnterprise;
 	}

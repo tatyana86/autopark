@@ -116,6 +116,8 @@ public class ApiManagersController {
         List<Double> coordinates = Arrays.asList(point.getLongitude(), point.getLatitude());
         geometry.put("coordinates", coordinates);
         
+        geometry.put("idVehicle", point.getVehicleId().getId());
+        
         feature.setGeometry(geometry);
         
         Map<String, Object> properties = new HashMap<>();

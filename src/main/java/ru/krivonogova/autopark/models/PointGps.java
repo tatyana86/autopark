@@ -28,15 +28,15 @@ public class PointGps {
     @Column(name="coordinates")
     private Point coordinates;
     
+    @Column(name = "time_point")
+    private String timeOfPointGps;
+    
     @Transient
     private double longitude; // x
     
     @Transient
     private double latitude; // y
-    
-    @Column(name = "time_point")
-    private String timeOfPointGps;
-        
+            
     public PointGps() {
 	}
 

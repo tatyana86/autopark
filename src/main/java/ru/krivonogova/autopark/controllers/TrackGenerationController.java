@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
+import ru.krivonogova.autopark.dto.TrackGenerationDTO;
 import ru.krivonogova.autopark.services.TrackGenerationService;
 
 @RestController
@@ -21,9 +22,9 @@ public class TrackGenerationController {
 	}
 	
 	@PostMapping
-	public void generateTrack() {
+	public void generateTrack(@RequestBody TrackGenerationDTO request) {
 		
-		trackGenerationService.generateTrack();
+		trackGenerationService.generateTrack(request);
 		
 		
 	}
