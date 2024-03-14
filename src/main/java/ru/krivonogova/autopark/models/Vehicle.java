@@ -52,10 +52,13 @@ public class Vehicle {
     @OneToOne(mappedBy = "activeVehicle")
     private Driver activeDriver;
     
-    // new
     @OneToMany(mappedBy = "vehicle")
     @JsonIgnore
     private List<PointGps> PointsGps;
+    
+    @OneToMany(mappedBy = "vehicle")
+    @JsonIgnore
+    private List<Trip> trip;
     
 	public Vehicle() {
 	}
