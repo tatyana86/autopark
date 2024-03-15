@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.krivonogova.autopark.dto.PointGpsCoord;
 import ru.krivonogova.autopark.dto.TrackGenerationDTO;
 import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.Trip;
+import ru.krivonogova.autopark.models.Vehicle;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,11 +36,13 @@ public class TrackGenerationService {
 	
 	private final VehiclesService vehiclesService;
 	private final PointsGpsService pointsGpsService;
+	private final TripService tripService;
 	
 	@Autowired
-    public TrackGenerationService(VehiclesService vehiclesService, PointsGpsService pointsGpsService) {
+    public TrackGenerationService(VehiclesService vehiclesService, PointsGpsService pointsGpsService, TripService tripService) {
 		this.vehiclesService = vehiclesService;
 		this.pointsGpsService = pointsGpsService;
+		this.tripService = tripService;
 	}
 
 	double centerLongitude = 50.157566;
@@ -69,11 +73,13 @@ public class TrackGenerationService {
 		List<PointGpsCoord> track = getRouting(startLong, startLat, endLong, endLat);
 		
 		List<PointGps> points = new ArrayList<>();
+		Vehicle vehicle = vehiclesService.findOne(request.getIdVehicle());
 
+		//блок сохранения gps-точек в таблицу track
 		for (PointGpsCoord pointOfTrack : track) {
 		    PointGps point = new PointGps();
 		    
-		    point.setVehicle(vehiclesService.findOne(request.getIdVehicle()));
+		    point.setVehicle(vehicle);
 		    
 		    GeometryFactory geometryFactory = new GeometryFactory();
 	        Coordinate coordinate = new Coordinate(pointOfTrack.getLongitude(), pointOfTrack.getLatitude());
@@ -93,7 +99,16 @@ public class TrackGenerationService {
             }
 		}
 
-		// pointsGpsService.saveAll(points);
+		// pointsGpsService.saveAll(points); // тогда будет одно время сохранения
+		
+		// блок сохранения отдельной поездки в таблицу trip
+		String timeOfStart = points.get(0).getTimeOfPointGps();
+		String timeOfEnd = points.get(points.size()-1).getTimeOfPointGps();
+		
+		Trip trip = new Trip(vehicle, timeOfStart, timeOfEnd);
+		
+		tripService.save(trip);
+		
 		
 	}
 	

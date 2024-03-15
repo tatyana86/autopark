@@ -10,12 +10,14 @@ import ru.krivonogova.autopark.models.PointGps;
 
 
 @Repository
-public interface PointsGpsRepository extends JpaRepository<PointGps, Integer>{
+public interface PointsGpsRepository extends JpaRepository<PointGps, Integer> {
 
 	@Query("SELECT p FROM PointGps p WHERE p.vehicle.id = :vehicleId AND p.timeOfPointGps BETWEEN :dateFrom AND :dateTo")
-    List<PointGps> findAllByVehicleAndTimePeriod(@Param("vehicleId") int vehicleId, @Param("dateFrom") String dateFrom, @Param("dateTo") String dateTo);
-	
+    List<PointGps> findAllByVehicleAndTimePeriod(@Param("vehicleId") int vehicleId, 
+    											@Param("dateFrom") String dateFrom, 
+    											@Param("dateTo") String dateTo);
 	
 	/*@Query("SELECT p FROM PointGps p WHERE p.vehicle.id = :vehicleId")
     List<PointGps> findAllByVehicleId(@Param("vehicleId") int vehicleId);*/
+	
 }

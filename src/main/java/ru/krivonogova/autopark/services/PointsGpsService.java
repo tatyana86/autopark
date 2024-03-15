@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.Trip;
 import ru.krivonogova.autopark.repositories.PointsGpsRepository;
 
 @Service
@@ -27,6 +28,14 @@ public class PointsGpsService {
 	
 	public List<PointGps> findAllByVehicleAndTimePeriod(int vehicleId, String dateFrom, String dateTo) {
 		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo);
+	}
+	
+	public List<PointGps> findAllByVehicleAndTrip(int vehicleId, List<Trip> trips) {
+		
+		String dateFrom_upd = trips.get(0).getTimeOfStart();
+		String dateTo_upd = trips.get(trips.size() - 1).getTimeOfEnd();
+		
+		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom_upd, dateTo_upd);
 	}
 	
 	/*public List<PointGps> findAllByVehicleId(int vehicleId) {

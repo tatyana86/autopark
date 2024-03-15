@@ -3,6 +3,7 @@ package ru.krivonogova.autopark.controllers;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,12 +43,14 @@ import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.Trip;
 import ru.krivonogova.autopark.models.Vehicle;
-import ru.krivonogova.autopark.repositories.PointsGpsRepository;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.DriversService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.ManagersService;
+import ru.krivonogova.autopark.services.PointsGpsService;
+import ru.krivonogova.autopark.services.TripService;
 import ru.krivonogova.autopark.services.VehiclesService;
 import ru.krivonogova.autopark.util.EnterpriseErrorResponse;
 import ru.krivonogova.autopark.util.EnterpriseNotCreatedException;
@@ -67,20 +70,23 @@ public class ApiManagersController {
 	private final DriversService driversService;
 	private final ModelMapper modelMapper;
 	private final ManagersService managersService;
-	private final PointsGpsRepository pointsGpsService;
+	private final PointsGpsService pointsGpsService;
+	private final TripService tripService;
 	
 	@Autowired
 	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService,
 			DriversService driversService, ModelMapper modelMapper, ManagersService managersService,
-			PointsGpsRepository pointsGpsService) {
+			PointsGpsService pointsGpsService, TripService tripService) {
 		this.enterprisesService = enterprisesService;
 		this.vehiclesService = vehiclesService;
 		this.driversService = driversService;
 		this.modelMapper = modelMapper;
 		this.managersService = managersService;
 		this.pointsGpsService = pointsGpsService;
+		this.tripService = tripService;
 	}
 
+	// время в UTC = 0 (как исходно хранятся в таблице)
 	@GetMapping("/allpoints")
 	public List<PointGpsDTO> indexAllPointsGPS() {
 						
@@ -88,6 +94,7 @@ public class ApiManagersController {
 				.collect(Collectors.toList());
 	}
 	
+	// время (возвращается) с учетом таймзоны предприятия, в запросе в UTC время
 	@GetMapping("/points")
 	public Object indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
 											@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
@@ -104,6 +111,32 @@ public class ApiManagersController {
 		
 		return points.stream().map(this::convertToPointGpsDTO_forAPI)
 								.collect(Collectors.toList());
+	}
+	
+	// время (возвращается) с учетом таймзоны предприятия, в запросе в UTC время
+	@GetMapping("/trips/points")
+	public Object indexPointsGPSFromTrip(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
+										@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+										@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
+										@RequestParam(value = "returnGeoJson", defaultValue = "false") boolean returnGeoJson) {
+		
+		List<Trip> trips = tripService.findAllByTimePeriod(vehicleId, dateFrom, dateTo);
+		
+		List<PointGps> points = new ArrayList<PointGps>();
+		
+		if(!trips.isEmpty()) {
+			points = pointsGpsService.findAllByVehicleAndTrip(vehicleId, trips);
+		}
+		
+		if (returnGeoJson) {
+			return points.stream().map(this::convertToPointGpsDTO_forAPI)
+									.map(this::convertToGeoJsonFeature)
+									.collect(Collectors.toList());
+		 }
+		
+		return points.stream().map(this::convertToPointGpsDTO_forAPI)
+								.collect(Collectors.toList());
+		
 	}
 	
 	private GeoJsonFeature convertToGeoJsonFeature(PointGpsDTO_forAPI point) {
