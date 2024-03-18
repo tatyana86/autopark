@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.dto.TrackGenerationDTO;
 import ru.krivonogova.autopark.services.TrackGenerationService;
 
@@ -26,8 +25,6 @@ public class TrackGenerationController {
 		
 		trackGenerationService.generateTrack(request);
 		
-		
 	}
-	
 	
 }

@@ -1,6 +1,7 @@
 package ru.krivonogova.autopark.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,9 @@ public interface PointsGpsRepository extends JpaRepository<PointGps, Integer> {
 	/*@Query("SELECT p FROM PointGps p WHERE p.vehicle.id = :vehicleId")
     List<PointGps> findAllByVehicleId(@Param("vehicleId") int vehicleId);*/
 	
+	
+
+	@Query("SELECT p FROM PointGps p WHERE p.vehicle.id = :vehicleId AND p.timeOfPointGps = :time")
+	Optional<PointGps> findFirstByVehicleIdAndTimeOfPointGps(@Param("vehicleId") int vehicleId, @Param("time") String time);
+		
 }

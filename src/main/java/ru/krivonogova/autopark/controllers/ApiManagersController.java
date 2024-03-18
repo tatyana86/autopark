@@ -1,14 +1,19 @@
 package ru.krivonogova.autopark.controllers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -38,6 +43,7 @@ import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.GeoJsonFeature;
 import ru.krivonogova.autopark.dto.PointGpsDTO;
 import ru.krivonogova.autopark.dto.PointGpsDTO_forAPI;
+import ru.krivonogova.autopark.dto.TripDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
@@ -137,6 +143,59 @@ public class ApiManagersController {
 		return points.stream().map(this::convertToPointGpsDTO_forAPI)
 								.collect(Collectors.toList());
 		
+	}
+	
+	// время (возвращается) с учетом таймзоны предприятия, в запросе время предприятия!
+	@GetMapping("/trips")
+	public List<TripDTO> indexPointsTrip(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
+								@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+								@RequestParam(value = "dateTo", defaultValue = "") String dateTo) throws ParseException {
+		
+		String timezone = vehiclesService.findOne(vehicleId).getEnterprise().getTimezone();
+		
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        inputDateFormat.setTimeZone(TimeZone.getTimeZone(timezone)); // Используем временную зону предприятия
+
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        outputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Используем UTC
+
+        Date dateFrom_UTC = inputDateFormat.parse(dateFrom);
+        Date dateTo_UTC = inputDateFormat.parse(dateTo);
+        
+        String dateFrom_utc = outputDateFormat.format(dateFrom_UTC);
+        String dateTo_utc = outputDateFormat.format(dateTo_UTC);
+        
+        System.out.println(dateFrom_utc + " " + dateTo_utc);
+
+		
+		List<Trip> trips = tripService.findAllByTimePeriod(vehicleId, dateFrom_utc, dateTo_utc);
+		
+		if(trips.isEmpty()) {
+			return new ArrayList<TripDTO>();
+		}
+		
+		return trips.stream().map(this::convertToTripDTO)
+								.collect(Collectors.toList());
+		
+	}
+	
+	private TripDTO convertToTripDTO(Trip trip) {
+		
+		TripDTO tripDTO = modelMapper.map(trip, TripDTO.class);
+		
+		String timeOfStart = trip.getTimeOfStart();
+		String timeOfEnd = trip.getTimeOfEnd();
+		
+		Optional<PointGps> pointOfStart = pointsGpsService.findByVehicleAndTime(trip.getVehicle().getId(), timeOfStart);
+		Optional<PointGps> pointOfEnd = pointsGpsService.findByVehicleAndTime(trip.getVehicle().getId(), timeOfEnd);
+		
+		String addressOfStart = pointsGpsService.takeAddressOfPointGPS(pointOfStart.get());
+		String addressOfEnd = pointsGpsService.takeAddressOfPointGPS(pointOfEnd.get());
+
+		tripDTO.setAddressOfStart(addressOfStart);
+		tripDTO.setAddressOfEnd(addressOfEnd);
+				
+		return tripDTO;
 	}
 	
 	private GeoJsonFeature convertToGeoJsonFeature(PointGpsDTO_forAPI point) {

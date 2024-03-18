@@ -109,11 +109,10 @@ public class TrackGenerationService {
 		
 		tripService.save(trip);
 		
-		
 	}
 	
 	public String getTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
 
         return dateFormat.format(date);

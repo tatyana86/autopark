@@ -7,8 +7,6 @@ CREATE TABLE track (
     time_point varchar(50)
 );
 
-SELECT * FROM track;
-
 DROP TABLE trip;
 
 CREATE TABLE trip (
@@ -18,5 +16,23 @@ CREATE TABLE trip (
     time_end varchar(50)
 );
 
+SELECT * FROM track;
+
 SELECT * FROM trip;
 
+SELECT p 
+FROM track p 
+WHERE p.vehicle_id = 1 
+AND p.time_point = '2024/03/15 23:36' 
+LIMIT 1
+		
+SELECT *
+FROM track
+WHERE p.vehicle_id = 1 
+AND time_point = '2024/03/15 23:36'
+ORDER BY id DESC
+LIMIT 1
+			
+			
+SELECT p FROM track p WHERE p.vehicle_id = 1 AND p.time_point = '2024/03/15 23:36' ORDER BY p.id ASC
+			
