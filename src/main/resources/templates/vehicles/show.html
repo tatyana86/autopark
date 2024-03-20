@@ -56,7 +56,49 @@
 					
 			</table>
 			
+			<h1>Поездки:</h1>
+			<p th:utext="${dateFrom}"> <p th:utext="${dateTo}">
 			
+<form th:action="@{'/managers/enterprises/' + ${idEnterprise} + '/vehicles/' + ${vehicle.id}}" method="get">
+    <div class="container">
+        <p>Выбранный период с <input type="date" name="dateFrom" th:value="${dateFrom}"> по <input type="date" name="dateTo" th:value="${dateTo}">
+        <button type="submit" class="btn btn-primary ml-2">Обновить</button>
+        </p>
+    </div>
+</form>
+
+<form th:action="@{'/managers/enterprises/' + ${idEnterprise} + '/vehicles/' + ${vehicle.id}}" method="get">
+    <div class="container">
+        <p>Выбранный период с <input type="date" name="dateFrom" th:value="${dateFrom}" th:attr="value=${dateFrom}"> по <input type="date" name="dateTo" th:value="${dateTo}" th:attr="value=${dateTo}">
+        <button type="submit" class="btn btn-primary ml-2">Обновить</button>
+        </p>
+    </div>
+</form>
+			
+			<table style="border-collapse: collapse; width: 100%;">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Начало</th>
+						<th>Окончание</th>
+						<th>Адрес отправления</th>
+						<th>Адрес прибытия</th>
+					</tr>
+				</thead>
+			    <tbody th:each="trip : ${trips}">
+			        <tr style="border-bottom: 1px solid #ddd;">
+			            <td style="padding: 8px;" th:text="${trip.id}"></td>
+			            <td style="padding: 8px;"><a th:href="@{/managers/enterprises/{idEnterprise}/vehicles/{idVehicle}(idEnterprise=${idEnterprise},idVehicle=${vehicle.id})}" 
+			            								th:text="${trip.timeOfStartForManager}"></a></td>
+			        	<td style="padding: 8px;" th:text="${trip.timeOfEndForManager}"></td>
+			        	<td style="padding: 8px;" th:text="${trip.addressOfStart}"></td>
+			        	<td style="padding: 8px;" th:text="${trip.addressOfEnd}"></td>
+
+			        </tr>
+			    </tbody>
+			</table>
+		
+		
 		
 			<div>
 			    <b> <a	th:href="@{/managers/enterprises/{idEnterprise}/vehicles?page=1(idEnterprise=${enterprise.getId()})}" 

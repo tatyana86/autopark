@@ -1,19 +1,17 @@
 package ru.krivonogova.autopark.controllers;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,7 +20,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,13 +28,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
+import ru.krivonogova.autopark.dto.TripDTO;
+import ru.krivonogova.autopark.dto.TripDTO_forAPI;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.models.Enterprise;
+import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.Trip;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.BrandsService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.ManagersService;
+import ru.krivonogova.autopark.services.PointsGpsService;
+import ru.krivonogova.autopark.services.TripService;
 import ru.krivonogova.autopark.services.VehiclesService;
 
 @Controller
@@ -48,28 +51,29 @@ public class ManagersController {
 	private final ManagersService managersService;
 	private final VehiclesService vehiclesService;
 	private final BrandsService brandsService;
+	private final TripService tripService;
+	private final PointsGpsService pointsGpsService;
 	private final ModelMapper modelMapper;
 	
 	@Autowired	
-	public ManagersController(EnterprisesService enterprisesService, ManagersService managersService, VehiclesService vehiclesService, ModelMapper modelMapper, BrandsService brandsService) {
+	public ManagersController(EnterprisesService enterprisesService, ManagersService managersService, VehiclesService vehiclesService, ModelMapper modelMapper, BrandsService brandsService, TripService tripService, PointsGpsService pointsGpsService) {
 		this.enterprisesService = enterprisesService;
 		this.managersService = managersService;
 		this.vehiclesService = vehiclesService;
 		this.brandsService = brandsService;
+		this.tripService = tripService;
+		this.pointsGpsService = pointsGpsService;
 		this.modelMapper = modelMapper;
 	}
 
 	@GetMapping("/enterprises")
 	public ModelAndView indexEnterprisesWOid() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
-		String username = personDetails.getPerson().getUsername();
-		
-		Integer id = managersService.findByUsername(username).getId();
+
+		Integer idManager = getManagerId();
 		
 		ModelAndView enterprises = new ModelAndView("enterprises/index");
 		
-		enterprises.addObject("enterprises", enterprisesService.findAllForManager(id));
+		enterprises.addObject("enterprises", enterprisesService.findAllForManager(idManager));
 		
 		return enterprises;
 	}
@@ -95,9 +99,7 @@ public class ManagersController {
 			return "enterprises/edit";
 		}
 		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
-		Integer idManager = personDetails.getPerson().getId();
+		Integer idManager = getManagerId();
 		
 		enterprisesService.update(idManager, idEnterprise, enterprise);
 		
@@ -109,16 +111,13 @@ public class ManagersController {
 								@RequestParam(value = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
 								@PathVariable("idEnterprise") int idEnterprise,
 								Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
-		String username = personDetails.getPerson().getUsername();
-		
-	    String timezone = personDetails.getPerson().getTimezone();   
-		
-		Integer idManager = managersService.findByUsername(username).getId();
+
+		Integer idManager = getManagerId();
+		String timezone = getManagerTimezone();   
 				
 		Page<Vehicle> vehiclesPage = vehiclesService.findForManagerByEnterpriseId(idManager, idEnterprise, page, itemsPerPage);
-	    model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(vehicle -> convertToVehicleDTO(vehicle, timezone)).collect(Collectors.toList()));
+	    
+		model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(vehicle -> convertToVehicleDTO(vehicle, timezone)).collect(Collectors.toList()));
 	    model.addAttribute("currentPage", vehiclesPage.getNumber() + 1);
 	    model.addAttribute("totalPages", vehiclesPage.getTotalPages());
 	    model.addAttribute("hasNext", vehiclesPage.hasNext());
@@ -131,15 +130,91 @@ public class ManagersController {
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
 	public String show(@PathVariable("idEnterprise") int idEnterprise,
 						@PathVariable("idVehicle") int idVehicle,
+						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
 						Model model, 
 						@ModelAttribute("vehicle") Vehicle vehicle) {
+			
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		
+		LocalDate dateFromDate = dateFrom.isEmpty() ? LocalDate.now().minusMonths(1) : LocalDate.parse(dateFrom, inputFormatter);
+		LocalDate dateToDate = dateTo.isEmpty() ? LocalDate.now() : LocalDate.parse(dateTo, inputFormatter);
+		
+		dateFrom = dateFromDate.atStartOfDay().format(outputFormatter);
+		dateTo = dateToDate.atStartOfDay().format(outputFormatter);
+		
+		// для представления
+		String formattedFrom = dateFromDate.atStartOfDay().format(inputFormatter);
+		String formattedTo = dateToDate.atStartOfDay().format(inputFormatter);
+		
+		model.addAttribute("dateFrom", dateFrom);
+		model.addAttribute("dateTo", dateTo);
 		model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
 		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
+		
+		//new
+		
+	    String timezone = getManagerTimezone();   
+	    
+		List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, dateFrom, dateTo);
+		model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
 		
 		return "vehicles/show";
 	}
 	
+	private TripDTO convertToTripDTO(Trip trip, String timezone) {
+		
+		TripDTO tripDTO = modelMapper.map(trip, TripDTO.class);
+		
+		// установка времени
+		String timeOfStart = trip.getTimeOfStart();
+		String timeOfEnd = trip.getTimeOfEnd();
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+	    LocalDateTime dateOfStart_UTC = LocalDateTime.parse(timeOfStart, formatter);
+	    LocalDateTime dateOfEnd_UTC = LocalDateTime.parse(timeOfEnd, formatter);
+		
+	    ZoneOffset timeZone = ZoneOffset.of(timezone);
+	    
+	    LocalDateTime dateOfStart = dateOfStart_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    LocalDateTime dateOfEnd = dateOfEnd_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    
+	    String dateOfStartForEnterprise = dateOfStart.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+	    String dateOfEndForEnterprise = dateOfEnd.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+	 	    
+		// установка адресов		
+		Optional<PointGps> pointOfStart = pointsGpsService.findByVehicleAndTime(trip.getVehicle().getId(), timeOfStart);
+		Optional<PointGps> pointOfEnd = pointsGpsService.findByVehicleAndTime(trip.getVehicle().getId(), timeOfEnd);
+		
+		String addressOfStart = pointsGpsService.takeAddressOfPointGPS(pointOfStart.get());
+		String addressOfEnd = pointsGpsService.takeAddressOfPointGPS(pointOfEnd.get());
+
+		tripDTO.setAddressOfStart(addressOfStart);
+		tripDTO.setAddressOfEnd(addressOfEnd);
+		
+	    tripDTO.setTimeOfStartForManager(dateOfStartForEnterprise);
+	    tripDTO.setTimeOfEndForManager(dateOfEndForEnterprise);
+				
+		return tripDTO;
+		
+	}
+	
+	private Integer getManagerId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+		Integer idManager = personDetails.getPerson().getId();
+		
+		return idManager;
+	}
+	
+	private String getManagerTimezone() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+	    String timezone = personDetails.getPerson().getTimezone();   
+	    
+	    return timezone;
+	}
 	
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/new")
 	public String newVehicle(@ModelAttribute("vehicle") VehicleDTO vehicle,
@@ -216,11 +291,7 @@ public class ManagersController {
 	private Vehicle convertToVehicle(VehicleDTO vehicleDTO) {
 		return modelMapper.map(vehicleDTO, Vehicle.class);
 	}
-	
-	private VehicleDTO convertToVehicleDTO(Vehicle vehicle) {
-		return modelMapper.map(vehicle, VehicleDTO.class);
-	}
-	
+		
 	private VehicleDTO convertToVehicleDTO(Vehicle vehicle, String timezone) {
 	    
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");

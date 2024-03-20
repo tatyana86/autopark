@@ -7,7 +7,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,7 @@ import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.GeoJsonFeature;
 import ru.krivonogova.autopark.dto.PointGpsDTO;
 import ru.krivonogova.autopark.dto.PointGpsDTO_forAPI;
-import ru.krivonogova.autopark.dto.TripDTO;
+import ru.krivonogova.autopark.dto.TripDTO_forAPI;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
@@ -147,45 +146,62 @@ public class ApiManagersController {
 	
 	// время (возвращается) с учетом таймзоны предприятия, в запросе время предприятия!
 	@GetMapping("/trips")
-	public List<TripDTO> indexPointsTrip(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
+	public List<TripDTO_forAPI> indexPointsTrip(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
 								@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
 								@RequestParam(value = "dateTo", defaultValue = "") String dateTo) throws ParseException {
 		
-		String timezone = vehiclesService.findOne(vehicleId).getEnterprise().getTimezone();
+		String timezone_enter = vehiclesService.findOne(vehicleId).getEnterprise().getTimezone();
+
+		TimeZone timezone = TimeZone.getTimeZone("GMT" + timezone_enter);
+		SimpleDateFormat sdfLocal = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		sdfLocal.setTimeZone(timezone);
+
+		SimpleDateFormat sdfUTC = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		sdfUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		Date fromDate = sdfLocal.parse(dateFrom);
+		Date toDate = sdfLocal.parse(dateTo);
+
+		String dateFromUTC = sdfUTC.format(fromDate);
+		String dateToUTC = sdfUTC.format(toDate);
 		
-		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        inputDateFormat.setTimeZone(TimeZone.getTimeZone(timezone)); // Используем временную зону предприятия
-
-        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        outputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Используем UTC
-
-        Date dateFrom_UTC = inputDateFormat.parse(dateFrom);
-        Date dateTo_UTC = inputDateFormat.parse(dateTo);
-        
-        String dateFrom_utc = outputDateFormat.format(dateFrom_UTC);
-        String dateTo_utc = outputDateFormat.format(dateTo_UTC);
-        
-        System.out.println(dateFrom_utc + " " + dateTo_utc);
-
-		
-		List<Trip> trips = tripService.findAllByTimePeriod(vehicleId, dateFrom_utc, dateTo_utc);
+		List<Trip> trips = tripService.findAllByTimePeriod(vehicleId, dateFromUTC, dateToUTC);
 		
 		if(trips.isEmpty()) {
-			return new ArrayList<TripDTO>();
+			return new ArrayList<TripDTO_forAPI>();
 		}
 		
-		return trips.stream().map(this::convertToTripDTO)
+		return trips.stream().map(this::convertToTripDTO_forAPI)
 								.collect(Collectors.toList());
 		
 	}
-	
-	private TripDTO convertToTripDTO(Trip trip) {
 		
-		TripDTO tripDTO = modelMapper.map(trip, TripDTO.class);
+	// время в таймзоне предприятия
+	private TripDTO_forAPI convertToTripDTO_forAPI(Trip trip) {
 		
+		TripDTO_forAPI tripDTO = modelMapper.map(trip, TripDTO_forAPI.class);
+				
+		// установка времени
 		String timeOfStart = trip.getTimeOfStart();
 		String timeOfEnd = trip.getTimeOfEnd();
 		
+		String timezone = trip.getVehicle().getEnterprise().getTimezone();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+	    LocalDateTime dateOfStart_UTC = LocalDateTime.parse(timeOfStart, formatter);
+	    LocalDateTime dateOfEnd_UTC = LocalDateTime.parse(timeOfEnd, formatter);
+	    
+	    ZoneOffset timeZone = ZoneOffset.of(timezone);
+	    
+	    LocalDateTime dateOfStart = dateOfStart_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    LocalDateTime dateOfEnd = dateOfEnd_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    
+	    String dateOfStartForEnterprise = dateOfStart.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+	    String dateOfEndForEnterprise = dateOfEnd.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+	    
+	    tripDTO.setTimeOfStartForEnterprise(dateOfStartForEnterprise);
+	    tripDTO.setTimeOfEndForEnterprise(dateOfEndForEnterprise);
+	    
+		// установка адресов		
 		Optional<PointGps> pointOfStart = pointsGpsService.findByVehicleAndTime(trip.getVehicle().getId(), timeOfStart);
 		Optional<PointGps> pointOfEnd = pointsGpsService.findByVehicleAndTime(trip.getVehicle().getId(), timeOfEnd);
 		

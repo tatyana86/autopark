@@ -4,7 +4,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-public class TripDTO {
+public class TripDTO_forAPI {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,25 +12,13 @@ public class TripDTO {
 	
     private VehicleIdDTO vehicleId;
 	
-    private String timeOfStartForManager;
+    private String timeOfStartForEnterprise;
 	
-    private String timeOfEndForManager;
+    private String timeOfEndForEnterprise;
     
     private String addressOfStart;
     
     private String addressOfEnd;
-
-	public TripDTO() {
-	}
-
-	public TripDTO(VehicleIdDTO vehicleId, String timeOfStartForManager, String timeOfEndForManager,
-			String addressOfStart, String addressOfEnd) {
-		this.vehicleId = vehicleId;
-		this.timeOfStartForManager = timeOfStartForManager;
-		this.timeOfEndForManager = timeOfEndForManager;
-		this.addressOfStart = addressOfStart;
-		this.addressOfEnd = addressOfEnd;
-	}
 
 	public int getId() {
 		return id;
@@ -48,20 +36,20 @@ public class TripDTO {
 		this.vehicleId = vehicleId;
 	}
 
-	public String getTimeOfStartForManager() {
-		return timeOfStartForManager;
+	public String getTimeOfStartForEnterprise() {
+		return timeOfStartForEnterprise;
 	}
 
-	public void setTimeOfStartForManager(String timeOfStartForManager) {
-		this.timeOfStartForManager = timeOfStartForManager;
+	public void setTimeOfStartForEnterprise(String timeOfStartForEnterprise) {
+		this.timeOfStartForEnterprise = timeOfStartForEnterprise;
 	}
 
-	public String getTimeOfEndForManager() {
-		return timeOfEndForManager;
+	public String getTimeOfEndForEnterprise() {
+		return timeOfEndForEnterprise;
 	}
 
-	public void setTimeOfEndForManager(String timeOfEndForManager) {
-		this.timeOfEndForManager = timeOfEndForManager;
+	public void setTimeOfEndForEnterprise(String timeOfEndForEnterprise) {
+		this.timeOfEndForEnterprise = timeOfEndForEnterprise;
 	}
 
 	public String getAddressOfStart() {
@@ -79,5 +67,5 @@ public class TripDTO {
 	public void setAddressOfEnd(String addressOfEnd) {
 		this.addressOfEnd = addressOfEnd;
 	}
-	
+  
 }

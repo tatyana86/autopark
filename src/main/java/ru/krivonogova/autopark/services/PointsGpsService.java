@@ -77,7 +77,7 @@ public class PointsGpsService {
 
             HttpResponse response = httpClient.execute(request);
             
-            System.out.println(requestUrl);
+            //System.out.println(requestUrl);
             
             if (response.getStatusLine().getStatusCode() == 200) {
             	HttpEntity entity = response.getEntity();

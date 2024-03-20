@@ -33,8 +33,6 @@ public class VehicleDTO {
     
     private String dateOfSaleForManager;
     
-    private String dateOfSaleForEnterprise;
-    
 	public int getId() {
 		return id;
 	}
@@ -105,14 +103,6 @@ public class VehicleDTO {
 
 	public void setDateOfSaleForManager(String dateOfSaleForManager) {
 		this.dateOfSaleForManager = dateOfSaleForManager;
-	}
-
-	public String getDateOfSaleForEnterprise() {
-		return dateOfSaleForEnterprise;
-	}
-
-	public void setDateOfSaleForEnterprise(String dateOfSaleForEnterprise) {
-		this.dateOfSaleForEnterprise = dateOfSaleForEnterprise;
 	}
     
 }
