@@ -1,6 +1,7 @@
 package ru.krivonogova.autopark.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,12 @@ public class TripService {
 	
 	public List<Trip> findAllByTimePeriod(int vehicleId, String dateFrom, String dateTo) {
 		return tripRepository.findTripsByVehicleAndTimeRange(vehicleId, dateFrom, dateTo);
+	}
+	
+	public Trip findOne(int id) {
+		Optional<Trip> foundTrip = tripRepository.findById(id);
+		
+		return foundTrip.orElse(null);
 	}
 	
 	@Transactional

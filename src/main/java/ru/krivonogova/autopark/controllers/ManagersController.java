@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -132,8 +133,8 @@ public class ManagersController {
 						@PathVariable("idVehicle") int idVehicle,
 						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
 						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
-						Model model, 
-						@ModelAttribute("vehicle") Vehicle vehicle) {
+						@RequestParam(value = "idTrip", required = false) Integer idTrip,
+						Model model) {
 			
 		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -148,19 +149,61 @@ public class ManagersController {
 		String formattedFrom = dateFromDate.atStartOfDay().format(inputFormatter);
 		String formattedTo = dateToDate.atStartOfDay().format(inputFormatter);
 		
-		model.addAttribute("dateFrom", dateFrom);
-		model.addAttribute("dateTo", dateTo);
+		model.addAttribute("dateFrom", formattedFrom);
+		model.addAttribute("dateTo", formattedTo);
 		model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
 		model.addAttribute("enterprise", enterprisesService.findOne(idEnterprise));
-		
-		//new
 		
 	    String timezone = getManagerTimezone();   
 	    
 		List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, dateFrom, dateTo);
 		model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
 		
+		System.out.println(idTrip);
+		
+		if(idTrip != null) {
+			List<PointGps> points = pointsGpsService.findAllByVehicleAndTrip(idVehicle, Arrays.asList(tripService.findOne(idTrip)));
+			String request = generateMapRequest(points);
+			System.out.println(request);
+			model.addAttribute("mapUrl", request);
+			model.addAttribute("idTrip", idTrip);
+		}
+		
 		return "vehicles/show";
+	}
+	
+	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}/trips/{idTrip}")
+	public String showTrip(@PathVariable("idEnterprise") int idEnterprise,
+						@PathVariable("idVehicle") int idVehicle,
+						@PathVariable("idTrip") int idTrip,
+						Model model) {
+		
+		List<PointGps> points = pointsGpsService.findAllByVehicleAndTrip(idVehicle, Arrays.asList(tripService.findOne(idTrip)));
+		
+		String request = generateMapRequest(points);
+		
+		System.out.println(request);
+		
+		model.addAttribute("mapUrl", request);
+		
+		return "trips/show";
+	}
+	
+	private String generateMapRequest(List<PointGps> points) {
+		String API_KEY = "4bc5b115-13bb-4a08-9e29-88347ed6207a";
+		StringBuilder request = new StringBuilder("https://static-maps.yandex.ru/v1?");
+
+        // Добавляем параметр pl
+        StringBuilder plBuilder = new StringBuilder("pl=c:8822DDC0,w:5");
+        for (PointGps point : points) {
+            plBuilder.append(",").append(point.getLongitude()).append(",").append(point.getLatitude());
+        }
+        request.append(plBuilder.toString());
+
+        // Добавляем API ключ
+        request.append("&apikey=").append(API_KEY);
+
+        return request.toString();
 	}
 	
 	private TripDTO convertToTripDTO(Trip trip, String timezone) {
