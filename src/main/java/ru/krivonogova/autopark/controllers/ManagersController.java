@@ -134,6 +134,7 @@ public class ManagersController {
 						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
 						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
 						@RequestParam(value = "idTrip", required = false) Integer idTrip,
+						@RequestParam(value = "showAll", defaultValue = "false") boolean showAll,
 						Model model) {
 			
 		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -143,7 +144,7 @@ public class ManagersController {
 		LocalDate dateToDate = dateTo.isEmpty() ? LocalDate.now() : LocalDate.parse(dateTo, inputFormatter);
 		
 		dateFrom = dateFromDate.atStartOfDay().format(outputFormatter);
-		dateTo = dateToDate.atStartOfDay().format(outputFormatter);
+		dateTo = dateToDate.atStartOfDay().plusDays(1).minusSeconds(1).format(outputFormatter);
 		
 		// для представления
 		String formattedFrom = dateFromDate.atStartOfDay().format(inputFormatter);
@@ -157,7 +158,11 @@ public class ManagersController {
 	    String timezone = getManagerTimezone();   
 	    
 		List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, dateFrom, dateTo);
-		model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
+		List<TripDTO> tripList = trips.stream()
+			    .map(trip -> convertToTripDTO(trip, timezone))
+			    .collect(Collectors.toList());
+		model.addAttribute("trips", tripList);
+		//model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
 		
 		System.out.println(idTrip);
 		
@@ -167,6 +172,13 @@ public class ManagersController {
 			System.out.println(request);
 			model.addAttribute("mapUrl", request);
 			model.addAttribute("idTrip", idTrip);
+		}
+		
+		if(showAll) {
+			List<PointGps> points = pointsGpsService.findAllByVehicleAndTrip(idVehicle, trips);
+			String request = generateMapRequest(points);
+			System.out.println(request);
+			model.addAttribute("mapUrlForAll", request);
 		}
 		
 		return "vehicles/show";

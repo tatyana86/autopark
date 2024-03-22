@@ -66,41 +66,61 @@
 			    </div>
 			</form>
 
-			<table style="border-collapse: collapse; width: 100%;">
-				<thead>
-					<tr>
-						<th>Id</th>
-						<th>Начало</th>
-						<th>Окончание</th>
-						<th>Адрес отправления</th>
-						<th>Адрес прибытия</th>
-						<th></th>
-					</tr>
-				</thead>
-			    <tbody th:each="trip : ${trips}">
-			        <tr style="border-bottom: 1px solid #ddd;">
-			            <td style="padding: 8px;" th:text="${trip.id}"></td>
-			            <td style="padding: 8px;" th:text="${trip.timeOfStartForManager}"></td>
-			        	<td style="padding: 8px;" th:text="${trip.timeOfEndForManager}"></td>
-			        	<td style="padding: 8px;" th:text="${trip.addressOfStart}"></td>
-			        	<td style="padding: 8px;" th:text="${trip.addressOfEnd}"></td>
+			<div th:if="${trips.size() == 0}">
+	    		<p>В выбранный период поездок нет.</p>
+			</div>
 
-						<td style="padding: 8px;">
-						    <a th:href="@{'/managers/enterprises/' + ${idEnterprise} + '/vehicles/' + ${vehicle.id} + '?idTrip=' + ${trip.id}}" title="Путь на карте">На карте</a>
-						</td>
-			        </tr>
-			        
-			        <tr th:if="${trip.id != null and trip.id == idTrip}">
-				        <td colspan="6">
-				            <img th:src="${mapUrl}" alt="Map Image"/>
-				        </td>
+			<div th:if="${trips.size() > 0}">
+	    		
+		    	<table style="border-collapse: collapse; width: 100%;">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Начало</th>
+							<th>Окончание</th>
+							<th>Адрес отправления</th>
+							<th>Адрес прибытия</th>
+							<th></th>
+						</tr>
+					</thead>
+				    <tbody th:each="trip : ${trips}">
+				        <tr style="border-bottom: 1px solid #ddd;">
+				            <td style="padding: 8px;" th:text="${trip.id}"></td>
+				            <td style="padding: 8px;" th:text="${trip.timeOfStartForManager}"></td>
+				        	<td style="padding: 8px;" th:text="${trip.timeOfEndForManager}"></td>
+				        	<td style="padding: 8px;" th:text="${trip.addressOfStart}"></td>
+				        	<td style="padding: 8px;" th:text="${trip.addressOfEnd}"></td>
+	
+							<td style="padding: 8px;">
+							    <a th:href="@{'/managers/enterprises/' + ${idEnterprise} + '/vehicles/' + ${vehicle.id} + '?idTrip=' + ${trip.id} + '&dateFrom=' + ${dateFrom} + '&dateTo=' + ${dateTo}}" title="Путь на карте">На карте</a>
+							</td>
+				        </tr>
 				        
-				    </tr>
-			    </tbody>
-			</table>
-		
-		
-		
+				        <tr th:if="${trip.id != null and trip.id == idTrip}">
+					        <td colspan="6">
+					            <img th:src="${mapUrl}" alt="Map Image"/>
+					        </td>
+					    </tr>
+				    </tbody>
+				</table>
+			
+				<form th:action="@{'/managers/enterprises/' + ${idEnterprise} + '/vehicles/' + ${vehicle.id}}" method="get">
+				    <div class="container" style="text-align: right;">
+				        <input type="hidden" name="dateFrom" th:value="${dateFrom}" />
+				        <input type="hidden" name="dateTo" th:value="${dateTo}" />
+				        <input type="hidden" name="showAll" value="true" />
+				        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Показать все треки на карте</button>
+				    </div>
+				</form>
+				
+				<tr th:if="${mapUrlForAll != null}">
+			        <td colspan="6">
+			            <img th:src="${mapUrlForAll}" alt="Map Image"/>
+			        </td>
+				</tr>
+	    		
+			</div>
+
 			<div>
 			    <b> <a	th:href="@{/managers/enterprises/{idEnterprise}/vehicles?page=1(idEnterprise=${enterprise.getId()})}" 
 			    		class="btn btn-secondary">Назад</a> </b>
