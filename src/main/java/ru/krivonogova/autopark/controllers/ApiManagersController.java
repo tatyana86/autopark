@@ -42,12 +42,14 @@ import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.GeoJsonFeature;
 import ru.krivonogova.autopark.dto.PointGpsDTO;
 import ru.krivonogova.autopark.dto.PointGpsDTO_forAPI;
+import ru.krivonogova.autopark.dto.ReportRequestDTO;
 import ru.krivonogova.autopark.dto.TripDTO_forAPI;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.ReportResult;
 import ru.krivonogova.autopark.models.Trip;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.PersonDetails;
@@ -55,6 +57,7 @@ import ru.krivonogova.autopark.services.DriversService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.ManagersService;
 import ru.krivonogova.autopark.services.PointsGpsService;
+import ru.krivonogova.autopark.services.ReportsService;
 import ru.krivonogova.autopark.services.TripService;
 import ru.krivonogova.autopark.services.VehiclesService;
 import ru.krivonogova.autopark.util.EnterpriseErrorResponse;
@@ -77,11 +80,12 @@ public class ApiManagersController {
 	private final ManagersService managersService;
 	private final PointsGpsService pointsGpsService;
 	private final TripService tripService;
+	private final ReportsService reportsService;
 	
 	@Autowired
 	public ApiManagersController(EnterprisesService enterprisesService, VehiclesService vehiclesService,
 			DriversService driversService, ModelMapper modelMapper, ManagersService managersService,
-			PointsGpsService pointsGpsService, TripService tripService) {
+			PointsGpsService pointsGpsService, TripService tripService, ReportsService reportsService) {
 		this.enterprisesService = enterprisesService;
 		this.vehiclesService = vehiclesService;
 		this.driversService = driversService;
@@ -89,8 +93,9 @@ public class ApiManagersController {
 		this.managersService = managersService;
 		this.pointsGpsService = pointsGpsService;
 		this.tripService = tripService;
+		this.reportsService = reportsService;
 	}
-
+	
 	// время в UTC = 0 (как исходно хранятся в таблице)
 	@GetMapping("/allpoints")
 	public List<PointGpsDTO> indexAllPointsGPS() {
@@ -102,9 +107,9 @@ public class ApiManagersController {
 	// время (возвращается) с учетом таймзоны предприятия, в запросе в UTC время
 	@GetMapping("/points")
 	public Object indexPointsGPS(@RequestParam(value = "vehicleId", defaultValue = "1") int vehicleId,
-											@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
-											@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
-											@RequestParam(value = "returnGeoJson", defaultValue = "false") boolean returnGeoJson) {
+								@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+								@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
+								@RequestParam(value = "returnGeoJson", defaultValue = "false") boolean returnGeoJson) {
 				
 		List<PointGps> points = pointsGpsService.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo);
 		
@@ -174,6 +179,28 @@ public class ApiManagersController {
 		return trips.stream().map(this::convertToTripDTO_forAPI)
 								.collect(Collectors.toList());
 		
+	}
+	
+	@GetMapping("/report")
+	public List<ReportResult> indexResult(@RequestBody ReportRequestDTO request) {
+		String timezone_enter = vehiclesService.findOne(request.getIdVehicle()).getEnterprise().getTimezone();
+
+		TimeZone timezone = TimeZone.getTimeZone("GMT" + timezone_enter);
+		SimpleDateFormat sdfLocal = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		sdfLocal.setTimeZone(timezone);
+
+		SimpleDateFormat sdfUTC = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		sdfUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		Date fromDate = sdfLocal.parse(request.getDateFrom());
+		Date toDate = sdfLocal.parse(request.getDateTo());
+
+		String dateFromUTC = sdfUTC.format(fromDate);
+		String dateToUTC = sdfUTC.format(toDate);
+		
+		List<Trip> trips = tripService.findAllByTimePeriod(request.getIdVehicle(), dateFromUTC, dateToUTC);
+		
+		return reportsService.getReport(request, trips);
 	}
 		
 	// время в таймзоне предприятия
@@ -272,10 +299,7 @@ public class ApiManagersController {
 	public List<Enterprise> indexEnterprises(@PathVariable("id") int id) {
 		return enterprisesService.findAllForManager(id);
 	}
-	
-
-
-	
+		
 // так было	
 //	@GetMapping("/{id}/vehicles")
 //	public List<VehicleDTO> indexVehicles(@PathVariable("id") int id) {
@@ -301,7 +325,6 @@ public class ApiManagersController {
 	}
 	
 	private VehicleDTO_forAPI convertToVehicleDTO_forAPI(Vehicle vehicle) {
-		
 		String timezone = vehicle.getEnterprise().getTimezone();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 	    LocalDateTime dateOfSale_UTC = LocalDateTime.parse(vehicle.getDateOfSale(), formatter);
@@ -316,7 +339,6 @@ public class ApiManagersController {
 	}
 	
 	private PointGpsDTO_forAPI convertToPointGpsDTO_forAPI(PointGps pointGps) {
-		
 		Vehicle vehicle = pointGps.getVehicle();
 		String timezone = vehicle.getEnterprise().getTimezone();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");

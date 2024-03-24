@@ -104,8 +104,9 @@ public class TrackGenerationService {
 		// блок сохранения отдельной поездки в таблицу trip
 		String timeOfStart = points.get(0).getTimeOfPointGps();
 		String timeOfEnd = points.get(points.size()-1).getTimeOfPointGps();
+		double distance = getDistance(startLong, startLat, endLong, endLat);
 		
-		Trip trip = new Trip(vehicle, timeOfStart, timeOfEnd);
+		Trip trip = new Trip(vehicle, timeOfStart, timeOfEnd, distance);
 		
 		tripService.save(trip);
 		
@@ -149,13 +150,10 @@ public class TrackGenerationService {
         
         return new PointGpsCoord(longitude, latitude);
 	}
-		
-	public List<PointGpsCoord> getRouting(double startLong, double startLat, double endLong, double endLat) {
-		List<PointGpsCoord> points = new ArrayList<>();
-				
+	
+	public double getDistance(double startLong, double startLat, double endLong, double endLat) {
+		double distance = 0;			
         String requestUrl = openRouteUrl + "&start=" + startLong + "," + startLat + "&end=" + endLong + "," + endLat;
-
-        System.out.println(requestUrl);
         
         try {
             HttpClient httpClient = HttpClients.createDefault();
@@ -164,16 +162,61 @@ public class TrackGenerationService {
 
             HttpResponse response = httpClient.execute(request);
             
-            System.out.println(response);
+            if (response.getStatusLine().getStatusCode() == 200) {
+            	HttpEntity entity = response.getEntity();
+                String jsonResponse = EntityUtils.toString(entity, "UTF-8");
+                distance = parseResponseForDistance(jsonResponse);
+            } else {
+                System.out.println("GET request failed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return distance;
+	}
+	
+	private static double parseResponseForDistance(String jsonResponse) {
+		double distance = 0;
+        try {
+            JSONObject responseObject = new JSONObject(jsonResponse);
+            JSONArray features = responseObject.getJSONArray("features");
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject feature = features.getJSONObject(i);
+                JSONObject properties = feature.getJSONObject("properties");
+                JSONObject summary = feature.getJSONObject("summary");
+                distance = summary.getDouble("distance");
+                System.out.println("Длина трека: " + distance);          
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            // обработка ошибки чтения или парсинга JSON
+        }
+        return distance;
+    }
+		
+	public List<PointGpsCoord> getRouting(double startLong, double startLat, double endLong, double endLat) {
+		List<PointGpsCoord> points = new ArrayList<>();	
+        String requestUrl = openRouteUrl + "&start=" + startLong + "," + startLat + "&end=" + endLong + "," + endLat;
+        //System.out.println(requestUrl);
+        
+        try {
+            HttpClient httpClient = HttpClients.createDefault();
+            HttpGet request = new HttpGet(requestUrl);
+            request.addHeader("Content-Type", "application/json");
+
+            HttpResponse response = httpClient.execute(request);
+            
+            //System.out.println(response);
 
             if (response.getStatusLine().getStatusCode() == 200) {
             	HttpEntity entity = response.getEntity();
-                String jsonResponse = EntityUtils.toString(entity, "UTF-8"); // Преобразуйте содержимое сущности в строку
+                String jsonResponse = EntityUtils.toString(entity, "UTF-8");
                 points = parseResponse(jsonResponse);
 
-                for (PointGpsCoord point : points) {
+                /*for (PointGpsCoord point : points) {
                     System.out.println("Point: " + point.getLongitude() + ", " + point.getLatitude());
-                }
+                }*/
             } else {
                 System.out.println("GET request failed");
             }
@@ -182,7 +225,6 @@ public class TrackGenerationService {
         }
         
         return points;
-		
 	}
 	
 	private static List<PointGpsCoord> parseResponse(String jsonResponse) {
@@ -204,7 +246,6 @@ public class TrackGenerationService {
                 double distance = feature.getJSONObject("properties").getJSONObject("summary").getDouble("distance");
                 System.out.println("Длина трека: " + distance);
                 
-          
             }
         } catch (JSONException e) {
             e.printStackTrace();

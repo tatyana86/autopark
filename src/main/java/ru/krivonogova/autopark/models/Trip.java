@@ -9,21 +9,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-/*
- * 19. Добавьте модель Поездка, в которой хранится автомобиль, 
- * и дата-время в UTC начало и окончание поездки без ограничений 
- * (может быть два часа, может быть два года).
-В API сделайте запрос, который по заданным дате-времени 
-начала и конца вытащит все поездки (считаем, что они в таймзоне предприятия) 
-— запрос именно по поездкам, но выдаются только точки трека по id заданного автомобиля. 
-Точки могут быть из нескольких реальных треков 
-(которые в проекте сами по себе никак не представлены); 
-условно, я могу запросить за месяц все поездки, и получу один огромный трек.
-Если начало первой поездки раньше начального времени запроса, 
-или окончание последней поездки позже времени конца запроса, 
-то их не включаем в выдачу.
- */
-
 @Entity
 @Table(name = "trip")
 public class Trip {
@@ -42,14 +27,18 @@ public class Trip {
 	
 	@Column(name = "time_end")
     private String timeOfEnd;
+	
+	@Column(name = "distance")
+    private double distance;
 
 	public Trip() {
 	}
 
-	public Trip(Vehicle vehicle, String timeOfStart, String timeOfEnd) {
+	public Trip(Vehicle vehicle, String timeOfStart, String timeOfEnd, double distance) {
 		this.vehicle = vehicle;
 		this.timeOfStart = timeOfStart;
 		this.timeOfEnd = timeOfEnd;
+		this.distance = distance;
 	}
 
 	public int getId() {
@@ -82,6 +71,14 @@ public class Trip {
 
 	public void setTimeOfEnd(String timeOfEnd) {
 		this.timeOfEnd = timeOfEnd;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
 	}
 
 }
