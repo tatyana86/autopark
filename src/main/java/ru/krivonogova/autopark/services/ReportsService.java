@@ -24,8 +24,8 @@ public class ReportsService {
 	        	Period period = request.getPeriod();
 	        	String dateFrom = request.getDateFrom();
 	        	String dateTo = request.getDateTo();
-	        	ReportMileageByPeriod report = new ReportMileageByPeriod(typeReport, period, dateFrom, dateTo, trips);
-	            return report;
+	        	ReportMileageByPeriod report = new ReportMileageByPeriod(period, dateFrom, dateTo, trips);
+	            return report.getResult();
 	        }
         }
 	}

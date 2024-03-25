@@ -10,12 +10,11 @@ public class Report {
 	private final String dateTo;
 	private List<ReportResult> result;
 	
-	public Report(TypeReport typeReport, Period period, String dateFrom, String dateTo, List<ReportResult> result) {
+	public Report(TypeReport typeReport, Period period, String dateFrom, String dateTo) {
 		this.typeReport = typeReport;
 		this.period = period;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
-		this.result = result;
 	}
 
 	public List<ReportResult> getResult() {

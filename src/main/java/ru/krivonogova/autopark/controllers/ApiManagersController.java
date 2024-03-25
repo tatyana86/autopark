@@ -182,7 +182,7 @@ public class ApiManagersController {
 	}
 	
 	@GetMapping("/report")
-	public List<ReportResult> indexResult(@RequestBody ReportRequestDTO request) {
+	public List<ReportResult> indexResult(@RequestBody ReportRequestDTO request) throws ParseException {
 		String timezone_enter = vehiclesService.findOne(request.getIdVehicle()).getEnterprise().getTimezone();
 
 		TimeZone timezone = TimeZone.getTimeZone("GMT" + timezone_enter);
