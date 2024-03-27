@@ -5,11 +5,11 @@ import ru.krivonogova.autopark.models.TypeReport;
 
 public class ReportRequestDTO {
 	
-	private final int idVehicle;
-	private final TypeReport typeReport;
-	private final Period period;
-	private final String dateFrom;
-	private final String dateTo;
+	private int idVehicle;
+	private TypeReport typeReport;
+	private Period period;
+	private String dateFrom;
+	private String dateTo;
 	
 	public ReportRequestDTO(int idVehicle, TypeReport typeReport, Period period, String dateFrom, String dateTo) {
 		this.idVehicle = idVehicle;
@@ -23,20 +23,40 @@ public class ReportRequestDTO {
 		return idVehicle;
 	}
 
+	public void setIdVehicle(int idVehicle) {
+		this.idVehicle = idVehicle;
+	}
+
 	public TypeReport getTypeReport() {
 		return typeReport;
+	}
+
+	public void setTypeReport(TypeReport typeReport) {
+		this.typeReport = typeReport;
 	}
 
 	public Period getPeriod() {
 		return period;
 	}
 
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
 	public String getDateFrom() {
 		return dateFrom;
 	}
 
+	public void setDateFrom(String dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
 	public String getDateTo() {
 		return dateTo;
+	}
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
 	}
 	
 }

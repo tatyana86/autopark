@@ -184,7 +184,7 @@ public class TrackGenerationService {
             for (int i = 0; i < features.length(); i++) {
                 JSONObject feature = features.getJSONObject(i);
                 JSONObject properties = feature.getJSONObject("properties");
-                JSONObject summary = feature.getJSONObject("summary");
+                JSONObject summary = properties.getJSONObject("summary");
                 distance = summary.getDouble("distance");
                 System.out.println("Длина трека: " + distance);          
             }

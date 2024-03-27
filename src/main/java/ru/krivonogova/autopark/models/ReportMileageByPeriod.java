@@ -33,7 +33,8 @@ public class ReportMileageByPeriod extends Report {
 		            currentDate = currentDate.plusDays(1);
 		        }
 		        for (Trip trip : trips) {
-		            LocalDate tripDate = startDate.toLocalDate();
+		        	LocalDateTime tripStartDateTime = LocalDateTime.parse(trip.getTimeOfStart(), DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+		            LocalDate tripDate = tripStartDateTime.toLocalDate();
 		            String tripDateStr = tripDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 		            if (dailyDistance.containsKey(tripDateStr)) {
 		                dailyDistance.put(tripDateStr, dailyDistance.get(tripDateStr) + trip.getDistance());
@@ -48,12 +49,13 @@ public class ReportMileageByPeriod extends Report {
 		    case MONTH: {
 		        Map<String, Double> monthlyDistance = new HashMap<>();
 		        YearMonth currentMonth = YearMonth.from(startDate);
-		        while (currentMonth.isBefore(YearMonth.from(endDate)) || currentMonth.equals(YearMonth.from(endDate))) {
+		        while (!currentMonth.isAfter(YearMonth.from(endDate))) {
 		            monthlyDistance.put(currentMonth.format(DateTimeFormatter.ofPattern("yyyy/MM")), 0.0);
 		            currentMonth = currentMonth.plusMonths(1);
 		        }
 		        for (Trip trip : trips) {
-		            YearMonth tripMonth = YearMonth.from(startDate.toLocalDate());
+		            LocalDateTime tripStartDateTime = LocalDateTime.parse(trip.getTimeOfStart(), DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+		            YearMonth tripMonth = YearMonth.from(tripStartDateTime);
 		            String tripMonthStr = tripMonth.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 		            if (monthlyDistance.containsKey(tripMonthStr)) {
 		                monthlyDistance.put(tripMonthStr, monthlyDistance.get(tripMonthStr) + trip.getDistance());

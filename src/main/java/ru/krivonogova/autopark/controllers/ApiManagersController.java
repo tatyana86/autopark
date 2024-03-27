@@ -48,9 +48,11 @@ import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
+import ru.krivonogova.autopark.models.Period;
 import ru.krivonogova.autopark.models.PointGps;
 import ru.krivonogova.autopark.models.ReportResult;
 import ru.krivonogova.autopark.models.Trip;
+import ru.krivonogova.autopark.models.TypeReport;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.DriversService;
@@ -182,7 +184,14 @@ public class ApiManagersController {
 	}
 	
 	@GetMapping("/report")
-	public List<ReportResult> indexResult(@RequestBody ReportRequestDTO request) throws ParseException {
+	public List<ReportResult> indexResult(@RequestParam int idVehicle,
+            @RequestParam TypeReport typeReport,
+            @RequestParam Period period,
+            @RequestParam String dateFrom,
+            @RequestParam String dateTo) throws ParseException {
+		
+		ReportRequestDTO request = new ReportRequestDTO(idVehicle, typeReport, period, dateFrom, dateTo);
+		
 		String timezone_enter = vehiclesService.findOne(request.getIdVehicle()).getEnterprise().getTimezone();
 
 		TimeZone timezone = TimeZone.getTimeZone("GMT" + timezone_enter);

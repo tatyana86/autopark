@@ -84,12 +84,17 @@
 		    	</tbody>
 			</table>
 		        
+			<form th:action="@{/managers/report}" th:method="GET">
+				<div class="mb-3" style="padding: 10px 20px;" >
+				<input type="submit" value="Создать отчет" class="btn btn-primary" />
+				</div>
+			</form>
 
-		        <form th:action="@{/logout}" th:method="POST">
-		            <div class="mb-3" style="padding: 10px 20px;" >
-		                <input type="submit" value="Выйти" class="btn btn-danger" />
-		            </div>
-		        </form>
+	        <form th:action="@{/logout}" th:method="POST">
+	            <div class="mb-3" style="padding: 10px 20px;" >
+	                <input type="submit" value="Выйти" class="btn btn-danger" />
+	            </div>
+	        </form>
 		</div>
 		    
 	</body>

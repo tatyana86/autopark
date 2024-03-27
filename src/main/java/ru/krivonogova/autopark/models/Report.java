@@ -4,10 +4,10 @@ import java.util.List;
 
 public class Report {
 	
-	private final TypeReport typeReport;
-	private final Period period;
-	private final String dateFrom;
-	private final String dateTo;
+	private TypeReport typeReport;
+	private Period period;
+	private String dateFrom;
+	private String dateTo;
 	private List<ReportResult> result;
 	
 	public Report(TypeReport typeReport, Period period, String dateFrom, String dateTo) {
@@ -39,6 +39,22 @@ public class Report {
 
 	public String getDateTo() {
 		return dateTo;
+	}
+
+	public void setTypeReport(TypeReport typeReport) {
+		this.typeReport = typeReport;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	public void setDateFrom(String dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
 	}
 	
 }

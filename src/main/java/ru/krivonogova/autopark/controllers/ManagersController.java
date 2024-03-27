@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -29,18 +30,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
+import ru.krivonogova.autopark.dto.ReportRequestDTO;
 import ru.krivonogova.autopark.dto.TripDTO;
 import ru.krivonogova.autopark.dto.TripDTO_forAPI;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.models.Enterprise;
+import ru.krivonogova.autopark.models.Period;
 import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.ReportResult;
 import ru.krivonogova.autopark.models.Trip;
+import ru.krivonogova.autopark.models.TypeReport;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.BrandsService;
 import ru.krivonogova.autopark.services.EnterprisesService;
 import ru.krivonogova.autopark.services.ManagersService;
 import ru.krivonogova.autopark.services.PointsGpsService;
+import ru.krivonogova.autopark.services.ReportsService;
 import ru.krivonogova.autopark.services.TripService;
 import ru.krivonogova.autopark.services.VehiclesService;
 
@@ -54,16 +60,18 @@ public class ManagersController {
 	private final BrandsService brandsService;
 	private final TripService tripService;
 	private final PointsGpsService pointsGpsService;
+	private final ReportsService reportsService;
 	private final ModelMapper modelMapper;
 	
 	@Autowired	
-	public ManagersController(EnterprisesService enterprisesService, ManagersService managersService, VehiclesService vehiclesService, ModelMapper modelMapper, BrandsService brandsService, TripService tripService, PointsGpsService pointsGpsService) {
+	public ManagersController(EnterprisesService enterprisesService, ManagersService managersService, VehiclesService vehiclesService, ModelMapper modelMapper, BrandsService brandsService, TripService tripService, PointsGpsService pointsGpsService, ReportsService reportsService) {
 		this.enterprisesService = enterprisesService;
 		this.managersService = managersService;
 		this.vehiclesService = vehiclesService;
 		this.brandsService = brandsService;
 		this.tripService = tripService;
 		this.pointsGpsService = pointsGpsService;
+		this.reportsService = reportsService;
 		this.modelMapper = modelMapper;
 	}
 
@@ -128,6 +136,45 @@ public class ManagersController {
         return "vehicles/index";
 	}
 	
+	
+	@GetMapping("/report")
+	public String create(@RequestParam(value = "idVehicle", required = false) Integer idVehicle,
+						@RequestParam(value = "typeReport", required = false) TypeReport typeReport,
+						@RequestParam(value = "period", required = false) Period period,
+						@RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+                        @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+						Model model) {
+		
+		model.addAttribute("vehicles", vehiclesService.findAllForManager(getManagerId()));
+		model.addAttribute("types", TypeReport.values());
+		model.addAttribute("periods", Period.values());
+		
+		if(idVehicle != null) {
+			
+			System.out.println(dateFrom+ " " + dateTo);
+			LocalDateTime dateTimeFrom = LocalDateTime.of(dateFrom, LocalTime.MIDNIGHT);
+	        LocalDateTime dateTimeTo = LocalDateTime.of(dateTo, LocalTime.of(23, 59, 59));
+	        
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+	        String formattedDateTimeFrom = dateTimeFrom.format(formatter);
+	        String formattedDateTimeTo = dateTimeTo.format(formatter);
+	        
+	        System.out.println(formattedDateTimeFrom + " " + formattedDateTimeTo);
+	        
+	        ReportRequestDTO request = new ReportRequestDTO(idVehicle, typeReport, period, formattedDateTimeFrom, formattedDateTimeTo);
+	        List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, formattedDateTimeFrom, formattedDateTimeTo);
+	        
+	        for(Trip trip : trips) {
+	        	System.out.println(trip.getId());
+	        }
+	        
+	        List<ReportResult> result = reportsService.getReport(request, trips);
+	        model.addAttribute("result", result);
+		}
+		
+		return "report/new";		
+	}
+	
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
 	public String show(@PathVariable("idEnterprise") int idEnterprise,
 						@PathVariable("idVehicle") int idVehicle,
@@ -163,9 +210,7 @@ public class ManagersController {
 			    .collect(Collectors.toList());
 		model.addAttribute("trips", tripList);
 		//model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
-		
-		System.out.println(idTrip);
-		
+				
 		if(idTrip != null) {
 			List<PointGps> points = pointsGpsService.findAllByVehicleAndTrip(idVehicle, Arrays.asList(tripService.findOne(idTrip)));
 			String request = generateMapRequest(points);
@@ -184,7 +229,7 @@ public class ManagersController {
 		return "vehicles/show";
 	}
 	
-	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}/trips/{idTrip}")
+	/*@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}/trips/{idTrip}")
 	public String showTrip(@PathVariable("idEnterprise") int idEnterprise,
 						@PathVariable("idVehicle") int idVehicle,
 						@PathVariable("idTrip") int idTrip,
@@ -199,7 +244,7 @@ public class ManagersController {
 		model.addAttribute("mapUrl", request);
 		
 		return "trips/show";
-	}
+	}*/
 	
 	private String generateMapRequest(List<PointGps> points) {
 		String API_KEY = "4bc5b115-13bb-4a08-9e29-88347ed6207a";
