@@ -93,7 +93,7 @@ public class TrackGenerationService {
 		    pointsGpsService.save(point);
 		    
             try {
-                TimeUnit.SECONDS.sleep(10); // Делаем паузу в конце каждой итерации
+                TimeUnit.SECONDS.sleep(5); // Делаем паузу в конце каждой итерации
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

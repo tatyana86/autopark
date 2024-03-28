@@ -141,33 +141,32 @@ public class ManagersController {
 	public String create(@RequestParam(value = "idVehicle", required = false) Integer idVehicle,
 						@RequestParam(value = "typeReport", required = false) TypeReport typeReport,
 						@RequestParam(value = "period", required = false) Period period,
-						@RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                        @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
 						Model model) {
 		
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+		
+		LocalDate dateFromDate = dateFrom.isEmpty() ? LocalDate.now().minusWeeks(1) : LocalDate.parse(dateFrom, inputFormatter);
+		LocalDate dateToDate = dateTo.isEmpty() ? LocalDate.now() : LocalDate.parse(dateTo, inputFormatter);
+		
+		dateFrom = dateFromDate.atStartOfDay().format(outputFormatter);
+		dateTo = dateToDate.atStartOfDay().plusDays(1).minusSeconds(1).format(outputFormatter);
+		
+		// для представления
+		String formattedFrom = dateFromDate.atStartOfDay().format(inputFormatter);
+		String formattedTo = dateToDate.atStartOfDay().format(inputFormatter);
+		
+		model.addAttribute("dateFrom", formattedFrom);
+		model.addAttribute("dateTo", formattedTo);		
 		model.addAttribute("vehicles", vehiclesService.findAllForManager(getManagerId()));
 		model.addAttribute("types", TypeReport.values());
 		model.addAttribute("periods", Period.values());
 		
-		if(idVehicle != null) {
-			
-			System.out.println(dateFrom+ " " + dateTo);
-			LocalDateTime dateTimeFrom = LocalDateTime.of(dateFrom, LocalTime.MIDNIGHT);
-	        LocalDateTime dateTimeTo = LocalDateTime.of(dateTo, LocalTime.of(23, 59, 59));
-	        
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-	        String formattedDateTimeFrom = dateTimeFrom.format(formatter);
-	        String formattedDateTimeTo = dateTimeTo.format(formatter);
-	        
-	        System.out.println(formattedDateTimeFrom + " " + formattedDateTimeTo);
-	        
-	        ReportRequestDTO request = new ReportRequestDTO(idVehicle, typeReport, period, formattedDateTimeFrom, formattedDateTimeTo);
-	        List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, formattedDateTimeFrom, formattedDateTimeTo);
-	        
-	        for(Trip trip : trips) {
-	        	System.out.println(trip.getId());
-	        }
-	        
+		if(idVehicle != null) {       	        
+	        ReportRequestDTO request = new ReportRequestDTO(idVehicle, typeReport, period, dateFrom, dateTo);
+	        List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, dateFrom, dateTo);	        
 	        List<ReportResult> result = reportsService.getReport(request, trips);
 	        model.addAttribute("result", result);
 		}
@@ -214,7 +213,6 @@ public class ManagersController {
 		if(idTrip != null) {
 			List<PointGps> points = pointsGpsService.findAllByVehicleAndTrip(idVehicle, Arrays.asList(tripService.findOne(idTrip)));
 			String request = generateMapRequest(points);
-			System.out.println(request);
 			model.addAttribute("mapUrl", request);
 			model.addAttribute("idTrip", idTrip);
 		}
@@ -222,7 +220,6 @@ public class ManagersController {
 		if(showAll) {
 			List<PointGps> points = pointsGpsService.findAllByVehicleAndTrip(idVehicle, trips);
 			String request = generateMapRequest(points);
-			System.out.println(request);
 			model.addAttribute("mapUrlForAll", request);
 		}
 		
