@@ -174,6 +174,41 @@ public class ManagersController {
 		return "report/new";		
 	}
 	
+	@GetMapping("/report/show")
+	public String show(@RequestParam(value = "idVehicle", required = false) Integer idVehicle,
+						@RequestParam(value = "typeReport", required = false) TypeReport typeReport,
+						@RequestParam(value = "period", required = false) Period period,
+						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
+						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
+						Model model) {
+		
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+		
+		LocalDate dateFromDate = dateFrom.isEmpty() ? LocalDate.now().minusWeeks(1) : LocalDate.parse(dateFrom, inputFormatter);
+		LocalDate dateToDate = dateTo.isEmpty() ? LocalDate.now() : LocalDate.parse(dateTo, inputFormatter);
+		
+		dateFrom = dateFromDate.atStartOfDay().format(outputFormatter);
+		dateTo = dateToDate.atStartOfDay().plusDays(1).minusSeconds(1).format(outputFormatter);
+		
+		// для представления
+		String formattedFrom = dateFromDate.atStartOfDay().format(inputFormatter);
+		String formattedTo = dateToDate.atStartOfDay().format(inputFormatter);
+		
+		model.addAttribute("dateFrom", formattedFrom);
+		model.addAttribute("dateTo", formattedTo);		
+		model.addAttribute("vehicle", vehiclesService.findOne(idVehicle));
+		model.addAttribute("type", typeReport);
+		model.addAttribute("period", period);
+		     	        
+        ReportRequestDTO request = new ReportRequestDTO(idVehicle, typeReport, period, dateFrom, dateTo);
+        List<Trip> trips = tripService.findAllByTimePeriod(idVehicle, dateFrom, dateTo);	        
+        List<ReportResult> result = reportsService.getReport(request, trips);
+        model.addAttribute("result", result);
+		
+		return "report/show";
+	}
+	
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
 	public String show(@PathVariable("idEnterprise") int idEnterprise,
 						@PathVariable("idVehicle") int idVehicle,
