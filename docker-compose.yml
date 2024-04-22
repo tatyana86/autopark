@@ -2,18 +2,15 @@ version: '3'
 
 services:
   nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     container_name: nginx
-    image: nginx:1.13
     restart: always
     ports:
-      - 8080:80
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - web-root:/home/tanya/git
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
+      - "80:80"
     networks:
-      - app-network    
+      - app-network
 
   certbot:
     image: certbot/certbot
@@ -40,7 +37,7 @@ services:
     networks:
       - app-network    
 
-  app:
+  autopark:
     container_name: autopark
     build:
       context: .
