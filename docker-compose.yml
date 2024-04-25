@@ -20,17 +20,18 @@ services:
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - web-root:/home/tanya/git
-    command: certonly --webroot --webroot-path=/home/tanya/git --email tanyaridman@gmail.com --agree-tos --no-eff-email --staging -d 46.0.180.5
+      - web-root:/app
+    command: certonly --webroot --webroot-path=/app --email tanyaridman@gmail.com --agree-tos --no-eff-email --staging -d localhost
 
   postgresql:
     container_name: postgresql
-    image: postgres:12.2-alpine
+    image: postgis/postgis
     environment:
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5434:5432"  
+      - "5432:5432"  
     restart: always
     volumes:
       - ./init:/docker-entrypoint-initdb.d/
@@ -43,10 +44,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - "DB_HOST=postgresql"
-      - "POSTGRES_USER=${POSTGRES_USER}"
-      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
-      - "SERVER_PORT=8080" 
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/autopark
     expose:
       - "8080"
     depends_on:
