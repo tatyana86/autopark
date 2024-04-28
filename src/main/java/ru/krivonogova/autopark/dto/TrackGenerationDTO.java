@@ -22,5 +22,4 @@ public class TrackGenerationDTO {
 		this.lengthOfTrack = lengthOfTrack;
 	}
 	
-	
 }

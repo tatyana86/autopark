@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ru.krivonogova.autopark.dto.BigDataGenerationDTO;
 import ru.krivonogova.autopark.dto.TrackGenerationDTO;
 import ru.krivonogova.autopark.services.TrackGenerationService;
 
@@ -24,6 +25,13 @@ public class TrackGenerationController {
 	public void generateTrack(@RequestBody TrackGenerationDTO request) {
 		
 		trackGenerationService.generateTrack(request);
+		
+	}
+	
+	@PostMapping("/bigdata")
+	public void generateBigData(@RequestBody BigDataGenerationDTO request) throws InterruptedException {
+		
+		trackGenerationService.generateBigData(request);
 		
 	}
 	

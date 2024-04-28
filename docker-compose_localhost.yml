@@ -9,10 +9,6 @@ services:
     restart: always
     ports:
       - "80:80"
-    volumes:
-      - web-root:/app
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/app/lib/letsencrypt
     networks:
       - app-network
 
@@ -25,7 +21,7 @@ services:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - web-root:/app
-    command: certonly --webroot --webroot-path=/app --email tanyaridman@gmail.com --agree-tos --no-eff-email --staging -d mysweetcar.ru
+    command: certonly --webroot --webroot-path=/app --email tanyaridman@gmail.com --agree-tos --no-eff-email --staging -d localhost
 
   postgresql:
     container_name: postgresql

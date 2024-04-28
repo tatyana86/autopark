@@ -146,5 +146,13 @@ public class VehiclesService {
 		
 	    return vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId, pageable);
 	}
+	
+	public Page<Vehicle> findAll(Integer page,
+								Integer itemsPerPage) {
+		
+		Pageable pageable = PageRequest.of(page - 1, itemsPerPage);	
+		
+		return vehiclesRepository.findAll(pageable);
+	}
 		
 }

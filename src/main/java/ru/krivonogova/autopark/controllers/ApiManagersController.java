@@ -350,11 +350,11 @@ public class ApiManagersController {
 	private PointGpsDTO_forAPI convertToPointGpsDTO_forAPI(PointGps pointGps) {
 		Vehicle vehicle = pointGps.getVehicle();
 		String timezone = vehicle.getEnterprise().getTimezone();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 	    LocalDateTime timeOfPointGps_UTC = LocalDateTime.parse(pointGps.getTimeOfPointGps(), formatter);
 	    ZoneOffset timeZone = ZoneOffset.of(timezone);
 	    LocalDateTime timeOfPointGps = timeOfPointGps_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
-	    String timeOfPointGpsForEnterprise = timeOfPointGps.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	    String timeOfPointGpsForEnterprise = timeOfPointGps.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 	    
 	    PointGpsDTO_forAPI pointGpsDTO_forAPI = modelMapper.map(pointGps, PointGpsDTO_forAPI.class);
 	    pointGpsDTO_forAPI.setTimeOfPointGpsForEnterprise(timeOfPointGpsForEnterprise);

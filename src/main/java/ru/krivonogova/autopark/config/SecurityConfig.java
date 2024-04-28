@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,8 +14,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
@@ -61,6 +65,7 @@ public class SecurityConfig {
         		.requestMatchers("api/managers/1/**").hasRole("MANAGER1")
         		.requestMatchers("api/managers/2/**").hasRole("MANAGER2")
         		.requestMatchers("api/managers", "api/**", "managers/**").hasAnyRole("MANAGER1", "MANAGER2")
+        		.requestMatchers("/vehicles").hasAnyRole("USER")
                 .requestMatchers("/auth/login", "/auth/registration").permitAll()
                 .anyRequest().authenticated()
         	);
@@ -70,7 +75,7 @@ public class SecurityConfig {
         formLogin
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/process_login")
-//                .defaultSuccessUrl("/vehicles", true)
+                //.defaultSuccessUrl("/vehicles", true)
                 .defaultSuccessUrl("/managers/enterprises", true)
                 .failureUrl("/auth/login?error")
         		);
@@ -83,5 +88,5 @@ public class SecurityConfig {
         		
 		return http.build();
 	}
-	
+		
 }

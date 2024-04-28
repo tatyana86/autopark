@@ -1,6 +1,8 @@
 package ru.krivonogova.autopark.services;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -108,6 +110,8 @@ public class DataGenerationService {
 		vehicle.setRegistrationNumber(generateRegistrationNumber());
 		vehicle.setYearOfProduction(generateYearOfProduction());
 		
+		vehicle.setDateOfSale(generateDateOfSale());
+		
 		return vehicle;
 	}
 	
@@ -185,5 +189,17 @@ public class DataGenerationService {
 		Random random = new Random();
 		
 		return minYear + random.nextInt(maxYear - minYear + 1);
+	}
+	
+	private String generateDateOfSale() {
+		// Генерация случайной даты за последние 20 лет
+        long twentyYearsInMillis = 20L * 365 * 24 * 60 * 60 * 1000; // количество миллисекунд в 20 годах
+        long currentTimeMillis = System.currentTimeMillis(); // текущее время в миллисекундах
+        long randomTimeMillis = currentTimeMillis - (long) (Math.random() * twentyYearsInMillis); // случайное время за последние 20 лет
+        Date randomDate = new Date(randomTimeMillis);
+
+        // Форматирование даты в строку
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        return dateFormat.format(randomDate);
 	}
  }

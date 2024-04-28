@@ -1,6 +1,15 @@
 package ru.krivonogova.autopark.controllers;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
+import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.models.Vehicle;
+import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.BrandsService;
 import ru.krivonogova.autopark.services.VehiclesService;
 
@@ -24,17 +35,48 @@ public class VehiclesController {
 	
 	private final VehiclesService vehiclesService;
 	private final BrandsService brandsService;
+	private final ModelMapper modelMapper;
 
 	@Autowired
-	public VehiclesController(VehiclesService vehiclesService, BrandsService brandsService) {
+	public VehiclesController(VehiclesService vehiclesService, BrandsService brandsService, ModelMapper modelMapper) {
 		this.vehiclesService = vehiclesService;
 		this.brandsService = brandsService;
+		this.modelMapper = modelMapper;
 	}
 	
 	@GetMapping
-	public String index(Model model) {
-		model.addAttribute("vehicles", vehiclesService.findAll());
-        return "vehicles/index";
+	public String index(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+						@RequestParam(value = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
+						Model model) {
+		
+		Integer idPerson = getPersonId();
+		String timezone = getPersonTimezone();
+		
+		Page<Vehicle> vehiclesPage = vehiclesService.findAll(page, itemsPerPage);
+		
+		model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(vehicle -> convertToVehicleDTO(vehicle, timezone)).collect(Collectors.toList()));
+	    model.addAttribute("currentPage", vehiclesPage.getNumber() + 1);
+	    model.addAttribute("totalPages", vehiclesPage.getTotalPages());
+	    model.addAttribute("hasNext", vehiclesPage.hasNext());
+	    model.addAttribute("hasPrevious", vehiclesPage.hasPrevious());
+
+        return "vehicles/index_preview";
+	}
+	
+	private Integer getPersonId() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+		Integer idPerson = personDetails.getPerson().getId();
+		
+		return idPerson;
+	}
+	
+	private String getPersonTimezone() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+	    String timezone = personDetails.getPerson().getTimezone();   
+	    
+	    return timezone;
 	}
 	
 	@GetMapping("/{id}")
@@ -100,5 +142,22 @@ public class VehiclesController {
 		vehiclesService.delete(id);
 		
 		return "redirect:/vehicles";
+	}
+	
+	private VehicleDTO convertToVehicleDTO(Vehicle vehicle, String timezone) {
+	    
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+	    LocalDateTime dateOfSale_UTC = LocalDateTime.parse(vehicle.getDateOfSale(), formatter);
+	    ZoneOffset timeZone = ZoneOffset.of(timezone);
+	    LocalDateTime dateOfSale = dateOfSale_UTC.atZone(ZoneOffset.UTC).withZoneSameInstant(timeZone).toLocalDateTime();
+	    String dateOfSaleForManager = dateOfSale.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+
+	    VehicleDTO vehicleDTO = modelMapper.map(vehicle, VehicleDTO.class);
+	    vehicleDTO.setDateOfSaleForManager(dateOfSaleForManager);
+	    
+	    // System.out.println(vehicleDTO.getDateOfSale());
+	    // System.out.println(vehicleDTO.getDateOfSaleForManager());
+	    
+	    return vehicleDTO;
 	}
 }

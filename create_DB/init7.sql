@@ -60,6 +60,7 @@ UPDATE manager SET timezone = '+02:00' WHERE username = 'manager2';
 ALTER TABLE person ADD COLUMN timezone VARCHAR (20);
 UPDATE person SET timezone = '-02:00' WHERE username = 'manager1';
 UPDATE person SET timezone = '+02:00' WHERE username = 'manager2';
+UPDATE person SET timezone = '+01:00' WHERE username = 'qwer';
 
 SELECT * FROM vehicle;
 

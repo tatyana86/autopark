@@ -1,6 +1,7 @@
 package ru.krivonogova.autopark.services;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,9 @@ public class EnterprisesService {
 	}
 	
 	public List<Enterprise> findAllForManager(int id) {
-		return enterprisesRepository.findEnterprisesByManagers_id(id);
+	    List<Enterprise> enterprises = enterprisesRepository.findEnterprisesByManagers_id(id);
+	    enterprises.sort(Comparator.comparingInt(Enterprise::getId));
+	    return enterprises;
 	}
 	
 	@Transactional

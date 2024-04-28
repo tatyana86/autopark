@@ -16,4 +16,6 @@ public interface VehiclesRepository extends JpaRepository<Vehicle, Integer> {
 	
 	Page<Vehicle> findVehiclesByEnterprise_id(int id, Pageable pageable);
 	
+	Page<Vehicle> findAll(Pageable pageable);
+	
 }
