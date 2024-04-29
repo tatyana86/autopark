@@ -12,7 +12,7 @@ services:
     volumes:
       - web-root:/app
       - certbot-etc:/etc/letsencrypt
-      - certbot-var:/app/lib/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
     networks:
       - app-network
 
