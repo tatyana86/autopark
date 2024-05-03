@@ -17,11 +17,11 @@ jobs:
       
     - name: Insert repo
       uses: D3rHase/ssh-command-action@v0.2.2
-        with:
-          host: ${{secrets.SSH_HOST}}
-          user: ${{secrets.SSH_USER}}
-          private_key: ${{secrets.KEY}}
-          command: |
-            cd ${{ secrets.PROJECT_FOLDER }};
-            git checkout main;
-            git pull;
+      with:
+        host: ${{secrets.SSH_HOST}}
+        user: ${{secrets.SSH_USER}}
+        private_key: ${{secrets.KEY}}
+        command: |
+          cd ${{ secrets.PROJECT_FOLDER }};
+          git checkout main;
+          git pull;
