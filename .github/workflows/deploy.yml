@@ -1,27 +1,30 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch
+
+env:
+  SSH_HOST: ${{secrets.SSH_HOST}}
+  SSH_USER: ${{secrets.SSH_USER}}
+  PROJECT_FOLDER: ${{secrets.PROJECT_FOLDER}}
 
 
 jobs:
-
   my_deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Git clone my repo
+    - name: Copy repo
       uses: actions/checkout@v4
       
-    - name: Insert repo
-      uses: D3rHase/ssh-command-action@v0.2.2
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2.3.1
       with:
-        host: ${{secrets.SSH_HOST}}
-        user: ${{secrets.SSH_USER}}
-        private_key: ${{secrets.KEY}}
-        command: |
-          cd ${{ secrets.PROJECT_FOLDER }};
-          git checkout main;
-          git pull;
+        key: "${{ secrets.KEY }}"
+        known_hosts: "just-a-placeholder-so-we-dont-get-errors"
+          
+    - name: Generate auth hosts
+      run: ssh-keyscan -H ${{ env.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # Deploy
+    - run: rsync --archive --compress --progress . ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:${{ env.PROJECT_FOLDER }}
