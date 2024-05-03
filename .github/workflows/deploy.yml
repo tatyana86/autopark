@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+jobs:
+
+  my_deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Git clone my repo
+      uses: actions/checkout@v4
+      
+    - name: Insert repo
+      uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          user: ${{secrets.SSH_USER}}
+          private_key: ${{secrets.KEY}}
+          command: |
+            cd ${{ secrets.PROJECT_FOLDER }};
+            git checkout main;
+            git pull;
