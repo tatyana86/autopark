@@ -37,4 +37,5 @@ jobs:
     - name: Deploy
       run: rsync --archive --compress --progress . ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:${{ env.PROJECT_FOLDER }}
       
-
+    - name: Build and start new containers
+      run: ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "cd ${{ env.PROJECT_FOLDER }} && docker-compose up -d --build"
