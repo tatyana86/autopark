@@ -9,12 +9,10 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - web-root:/app
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - dhparam:/etc/ssl/certs
     networks:
       - app-network
 
@@ -63,13 +61,7 @@ services:
 volumes:
   certbot-etc:
   certbot-var:
-  web-root:
-  dhparam:  
-    driver: local
-    driver_opts:
-      type: none
-      device: /var/projects/autopark/dhparam/
-      o: bind     
+  web-root:        
 
 networks:
   app-network:
