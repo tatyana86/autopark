@@ -28,6 +28,7 @@ jobs:
 
     - name: Stop running containers
       run: |
+        ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "cd ${{ env.PROJECT_FOLDER }}"
         ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "docker-compose down"
         echo "yes" | ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "docker system prune"
 
