@@ -1,7 +1,6 @@
-package ru.krivonogova.autopark.controllers;
+package ru.krivonogova.autopark.controllers.view;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.modelmapper.ModelMapper;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,38 +10,42 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.models.Brand;
 import ru.krivonogova.autopark.models.TypeVehicle;
-import ru.krivonogova.autopark.services.BrandsService;
 
-@Controller
-@RequestMapping("/brands")
-public class BrandsController {
-	
-	private final BrandsService brandsService;
+@RestController
+@RequestMapping
+public class PrimitiveController {
 
-	@Autowired
-	public BrandsController(BrandsService brandsService) {
-		this.brandsService = brandsService;
+	private final DatabaseController databaseController;
+	private final ModelMapper modelMapper;
+
+	public PrimitiveController(DatabaseController databaseController, ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+		this.databaseController = databaseController;
 	}
 	
-	@GetMapping
+	// CRUD для брендов
+	
+	@GetMapping("/brands")
 	public String index(Model model) {
-		model.addAttribute("brands", brandsService.findAll());
+		model.addAttribute("brands", databaseController.findAllBrands());
         return "brands/index";
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/brands/{id}")
 	public String show(@PathVariable("id") int id, Model model, 
 						@ModelAttribute("vehicle") Brand brand) {
-		model.addAttribute("brand", brandsService.findOne(id));
+		model.addAttribute("brand", databaseController.findOneBrand(id));
 		
 		return "brands/show";
 	}	
 	
-	@GetMapping("/new")
+	@GetMapping("/brands/new")
 	public String newBrand(@ModelAttribute("brand") Brand brand,
 							Model model) {	
 				
@@ -52,29 +55,29 @@ public class BrandsController {
 		return "brands/new";
 	}
 	
-    @PostMapping
+    @PostMapping("/brands")
 	public String create(@ModelAttribute("brand") @Valid Brand brand,
 						BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
 			return "brands/new";
 		}
 		
-		brandsService.save(brand);
+		databaseController.saveBrand(brand);
 		return "redirect:/brands";
 	}
-    
-    @GetMapping("/{id}/edit")
+	
+    @GetMapping("/brands/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
     	
     	TypeVehicle[] types = TypeVehicle.values();
 		model.addAttribute("types", types);
     	
-    	model.addAttribute("brand", brandsService.findOne(id));
+    	model.addAttribute("brand", databaseController.findOneBrand(id));
     	
     	return "brands/edit";
     }
 	
-    @PatchMapping("/{id}")
+    @PatchMapping("/brands/{id}")
     public String update(@ModelAttribute("brand") @Valid Brand brand,
     					BindingResult bindingResult,
     					@PathVariable("id") int id) {
@@ -82,15 +85,16 @@ public class BrandsController {
 			return "brands/edit";
 		}
 		
-		brandsService.update(id, brand);
+		databaseController.updateBrand(id, brand);
 		return "redirect:/brands";
     }
     
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/brands/{id}")
     public String delete(@PathVariable("id") int id) {
-    	brandsService.delete(id);
+    	databaseController.deleteBrand(id);
     	return "redirect:/brands";
     }
-	
-
+    
+    // CRUD для транспорта
+    
 }

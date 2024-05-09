@@ -36,6 +36,7 @@ public class VehiclesService {
 		return vehiclesRepository.findAll();
 	}
 	
+	//+
 	public Vehicle findOne(int id) {
 		Optional<Vehicle> foundVehicle = vehiclesRepository.findById(id);
 		
@@ -55,6 +56,7 @@ public class VehiclesService {
 		vehiclesRepository.save(vehicle);
 	}
 	
+	//+
 	@Transactional
 	public void save(Vehicle vehicle) {
 		vehiclesRepository.save(vehicle);
@@ -82,17 +84,20 @@ public class VehiclesService {
 		vehiclesRepository.save(updatedVehicle);		
 	}
 	
+	//+
 	@Transactional
 	public void update(int id, Vehicle updatedVehicle) {
 		updatedVehicle.setId(id);
 		vehiclesRepository.save(updatedVehicle);	
 	}
 	
+	//+
 	@Transactional
 	public void delete(int id) {
 		vehiclesRepository.deleteById(id);
 	}
 	
+	//+
 	public List<Vehicle> findAllForManager(int managerId) {
 		
 		List<Enterprise> enterprises = enterprisesService.findAllForManager(managerId);
@@ -115,6 +120,7 @@ public class VehiclesService {
 		return vehicles;
 	}
 	
+	//+
 	public Page<Vehicle> findAllForManager(int managerId, Integer page, Integer itemsPerPage) {
 		
 		List<Enterprise> enterprises = enterprisesService.findAllForManager(managerId);

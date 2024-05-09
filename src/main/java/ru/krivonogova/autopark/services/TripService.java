@@ -21,9 +21,7 @@ public class TripService {
 		this.tripRepository = tripRepository;
 	}
 	
-	public List<Trip> findAllByTimePeriod(int vehicleId, String dateFrom, String dateTo) {
-		return tripRepository.findTripsByVehicleAndTimeRange(vehicleId, dateFrom, dateTo);
-	}
+
 	
 	public Trip findOne(int id) {
 		Optional<Trip> foundTrip = tripRepository.findById(id);

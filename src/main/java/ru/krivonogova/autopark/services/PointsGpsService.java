@@ -33,10 +33,12 @@ public class PointsGpsService {
 	
 	private final String openRouteUrl = "https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf624881622e92681c4a87909ab330c6345a1e";
 	
+	//+
 	public List<PointGps> findAll() {
 		return pointsGpsRepository.findAll();
 	}
 	
+	//+
 	public List<PointGps> findAllByVehicleAndTimePeriod(int vehicleId, String dateFrom, String dateTo) {
 		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo);
 	}
@@ -49,18 +51,18 @@ public class PointsGpsService {
 		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom_upd, dateTo_upd);
 	}
 	
-	/*public List<PointGps> findAllByVehicleId(int vehicleId) {
-		return pointsGpsRepository.findAllByVehicleId(vehicleId);
-	}*/
+
 	
     public Optional<PointGps> findById(int id) {
         return pointsGpsRepository.findById(id);
     }
     
+    //+
     public Optional<PointGps> findByVehicleAndTime(int vehicleId, String time) {
         return pointsGpsRepository.findFirstByVehicleIdAndTimeOfPointGps(vehicleId, time);
     }
         
+    //+
     public String takeAddressOfPointGPS(PointGps pointGps) {
     	
     	String addressOfPointGPS = "";
