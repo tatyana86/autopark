@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.krivonogova.autopark.models.Brand;
@@ -30,6 +31,8 @@ import ru.krivonogova.autopark.util.EnterpriseNotDeletedException;
 import ru.krivonogova.autopark.util.EnterpriseNotUpdatedException;
 import ru.krivonogova.autopark.util.VehicleNotFoundException;
 
+@Service
+@Transactional(readOnly = true)
 public class DatabaseController {
 	private final BrandsRepository brandsRepository;
 	private final DriversRepository driversRepository;
@@ -88,11 +91,24 @@ public class DatabaseController {
 		return foundDriver.orElse(null);
 	}
 	
+	@Transactional
+	public void saveAllDrivers(List<Driver> drivers) {
+		driversRepository.saveAll(drivers);
+	}
+	
 	/* Транспорт */
 	
 	public List<Vehicle> findAllVehicles() {
 		return vehiclesRepository.findAll();
 	}
+	
+	public Page<Vehicle> findAllVehicles(Integer page,
+								Integer itemsPerPage) {
+	
+		Pageable pageable = PageRequest.of(page - 1, itemsPerPage);	
+	
+		return vehiclesRepository.findAll(pageable);
+	}	
 	
 	public Vehicle findOneVehicle(int id) {
 		Optional<Vehicle> foundVehicle = vehiclesRepository.findById(id);
@@ -105,9 +121,42 @@ public class DatabaseController {
 	}
 	
 	@Transactional
+	public void saveVehicle(Vehicle vehicle, int brandId) {
+		vehicle.setBrand(findOneBrand(brandId));
+		vehiclesRepository.save(vehicle);
+	}
+	
+	@Transactional
+	public void saveVehicle(Vehicle vehicle, int brandId, int idEnterprise) {
+		vehicle.setBrand(findOneBrand(brandId));
+		vehicle.setEnterprise(findOneEnterprise(idEnterprise));
+		vehiclesRepository.save(vehicle);
+	}
+	
+	@Transactional
+	public void saveAllVehicles(List<Vehicle> vehicles) {
+		vehiclesRepository.saveAll(vehicles);
+	}
+	
+	@Transactional
 	public void updateVehicle(int id, Vehicle updatedVehicle) {
 		updatedVehicle.setId(id);
 		vehiclesRepository.save(updatedVehicle);	
+	}
+	
+	@Transactional
+	public void updateVehicle(int id, Vehicle updatedVehicle, int updatedBrandId) {
+		updatedVehicle.setId(id);
+		updatedVehicle.setBrand(findOneBrand(updatedBrandId));
+		vehiclesRepository.save(updatedVehicle);		
+	}
+	
+	@Transactional
+	public void updateVehicle(int id, Vehicle updatedVehicle, int updatedBrandId, int idEnterprise) {
+		updatedVehicle.setId(id);
+		updatedVehicle.setBrand(findOneBrand(updatedBrandId));
+		updatedVehicle.setEnterprise(findOneEnterprise(idEnterprise));
+		vehiclesRepository.save(updatedVehicle);		
 	}
 	
 	@Transactional
@@ -231,6 +280,21 @@ public class DatabaseController {
 	    return new PageImpl<Vehicle>(vehicles.subList(start, end), pageable, vehicles.size());
 	}
 	
+	public List<Vehicle> findForManagerByEnterpriseId(int managerId, int enterpriseId) {
+		List<Vehicle> vehicles = new ArrayList<Vehicle>();
+		vehicles.addAll(vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId));
+		return vehicles;
+	}
+	
+	public Page<Vehicle> findForManagerByEnterpriseId(int managerId, 
+			int enterpriseId,
+			Integer page,
+			Integer itemsPerPage) {
+
+		Pageable pageable = PageRequest.of(page - 1, itemsPerPage);
+		return vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId, pageable);
+	}	
+	
 	// Водители, доступные менеджеру
 	
 	public List<Driver> findAllDriversForManager(int managerId) {
@@ -283,10 +347,38 @@ public class DatabaseController {
         return pointsGpsRepository.findFirstByVehicleIdAndTimeOfPointGps(vehicleId, time);
     }
     
+	public List<PointGps> findAllByVehicleAndTrip(int vehicleId, List<Trip> trips) {
+		
+		String dateFrom_upd = trips.get(0).getTimeOfStart();
+		String dateTo_upd = trips.get(trips.size() - 1).getTimeOfEnd();
+		
+		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom_upd, dateTo_upd);
+	}
+	
+    @Transactional
+    public void saveAllPoints(List<PointGps> pointsGps) {
+    	pointsGpsRepository.saveAll(pointsGps);
+    }
+    
+    @Transactional
+    public void savePoint(PointGps pointsGps) {
+    	pointsGpsRepository.save(pointsGps);
+    }
+    
 	/* Поездки */
+    
+	public Trip findOneTrip(int id) {
+		Optional<Trip> foundTrip = tripRepository.findById(id);
+		return foundTrip.orElse(null);
+	}
 	
 	public List<Trip> findAllTripsByTimePeriod(int vehicleId, String dateFrom, String dateTo) {
 		return tripRepository.findTripsByVehicleAndTimeRange(vehicleId, dateFrom, dateTo);
+	}
+	
+	@Transactional
+    public void saveTrip(Trip trip) {
+		tripRepository.save(trip);
 	}
 	
 }

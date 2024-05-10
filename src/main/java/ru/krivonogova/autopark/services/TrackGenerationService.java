@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.BigDataGenerationDTO;
 import ru.krivonogova.autopark.dto.PointGpsCoord;
 import ru.krivonogova.autopark.dto.TrackGenerationDTO;
@@ -36,21 +37,17 @@ import ru.krivonogova.autopark.models.Vehicle;
 @Service
 @Transactional(readOnly = true)
 public class TrackGenerationService {
-	
-	private final VehiclesService vehiclesService;
-	private final PointsGpsService pointsGpsService;
-	private final TripService tripService;
+		
+	private final DatabaseController databaseController;
 	
 	@Autowired
-    public TrackGenerationService(VehiclesService vehiclesService, PointsGpsService pointsGpsService, TripService tripService) {
-		this.vehiclesService = vehiclesService;
-		this.pointsGpsService = pointsGpsService;
-		this.tripService = tripService;
+    public TrackGenerationService(DatabaseController databaseController) {
+		this.databaseController = databaseController;
 	}
 
 	// вариант 1 с радиусом
 	double centerLongitude = 50.157566;
-    double centerLatitude = 53.228851;
+	double centerLatitude = 53.228851;
     //double radius = 4; // в км
     
     // вариант 2
@@ -93,7 +90,7 @@ public class TrackGenerationService {
 	        distance = routeResponse.getDistance();
 		}
 				
-		Vehicle vehicle = vehiclesService.findOne(request.getIdVehicle());
+		Vehicle vehicle = databaseController.findOneVehicle(request.getIdVehicle());
 		saveTrackAndTrip(routeResponse.getTrack(), vehicle, routeResponse.getDistance());
 		
 	}
@@ -107,7 +104,7 @@ public class TrackGenerationService {
 		String timeOfStart = points.get(0).getTimeOfPointGps();
 		String timeOfEnd = points.get(points.size()-1).getTimeOfPointGps();
 		Trip trip = new Trip(vehicle, timeOfStart, timeOfEnd, distance);
-		tripService.save(trip);
+		databaseController.saveTrip(trip);
 	}
 	
 	// сохранениe gps-точек в таблицу track "в реальном времени"
@@ -130,7 +127,7 @@ public class TrackGenerationService {
 		    
 		    points.add(point);
 		    
-		    pointsGpsService.save(point);
+		    databaseController.savePoint(point);
 		    
             try {
                 TimeUnit.SECONDS.sleep(1); // Делаем паузу в конце каждой итерации
@@ -173,7 +170,7 @@ public class TrackGenerationService {
 		    
 		    point.setTimeOfPointGps(dateFormat.format(randomTime));
 		    points.add(point);
-		    pointsGpsService.save(point);
+		    databaseController.savePoint(point);
 		    
 		    // увеличение временной метки на 1 минуту для следующей точки
             randomTime.setTime(randomTime.getTime() + 60000);
@@ -190,7 +187,7 @@ public class TrackGenerationService {
 		String timeOfStart = points.get(0).getTimeOfPointGps();
 		String timeOfEnd = points.get(points.size()-1).getTimeOfPointGps();
 		Trip trip = new Trip(vehicle, timeOfStart, timeOfEnd, distance);
-		tripService.save(trip);
+		databaseController.saveTrip(trip);
 	}
 	
 	@Transactional
@@ -231,7 +228,7 @@ public class TrackGenerationService {
 		int numberOfTrack = request.getNumberOfTrack();
 		int numberOfMonth = request.getNumberOfMonth();
 		
-		List<Vehicle> allVehicles = vehiclesService.findAll();
+		List<Vehicle> allVehicles = databaseController.findAllVehicles();
 		
 		for(int i = 0; i < numberOfTrack; i++) {
 			Vehicle randomVehicle = allVehicles.get(new Random().nextInt(allVehicles.size()));
@@ -289,7 +286,6 @@ public class TrackGenerationService {
 		}
 	
 	private PointGpsCoord generateEnd(PointGpsCoord start, int lengthOfTrack) {
-	    Random random = new Random();
 	    double degreesPerKm = 0.0089 / 1.0;
 	    double latitude;
 	    double longitude;

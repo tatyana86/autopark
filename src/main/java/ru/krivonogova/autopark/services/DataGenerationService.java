@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.models.Brand;
 import ru.krivonogova.autopark.models.Driver;
@@ -19,24 +20,18 @@ import ru.krivonogova.autopark.models.Vehicle;
 @Service
 @Transactional(readOnly = true)
 public class DataGenerationService {
-	private final EnterprisesService enterprisesService;
-	private final BrandsService brandsService;
-	private final DriversService driversService;
-	private final VehiclesService vehiclesService;
+
+	private final DatabaseController databaseController;
 	
 	@Autowired
-	public DataGenerationService(EnterprisesService enterprisesService, BrandsService brandsService, DriversService driversService, VehiclesService vehiclesService) {
-		this.enterprisesService = enterprisesService;
-		this.brandsService = brandsService;
-		this.driversService = driversService;
-		this.vehiclesService = vehiclesService;
+	public DataGenerationService(DatabaseController databaseController) {
+		this.databaseController = databaseController;
 	}
 
 	@Transactional
 	public void generate(DataGenerationDTO request) {
-		
 		for(Integer enterpriseId : request.getEnterprisesID()) {
-			Enterprise enterprise = enterprisesService.findOne(enterpriseId);
+			Enterprise enterprise = databaseController.findOneEnterprise(enterpriseId);
 			
 			List<Vehicle> vehicles = generateVehicles(enterprise, request.getNumberOfVehicle());
 			
@@ -44,15 +39,13 @@ public class DataGenerationService {
 					
 			assignVehicleWithDriver(vehicles, drivers, request.getIndicatorOfActiveVehicle());
 			
-			driversService.saveAll(drivers);
-			vehiclesService.saveAll(vehicles);		
-			
+			databaseController.saveAllDrivers(drivers);
+			databaseController.saveAllVehicles(vehicles);		
 		}
 	}
 	
 	private void assignVehicleWithDriver(List<Vehicle> vehicles, 
 				List<Driver> drivers, int indicatorOfActiveVehicle) {
-		
 		int numberActiveVehicles = vehicles.size() / indicatorOfActiveVehicle;
 		for(int i = 0; i < numberActiveVehicles; i++) {
 			Driver driver = findDisactiveDriver(drivers);
@@ -63,7 +56,6 @@ public class DataGenerationService {
 				driver.setActiveVehicle(vehicle);
 			}
 		}
-		
 	}
 	
 	private Driver findDisactiveDriver(List<Driver> drivers) {
@@ -72,12 +64,11 @@ public class DataGenerationService {
 				return driver;
 			}
 		}
-		
 		return null; // или создать исключение (?)
 	}
 
 	private List<Vehicle> generateVehicles(Enterprise enterprise, int numberOfVehicle) {
-		List<Brand> brands = brandsService.findAll();
+		List<Brand> brands = databaseController.findAllBrands();
 		List<Vehicle> vehicles = new ArrayList<>();
 		
 		for(int i = 0; i < numberOfVehicle; i ++) {
@@ -86,7 +77,6 @@ public class DataGenerationService {
 			newRandomVehicle.setEnterprise(enterprise);
 			vehicles.add(newRandomVehicle);
 		}
-		
 		return vehicles;
 	}
 	
@@ -98,29 +88,23 @@ public class DataGenerationService {
 			newRandomDriver.setEnterprise(enterprise);
 			drivers.add(newRandomDriver);
 		}
-		
 		return drivers;
 	}
 
 	private Vehicle newRandomVehicle() {
 		Vehicle vehicle = new Vehicle();
-		
 		vehicle.setMileage(generateMileage());
 		vehicle.setPrice(generatePrice());
 		vehicle.setRegistrationNumber(generateRegistrationNumber());
 		vehicle.setYearOfProduction(generateYearOfProduction());
-		
 		vehicle.setDateOfSale(generateDateOfSale());
-		
 		return vehicle;
 	}
 	
 	private Driver newRandomDriver() {
 		Driver driver = new Driver();
-		
 		driver.setName(generateName());
 		driver.setSalary(generateSalary());
-		
 		return driver;
 	}
 	
@@ -177,7 +161,6 @@ public class DataGenerationService {
         char secondChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
         char thirdChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
         int number = random.nextInt(1000);
-        String formattedNumber = String.format("%03d", number);
         int region = random.nextInt(MAX_REGION) + 1;
         return String.format("%c%s%c%c%02d", firstChar, number, secondChar, thirdChar, region);
 	}

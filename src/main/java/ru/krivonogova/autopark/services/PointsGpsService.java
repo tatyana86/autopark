@@ -24,45 +24,32 @@ import ru.krivonogova.autopark.repositories.PointsGpsRepository;
 @Transactional(readOnly = true)
 public class PointsGpsService {
 
+	private final String openRouteUrl = "https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf624881622e92681c4a87909ab330c6345a1e";
+	
 	private final PointsGpsRepository pointsGpsRepository;
-
+	
 	@Autowired
 	public PointsGpsService(PointsGpsRepository pointsGpsRepository) {
 		this.pointsGpsRepository = pointsGpsRepository;
 	}
 	
-	private final String openRouteUrl = "https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf624881622e92681c4a87909ab330c6345a1e";
-	
-	//+
-	public List<PointGps> findAll() {
-		return pointsGpsRepository.findAll();
-	}
-	
-	//+
-	public List<PointGps> findAllByVehicleAndTimePeriod(int vehicleId, String dateFrom, String dateTo) {
-		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom, dateTo);
-	}
-	
-	public List<PointGps> findAllByVehicleAndTrip(int vehicleId, List<Trip> trips) {
-		
-		String dateFrom_upd = trips.get(0).getTimeOfStart();
-		String dateTo_upd = trips.get(trips.size() - 1).getTimeOfEnd();
-		
-		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom_upd, dateTo_upd);
-	}
-	
+	public String generateMapRequest(List<PointGps> points) {
+		String API_KEY = "4bc5b115-13bb-4a08-9e29-88347ed6207a";
+		StringBuilder request = new StringBuilder("https://static-maps.yandex.ru/v1?");
 
+        // Добавляем параметр pl
+        StringBuilder plBuilder = new StringBuilder("pl=c:8822DDC0,w:5");
+        for (PointGps point : points) {
+            plBuilder.append(",").append(point.getLongitude()).append(",").append(point.getLatitude());
+        }
+        request.append(plBuilder.toString());
+
+        // Добавляем API ключ
+        request.append("&apikey=").append(API_KEY);
+
+        return request.toString();
+	}
 	
-    public Optional<PointGps> findById(int id) {
-        return pointsGpsRepository.findById(id);
-    }
-    
-    //+
-    public Optional<PointGps> findByVehicleAndTime(int vehicleId, String time) {
-        return pointsGpsRepository.findFirstByVehicleIdAndTimeOfPointGps(vehicleId, time);
-    }
-        
-    //+
     public String takeAddressOfPointGPS(PointGps pointGps) {
     	
     	String addressOfPointGPS = "";
@@ -113,14 +100,4 @@ public class PointsGpsService {
         return addressOfPointGPS;
     }
     
-    @Transactional
-    public void saveAll(List<PointGps> pointsGps) {
-    	pointsGpsRepository.saveAll(pointsGps);
-    }
-    
-    @Transactional
-    public void save(PointGps pointsGps) {
-    	pointsGpsRepository.save(pointsGps);
-    }
-
 }

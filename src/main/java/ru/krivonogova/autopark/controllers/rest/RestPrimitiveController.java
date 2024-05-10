@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DriverDTO;
-import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
 import ru.krivonogova.autopark.models.Brand;
 import ru.krivonogova.autopark.models.Driver;
@@ -23,11 +22,11 @@ import ru.krivonogova.autopark.models.Vehicle;
 
 @RestController
 @RequestMapping("/api")
-public class PrimitiveController {
+public class RestPrimitiveController {
 	private final DatabaseController databaseController;
 	private final ModelMapper modelMapper;
 
-	public PrimitiveController(DatabaseController databaseController, ModelMapper modelMapper) {
+	public RestPrimitiveController(DatabaseController databaseController, ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
 		this.databaseController = databaseController;
 	}

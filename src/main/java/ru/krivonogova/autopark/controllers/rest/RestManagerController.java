@@ -68,14 +68,14 @@ import ru.krivonogova.autopark.util.VehicleNotUpdatedException;
 
 @RestController
 @RequestMapping("/api/managers")
-public class ManagerController {
+public class RestManagerController {
 	private final DatabaseController databaseController;
 	private final PointsGpsService pointsGpsService;
 	private final ReportsService reportsService;
 	private final ModelMapper modelMapper;
 	
 	
-	public ManagerController(DatabaseController databaseController, ModelMapper modelMapper, PointsGpsService pointsGpsService, ReportsService reportsService) {
+	public RestManagerController(DatabaseController databaseController, ModelMapper modelMapper, PointsGpsService pointsGpsService, ReportsService reportsService) {
 		this.databaseController = databaseController;
 		this.pointsGpsService = pointsGpsService;
 		this.reportsService = reportsService;
@@ -327,7 +327,7 @@ public class ManagerController {
 		List<PointGps> points = new ArrayList<PointGps>();
 		
 		if(!trips.isEmpty()) {
-			points = pointsGpsService.findAllByVehicleAndTrip(vehicleId, trips);
+			points = databaseController.findAllByVehicleAndTrip(vehicleId, trips);
 		}
 		
 		if (returnGeoJson) {

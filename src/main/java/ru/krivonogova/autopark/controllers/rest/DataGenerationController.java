@@ -1,4 +1,4 @@
-package ru.krivonogova.autopark.controllers;
+package ru.krivonogova.autopark.controllers.rest;
 
 import java.util.List;
 

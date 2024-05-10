@@ -1,4 +1,4 @@
-package ru.krivonogova.autopark.controllers;
+package ru.krivonogova.autopark.controllers.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +14,7 @@ import ru.krivonogova.autopark.services.TrackGenerationService;
 @RequestMapping("/api/routing")
 public class TrackGenerationController {
 	
-		private final TrackGenerationService trackGenerationService;
+	private final TrackGenerationService trackGenerationService;
 
 	@Autowired
 	public TrackGenerationController(TrackGenerationService trackGenerationService) {
@@ -23,16 +23,12 @@ public class TrackGenerationController {
 	
 	@PostMapping
 	public void generateTrack(@RequestBody TrackGenerationDTO request) {
-		
 		trackGenerationService.generateTrack(request);
-		
 	}
 	
 	@PostMapping("/bigdata")
 	public void generateBigData(@RequestBody BigDataGenerationDTO request) throws InterruptedException {
-		
 		trackGenerationService.generateBigData(request);
-		
 	}
 	
 }
