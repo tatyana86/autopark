@@ -1,8 +1,6 @@
 package ru.krivonogova.autopark.services;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -12,27 +10,14 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import ru.krivonogova.autopark.models.PointGps;
-import ru.krivonogova.autopark.models.Trip;
-import ru.krivonogova.autopark.repositories.PointsGpsRepository;
 
 @Service
-@Transactional(readOnly = true)
 public class PointsGpsService {
 
 	private final String openRouteUrl = "https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf624881622e92681c4a87909ab330c6345a1e";
-	
-	private final PointsGpsRepository pointsGpsRepository;
-	
-	@Autowired
-	public PointsGpsService(PointsGpsRepository pointsGpsRepository) {
-		this.pointsGpsRepository = pointsGpsRepository;
-	}
-	
+		
 	public String generateMapRequest(List<PointGps> points) {
 		String API_KEY = "4bc5b115-13bb-4a08-9e29-88347ed6207a";
 		StringBuilder request = new StringBuilder("https://static-maps.yandex.ru/v1?");

@@ -1,6 +1,5 @@
 package ru.krivonogova.autopark.models;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;

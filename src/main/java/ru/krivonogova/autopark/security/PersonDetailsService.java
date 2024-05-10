@@ -1,4 +1,4 @@
-package ru.krivonogova.autopark.services;
+package ru.krivonogova.autopark.security;
 
 import java.util.Optional;
 
@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 
 import ru.krivonogova.autopark.models.Person;
 import ru.krivonogova.autopark.repositories.PeopleRepository;
-import ru.krivonogova.autopark.security.PersonDetails;
-
-
 
 @Service
 public class PersonDetailsService implements UserDetailsService {

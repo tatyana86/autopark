@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ru.krivonogova.autopark.models.Person;
-import ru.krivonogova.autopark.services.RegistrationService;
+import ru.krivonogova.autopark.security.RegistrationService;
 
 @Controller
 @RequestMapping("/auth")
