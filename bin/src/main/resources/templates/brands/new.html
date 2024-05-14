@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Add new brand</title>
+</head>
+<body>
+
+<b>Новый бренд</b>
+
+<form th:method="POST" th:action="@{/brands}" th:object="${brand}">
+	
+	<br/>
+	
+ 	<label for="name">Наименование бренда: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name error</div>
+    
+    <br/>
+    
+    <label for="typeVehicle">Тип ТС: </label>
+    <select id="typeVehicle" th:name="typeVehicle">
+	    <option th:each="type : ${types}" th:value="${type}">
+			<span th:text="${type.getTitle()}"></span>
+	    </option>
+	 </select>
+    
+    <br/>
+    
+    <label for="tankCapacity">Объем топливного бака, л: </label>
+    <input type="text" th:field="*{tankCapacity}" id="tankCapacity"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('tankCapacity')}" th:errors="*{tankCapacity}">tankCapacity error</div>
+ 
+    <br/>
+    
+    <label for="loadCapacity">Грузоподъемность, т: </label>
+    <input type="text" th:field="*{loadCapacity}" id="loadCapacity"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('loadCapacity')}" th:errors="*{loadCapacity}">loadCapacity error</div>
+    
+    <br/>
+    
+    <label for="passengerCapacity">Пассажировместимость, чел: </label>
+    <input type="text" th:field="*{passengerCapacity}" id="passengerCapacity"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('passengerCapacity')}" th:errors="*{passengerCapacity}">passengerCapacity error</div>
+    
+    <br/>
+    
+    <label for="enginePower">Мощность двигателя, л.с.: </label>
+    <input type="text" th:field="*{enginePower}" id="enginePower"/>
+    <div style="color:darkred" th:if="${#fields.hasErrors('enginePower')}" th:errors="*{enginePower}">enginePower error</div>
+    
+    <br/>
+    <br/>
+    
+    <input type="submit" value="Сохранить бренд"/>
+</form>
+
+</body>
+</html>

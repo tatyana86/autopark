@@ -39,6 +39,8 @@ public class Manager {
 	private List<Enterprise> enterprises;
 
 	public Manager() {
+		username = "";
+        password = "";
 	}
 
 	public int getId() {

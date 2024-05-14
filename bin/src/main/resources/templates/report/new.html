@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Создать отчет</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<style>
+			.triangle {
+		    position: absolute;
+		    top: 50%;
+		    right: 10px;
+		    border: solid black;
+		    border-width: 0 3px 3px 0;
+		    display: inline-block;
+		    padding: 3px;
+		    transform: rotate(45deg);
+			}	
+		</style>
+	</head>
+	
+<body>
+	<div class="container">
+        <h1>Создать отчет</h1>
+		
+		<form th:method="GET" th:action="@{/managers/report/show}" >
+            
+            <div class="form-group mb-3">
+			    <label for="idVehicle">Автомобиль:</label>
+			    <div class="dropdown">
+			        <select id="idVehicle" name="idVehicle" class="form-control" data-toggle="dropdown">
+			            <option th:each="vehicle : ${vehicles}" th:value="${vehicle.getId()}" th:text="${vehicle.getRegistrationNumber()}"></option>
+			        </select>
+			        <span class="triangle"></span>
+			    </div>
+			</div>
+        	
+			<div class="form-group mb-3">
+			    <label for="typeReport">Тип отчета:</label>
+			    <div class="dropdown">
+			        <select id="typeReport" name="typeReport" class="form-control" data-toggle="dropdown">
+			            <option th:each="type : ${types}" th:value="${type}" th:text="${type.getTitle()}"></option>
+			        </select>
+			        <span class="triangle"></span>
+			    </div>
+			</div>
+			
+			<div class="form-group mb-3">
+			    <label for="period">Период:</label>
+			    <div class="dropdown">
+			        <select id="period" name="period" class="form-control" data-toggle="dropdown">
+			            <option th:each="period : ${periods}" th:value="${period}" th:text="${period.getTitle()}"></option>
+			        </select>
+			        <span class="triangle"></span>
+			    </div>
+			</div>
+        	
+            <div class="container">
+                <p>Выбранный период с <input type="date" name="dateFrom" th:value="${dateFrom}"> по <input type="date" name="dateTo" th:value="${dateTo}">
+                </p>
+            </div>
+        		    
+            <input style="margin-bottom: 10px;"
+					type="submit" 
+					value="Получить отчет" 
+					class="btn btn-primary"/>    
+					
+		</form>
+			
+		<div>
+			<b> <a 	th:href="@{/managers/enterprises}" 
+					class="btn btn-secondary">Назад</a> </b>
+		</div>
+		
+	</div>
+</body>
+</html>
