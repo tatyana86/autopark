@@ -14,4 +14,13 @@ public enum Period {
 	public String getTitle() {
 		return type;
 	}	
+	
+	public static Period fromString(String text) {
+        for (Period period : Period.values()) {
+            if (period.type.equalsIgnoreCase(text)) {
+                return period;
+            }
+        }
+        return null;
+    }
 }
