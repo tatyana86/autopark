@@ -3,6 +3,8 @@ package ru.krivonogova.autopark.bot;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -101,14 +103,32 @@ public class TelegramBot extends TelegramLongPollingBot {
 	            			+ "'type id yyyy-MM-dd yyyy-MM-dd'.\n"
 	            			+ "Например, 'Месяц 1 2020-01-01 2022-07-30'";
 	           
-	            executeEditMessageText(text, chatId, messageId);
+	            //executeEditMessageText(text, chatId, messageId);
+	            
+	            SendMessage message = new SendMessage();
+	            message.setChatId(String.valueOf(chatId));
+	            message.setText(text);
+	            executeMessage(message);
             } else 
             if(callbackData.equals("ENTERPRISE_BUTTON")) {
                 String text = "Нет технической возможности получить отчет.";
-                executeEditMessageText(text, chatId, messageId);
+                //executeEditMessageText(text, chatId, messageId);
+                
+	            SendMessage message = new SendMessage();
+	            message.setChatId(String.valueOf(chatId));
+	            message.setText(text);
+	            executeMessage(message);
             } 
         }
 	}
+	
+    private void executeMessage(SendMessage message){
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error("Error occurred: " + e.getMessage());
+        }
+    }
 	
     private void executeEditMessageText(String text, long chatId, long messageId){
         EditMessageText message = new EditMessageText();
@@ -220,24 +240,17 @@ public class TelegramBot extends TelegramLongPollingBot {
 	    List<Trip> trips = databaseController.findAllTripsByTimePeriod(idVehicle, dateFrom, dateTo);	        
         List<ReportResult> result = reportsService.getReport(request, trips);
         
+        Collections.sort(result, Comparator.comparing(ReportResult::getTime));
         StringBuilder responseMessage = new StringBuilder();
-        responseMessage.append("Результат отчета:\n");
+        responseMessage.append("Результат отчета за " + periodType + ".\n");
         for(ReportResult report : result) {
-            responseMessage.append("Время: ").append(report.getTime()).append(" - Значение: ").append(report.getValue()).append("\n");
+            responseMessage.append(report.getTime()).append(" - Пробег: ").append(report.getValue()).append(" км.\n");
         }
         
         message.setText(responseMessage.toString());
         executeMessage(message);
 	}
-	
-    private void executeMessage(SendMessage message){
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            log.error("Error occurred: " + e.getMessage());
-        }
-    }
-  
+	  
     // авторизировать пользователя
 	private void authorizeUser(String messageText, SendMessage.SendMessageBuilder builder) throws Exception {
 
