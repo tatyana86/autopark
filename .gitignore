@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Игнорировать файлы с переменными окружения
+.env
+
+
+docker-compose_localhost.yml
+docker-compose_init.yml
+create_db
+
