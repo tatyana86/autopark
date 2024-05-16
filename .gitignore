@@ -33,7 +33,7 @@ build/
 .vscode/
 
 # Игнорировать файлы с переменными окружения
-.env
+#.env
 
 
 docker-compose_localhost.yml
