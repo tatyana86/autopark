@@ -31,8 +31,9 @@ jobs:
         ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "cd ${{ env.PROJECT_FOLDER }} && docker-compose down"
         echo "yes" | ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "docker system prune"
 
-    #- name: Clear remote directory
+    - name: Clear remote directory
       #run: ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "rm -rf ${{ env.PROJECT_FOLDER }}/*"
+      run: ssh ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "find ${{ env.PROJECT_FOLDER }} -maxdepth 1 -mindepth 1 -not -name 'dhparam' -exec rm -rf {} \;"
 
     - name: Deploy
       run: rsync --archive --compress --progress . ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:${{ env.PROJECT_FOLDER }}
