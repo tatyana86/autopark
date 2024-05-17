@@ -7,8 +7,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.models.Person;
 
+@Slf4j
 public class PersonDetails implements UserDetails {
 	
 	private final Person person;
@@ -19,7 +21,7 @@ public class PersonDetails implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		System.out.println(person.getRole());
+		log.info("logged in by: {}", person.getRole());
 		return Collections.singletonList(new SimpleGrantedAuthority(person.getRole()));
 	}
 

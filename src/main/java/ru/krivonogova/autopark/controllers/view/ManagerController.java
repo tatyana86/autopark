@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.ReportRequestDTO;
 import ru.krivonogova.autopark.dto.TripDTO;
@@ -42,6 +43,7 @@ import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.PointsGpsService;
 import ru.krivonogova.autopark.services.ReportsService;
 
+@Slf4j
 @Controller
 @RequestMapping("/managers")
 public class ManagerController {
@@ -116,6 +118,7 @@ public class ManagerController {
         return "vehicles/index";
 	}
 	
+	// проверим кэш
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
 	public String show(@PathVariable("idEnterprise") int idEnterprise,
 						@PathVariable("idVehicle") int idVehicle,
@@ -145,7 +148,9 @@ public class ManagerController {
 		
 	    String timezone = getManagerTimezone();   
 	    
+	    log.info("Start check trips cache for vehicle by id: {}", idVehicle);
 		List<Trip> trips = databaseController.findAllTripsByTimePeriod(idVehicle, dateFrom, dateTo);
+		log.info("End check trips cache for vehicle by id: {}", idVehicle);
 		List<TripDTO> tripList = trips.stream()
 			    .map(trip -> convertToTripDTO(trip, timezone))
 			    .collect(Collectors.toList());
@@ -153,7 +158,9 @@ public class ManagerController {
 		//model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
 				
 		if(idTrip != null) {
-			List<PointGps> points = databaseController.findAllByVehicleAndTrip(idVehicle, Arrays.asList(databaseController.findOneTrip(idTrip)));
+			log.info("Start check points cache for trip by id: {}", idTrip);
+			List<PointGps> points = databaseController.findAllByVehicleAndTrip(idVehicle, idTrip);
+			log.info("End check points cache for trip by id: {}", idTrip);
 			String request = pointsGpsService.generateMapRequest(points);
 			model.addAttribute("mapUrl", request);
 			model.addAttribute("idTrip", idTrip);

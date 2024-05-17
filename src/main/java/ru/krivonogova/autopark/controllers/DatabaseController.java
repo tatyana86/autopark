@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.models.Brand;
 import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
@@ -31,6 +31,7 @@ import ru.krivonogova.autopark.util.EnterpriseNotDeletedException;
 import ru.krivonogova.autopark.util.EnterpriseNotUpdatedException;
 import ru.krivonogova.autopark.util.VehicleNotFoundException;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class DatabaseController {
@@ -348,9 +349,19 @@ public class DatabaseController {
     }
     
 	public List<PointGps> findAllByVehicleAndTrip(int vehicleId, List<Trip> trips) {
-		
 		String dateFrom_upd = trips.get(0).getTimeOfStart();
 		String dateTo_upd = trips.get(trips.size() - 1).getTimeOfEnd();
+		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom_upd, dateTo_upd);
+	}
+ 	
+    // проверка кеша
+ 	@Cacheable("track")
+	public List<PointGps> findAllByVehicleAndTrip(int vehicleId, int tripId) {
+		
+		String dateFrom_upd = findOneTrip(tripId).getTimeOfStart();
+		String dateTo_upd = findOneTrip(tripId).getTimeOfEnd();
+		
+		log.info("Getting points from repo for trip by id: {}", tripId);
 		
 		return pointsGpsRepository.findAllByVehicleAndTimePeriod(vehicleId, dateFrom_upd, dateTo_upd);
 	}
@@ -372,7 +383,11 @@ public class DatabaseController {
 		return foundTrip.orElse(null);
 	}
 	
+	// проверка кеша
+	@Cacheable("trips")
 	public List<Trip> findAllTripsByTimePeriod(int vehicleId, String dateFrom, String dateTo) {
+		log.info("Getting trips from repo for vehicle by id: {}", vehicleId);
+		
 		return tripRepository.findTripsByVehicleAndTimeRange(vehicleId, dateFrom, dateTo);
 	}
 	

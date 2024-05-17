@@ -122,6 +122,53 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 	}
 	
+    // авторизировать пользователя
+	private void authorizeUser(String messageText, SendMessage.SendMessageBuilder builder) throws Exception {
+
+		if(messageText.startsWith("/") && !messageText.equals("/login")) {
+			manager.setUsername("");
+			builder.text("Требуется авторизция. Введите логин:  ");
+			execute(builder.build());
+			return; 
+		} 
+		
+	    switch(messageText) {
+	          case "/login": {
+	        	  if(! manager.getUsername().isBlank()) {	
+	        		  manager.setUsername("");
+	        	  }
+	        	  
+                  builder.text("Введите логин:");
+                  execute(builder.build());
+                  return;                 
+	          }
+	          
+	          default: {	        	  
+	        	  if(manager.getUsername().isBlank()) {
+				      manager = new Manager();
+				      manager.setUsername(messageText);
+				      builder.text("Введите пароль:");
+				      execute(builder.build());
+	        	  } 
+	        	  else if(manager.getPassword().isBlank()) {
+				      manager.setPassword(messageText);
+				        
+				      if(isCredentialsTrue()) {
+				          isAuthorized = true;
+				          builder.text("Вы успешно авторизированы");
+				          execute(builder.build());
+				      } else {
+				          isAuthorized = false;
+				          manager.setPassword("");
+				          builder.text("Неудачная авторизация. Повторите пароль:");
+				          execute(builder.build());
+				      }
+	        	  }
+	          }
+	    }
+    
+	}
+	
     private void executeMessage(SendMessage message){
         try {
             execute(message);
@@ -249,44 +296,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         
         message.setText(responseMessage.toString());
         executeMessage(message);
-	}
-	  
-    // авторизировать пользователя
-	private void authorizeUser(String messageText, SendMessage.SendMessageBuilder builder) throws Exception {
-
-	    switch(messageText) {
-	          case "/login": {
-	        	  if(manager.getUsername().isBlank()) {	            	
-	                  builder.text("Введите логин:");
-	                  execute(builder.build());
-	                  return;
-	              } 	                       
-	          }
-	          
-	          default: {
-	        	  if(manager.getUsername().isBlank()) {
-				        manager = new Manager();
-				        manager.setUsername(messageText);
-				        builder.text("Введите пароль тут:  ");
-				        execute(builder.build());
-	        	  } 
-	        	  else if(manager.getPassword().isBlank()) {
-				        manager.setPassword(messageText);
-				        
-				        if(isCredentialsTrue()) {
-				            isAuthorized = true;
-				            builder.text("Вы успешно авторизированы");
-				            execute(builder.build());
-				        } else {
-				            isAuthorized = false;
-				            manager.setPassword("");
-				            builder.text("Неудачная авторизация. Повторите пароль:");
-				            execute(builder.build());
-				        }
-	        	  }
-	          }
-	    }
-    
 	}
     
     private boolean isCredentialsTrue() {
