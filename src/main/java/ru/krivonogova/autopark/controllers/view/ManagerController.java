@@ -141,9 +141,14 @@ public class ManagerController {
 		String formattedFrom = dateFromDate.atStartOfDay().format(inputFormatter);
 		String formattedTo = dateToDate.atStartOfDay().format(inputFormatter);
 		
+		// test
+		log.info("Start check vehicle cache for vehicle by id: {}", idVehicle);
+		Vehicle vehicle = databaseController.findOneVehicle(idVehicle);
+		log.info("End check vehicle cache for vehicle by id: {}", idVehicle);
+		
 		model.addAttribute("dateFrom", formattedFrom);
 		model.addAttribute("dateTo", formattedTo);
-		model.addAttribute("vehicle", databaseController.findOneVehicle(idVehicle));
+		model.addAttribute("vehicle", vehicle);
 		model.addAttribute("enterprise", databaseController.findOneEnterprise(idEnterprise));
 		
 	    String timezone = getManagerTimezone();   

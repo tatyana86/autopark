@@ -111,7 +111,10 @@ public class DatabaseController {
 		return vehiclesRepository.findAll(pageable);
 	}	
 	
+	// проверка кеша
+	@Cacheable("vehicle")
 	public Vehicle findOneVehicle(int id) {
+		log.info("Getting vehicle from repo by id: {}", id);
 		Optional<Vehicle> foundVehicle = vehiclesRepository.findById(id);
 		return foundVehicle.orElseThrow(VehicleNotFoundException::new);
 	}
