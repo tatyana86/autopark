@@ -16,16 +16,11 @@
         </encoder>
     </appender>
     
-	<logger name="ru.krivonogova.autopark.controllers" level="debug">
+	<logger name="ru.krivonogova.autopark" level="debug">
 	    <appender-ref ref="CONSOLE" />
 	    <appender-ref ref="FILE" />
 	</logger>
-	
-	<logger name="ru.krivonogova.autopark" level="info">
-	    <appender-ref ref="CONSOLE" />
-	    <appender-ref ref="FILE" />
-	</logger>
-	
+		
 	<logger name="org.springframework" level="info">
    		<appender-ref ref="CONSOLE" />
 	</logger>
