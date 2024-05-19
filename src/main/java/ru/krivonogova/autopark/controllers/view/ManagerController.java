@@ -4,11 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.controllers.DatabaseController;
@@ -142,9 +139,9 @@ public class ManagerController {
 		String formattedTo = dateToDate.atStartOfDay().format(inputFormatter);
 		
 		// test
-		log.info("Start check vehicle cache for vehicle by id: {}", idVehicle);
+		//log.debug("Start check vehicle cache for vehicle by id: {}", idVehicle);
 		Vehicle vehicle = databaseController.findOneVehicle(idVehicle);
-		log.info("End check vehicle cache for vehicle by id: {}", idVehicle);
+		//log.debug("End check vehicle cache for vehicle by id: {}", idVehicle);
 		
 		model.addAttribute("dateFrom", formattedFrom);
 		model.addAttribute("dateTo", formattedTo);
@@ -153,9 +150,9 @@ public class ManagerController {
 		
 	    String timezone = getManagerTimezone();   
 	    
-	    log.info("Start check trips cache for vehicle by id: {}", idVehicle);
+	    //log.debug("Start check trips cache for vehicle by id: {}", idVehicle);
 		List<Trip> trips = databaseController.findAllTripsByTimePeriod(idVehicle, dateFrom, dateTo);
-		log.info("End check trips cache for vehicle by id: {}", idVehicle);
+		//log.debug("End check trips cache for vehicle by id: {}", idVehicle);
 		List<TripDTO> tripList = trips.stream()
 			    .map(trip -> convertToTripDTO(trip, timezone))
 			    .collect(Collectors.toList());
@@ -163,9 +160,9 @@ public class ManagerController {
 		//model.addAttribute("trips", trips.stream().map(trip -> convertToTripDTO(trip, timezone)));
 				
 		if(idTrip != null) {
-			log.info("Start check points cache for trip by id: {}", idTrip);
+			log.debug("Start check points cache for trip by id: {}", idTrip);
 			List<PointGps> points = databaseController.findAllByVehicleAndTrip(idVehicle, idTrip);
-			log.info("End check points cache for trip by id: {}", idTrip);
+			log.debug("End check points cache for trip by id: {}", idTrip);
 			String request = pointsGpsService.generateMapRequest(points);
 			model.addAttribute("mapUrl", request);
 			model.addAttribute("idTrip", idTrip);
@@ -239,6 +236,9 @@ public class ManagerController {
 		}
 		
 		databaseController.updateVehicle(idVehicle, convertToVehicle(vehicle), brandId, idEnterprise);
+		
+		log.warn("Vehicle by id: {} was updated", idVehicle);
+		
 		return "redirect:/managers/enterprises/" + idEnterprise + "/vehicles";
 	}
 	
@@ -322,6 +322,8 @@ public class ManagerController {
         List<ReportResult> result = reportsService.getReport(request, trips);
         model.addAttribute("result", result);
 		
+        log.info("Report for vehicle by id: {} was created", idVehicle);
+        
 		return "report/show";
 	}
 	

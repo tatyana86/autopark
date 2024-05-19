@@ -114,7 +114,7 @@ public class DatabaseController {
 	// проверка кеша
 	@Cacheable("vehicle")
 	public Vehicle findOneVehicle(int id) {
-		log.info("Getting vehicle from repo by id: {}", id);
+		//log.info("Getting vehicle from repo by id: {}", id);
 		Optional<Vehicle> foundVehicle = vehiclesRepository.findById(id);
 		return foundVehicle.orElseThrow(VehicleNotFoundException::new);
 	}
@@ -389,7 +389,7 @@ public class DatabaseController {
 	// проверка кеша
 	@Cacheable("trips")
 	public List<Trip> findAllTripsByTimePeriod(int vehicleId, String dateFrom, String dateTo) {
-		log.info("Getting trips from repo for vehicle by id: {}", vehicleId);
+		//log.info("Getting trips from repo for vehicle by id: {}", vehicleId);
 		
 		return tripRepository.findTripsByVehicleAndTimeRange(vehicleId, dateFrom, dateTo);
 	}

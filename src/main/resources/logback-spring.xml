@@ -1,0 +1,34 @@
+<configuration>
+
+	<property name="PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+	
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>application.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+    
+	<logger name="ru.krivonogova.autopark.controllers" level="debug">
+	    <appender-ref ref="CONSOLE" />
+	    <appender-ref ref="FILE" />
+	</logger>
+	
+	<logger name="ru.krivonogova.autopark" level="info">
+	    <appender-ref ref="CONSOLE" />
+	    <appender-ref ref="FILE" />
+	</logger>
+	
+	<logger name="org.springframework" level="info">
+   		<appender-ref ref="CONSOLE" />
+	</logger>
+
+
+</configuration>
