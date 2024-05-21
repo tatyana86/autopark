@@ -3,9 +3,11 @@ package ru.krivonogova.autopark.controllers.view;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,25 +22,46 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.controllers.DatabaseController;
+import ru.krivonogova.autopark.dao.Transaction;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.models.Brand;
+import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.TypeVehicle;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.security.PersonDetails;
 
+@Slf4j
 @RestController
 @RequestMapping
 public class PrimitiveController {
 
 	private final DatabaseController databaseController;
 	private final ModelMapper modelMapper;
+	private final Transaction transaction;
 
-	public PrimitiveController(DatabaseController databaseController, ModelMapper modelMapper) {
+	@Autowired
+	public PrimitiveController(DatabaseController databaseController, ModelMapper modelMapper, Transaction transaction) {
 		this.modelMapper = modelMapper;
 		this.databaseController = databaseController;
+		this.transaction = transaction;
+	}
+	
+	@GetMapping("/transaction")
+	public ModelAndView goToInsideTransaction(Model model) {
+		//transaction.goInside();
+		log.info("1");
+		ModelAndView enterprises = new ModelAndView("enterprises/index_for_transaction");
+		log.info("2");
+		List<Enterprise> result = databaseController.findAllEnterprises();
+		log.info("3");
+		enterprises.addObject("enterprises", result);
+		log.info("4");
+		return enterprises;
 	}
 	
 	// CRUD для брендов

@@ -1,17 +1,9 @@
-23:57:44.419 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 35060 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
-23:57:44.426 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
-23:57:44.432 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
-23:57:57.588 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 14.107 seconds (process running for 15.115)
-00:00:05.091 [http-nio-8080-exec-5] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
-00:00:22.726 [http-nio-8080-exec-9] DEBUG r.k.a.c.view.ManagerController - Start check points cache for trip by id: 491
-00:00:22.758 [http-nio-8080-exec-9] INFO  r.k.a.controllers.DatabaseController - Getting points from repo for trip by id: 491
-00:00:22.857 [http-nio-8080-exec-9] DEBUG r.k.a.c.view.ManagerController - End check points cache for trip by id: 491
-00:00:35.149 [http-nio-8080-exec-10] DEBUG r.k.a.c.view.ManagerController - Start check points cache for trip by id: 749
-00:00:35.155 [http-nio-8080-exec-10] INFO  r.k.a.controllers.DatabaseController - Getting points from repo for trip by id: 749
-00:00:35.227 [http-nio-8080-exec-10] DEBUG r.k.a.c.view.ManagerController - End check points cache for trip by id: 749
-00:00:40.584 [http-nio-8080-exec-1] DEBUG r.k.a.c.view.ManagerController - Start check points cache for trip by id: 491
-00:00:40.586 [http-nio-8080-exec-1] DEBUG r.k.a.c.view.ManagerController - End check points cache for trip by id: 491
-00:01:13.298 [http-nio-8080-exec-6] INFO  r.k.a.c.view.ManagerController - Report for vehicle by id: 1 was created
-00:01:24.808 [http-nio-8080-exec-1] WARN  r.k.a.c.view.ManagerController - Vehicle by id: 6 was updated
-00:01:37.520 [http-nio-8080-exec-5] INFO  r.k.a.c.view.ManagerController - Report for vehicle by id: 17 was created
-00:01:48.784 [http-nio-8080-exec-10] WARN  r.k.a.c.view.ManagerController - Vehicle by id: 32 was updated
+23:47:08.690 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 21539 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
+23:47:08.698 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
+23:47:08.701 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
+23:47:19.195 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 11.316 seconds (process running for 12.398)
+23:47:32.263 [http-nio-8080-exec-3] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:47:37.082 [http-nio-8080-exec-5] INFO  r.k.autopark.dao.Transaction - Inside transaction
+23:47:37.139 [http-nio-8080-exec-5] INFO  r.k.autopark.dao.Transaction - New enterprise was added
+23:47:37.164 [http-nio-8080-exec-5] INFO  r.k.a.c.view.PrimitiveController - 1
+23:47:37.164 [http-nio-8080-exec-5] INFO  r.k.a.c.view.PrimitiveController - 2

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +50,7 @@ public class ManagerController {
 	private final ReportsService reportsService;
 	private final ModelMapper modelMapper;
 	
+	@Autowired
 	public ManagerController(DatabaseController databaseController, ModelMapper modelMapper, PointsGpsService pointsGpsService, ReportsService reportsService) {
 		this.databaseController = databaseController;
 		this.pointsGpsService = pointsGpsService;

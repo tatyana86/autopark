@@ -36,7 +36,6 @@ public class Enterprise {
     @NotEmpty(message = "Обязательное поле")
     private String phone;
     
-    
     @Column(name = "timezone")
     private String timezone;
 
