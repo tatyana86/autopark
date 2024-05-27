@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.models.Brand;
@@ -43,7 +45,7 @@ public class DataGenerationService {
 			databaseController.saveAllVehicles(vehicles);		
 		}
 	}
-	
+		
 	private void assignVehicleWithDriver(List<Vehicle> vehicles, 
 				List<Driver> drivers, int indicatorOfActiveVehicle) {
 		int numberActiveVehicles = vehicles.size() / indicatorOfActiveVehicle;
@@ -57,7 +59,7 @@ public class DataGenerationService {
 			}
 		}
 	}
-	
+		
 	private Driver findDisactiveDriver(List<Driver> drivers) {
 		for(Driver driver : drivers) {
 			if(! driver.isActive()) {
@@ -79,7 +81,7 @@ public class DataGenerationService {
 		}
 		return vehicles;
 	}
-	
+		
 	private List<Driver> generateDrivers(Enterprise enterprise, int numberOfDriver) {
 		List<Driver> drivers = new ArrayList<>();
 		
@@ -90,7 +92,7 @@ public class DataGenerationService {
 		}
 		return drivers;
 	}
-
+	
 	private Vehicle newRandomVehicle() {
 		Vehicle vehicle = new Vehicle();
 		vehicle.setMileage(generateMileage());

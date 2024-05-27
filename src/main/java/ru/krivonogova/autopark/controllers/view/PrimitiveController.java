@@ -3,6 +3,7 @@ package ru.krivonogova.autopark.controllers.view;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,14 +54,12 @@ public class PrimitiveController {
 	
 	@GetMapping("/transaction")
 	public ModelAndView goToInsideTransaction(Model model) {
-		//transaction.goInside();
-		log.info("1");
-		ModelAndView enterprises = new ModelAndView("enterprises/index_for_transaction");
-		log.info("2");
-		List<Enterprise> result = databaseController.findAllEnterprises();
-		log.info("3");
-		enterprises.addObject("enterprises", result);
-		log.info("4");
+		transaction.goInside();
+
+		List<Enterprise> sortedEnterprises = databaseController.findAllEnterprises();
+		sortedEnterprises.sort(Comparator.comparing(Enterprise::getId));
+		ModelAndView enterprises = new ModelAndView("enterprises/index_preview");
+		enterprises.addObject("enterprises", sortedEnterprises);
 		return enterprises;
 	}
 	

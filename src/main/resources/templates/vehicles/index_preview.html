@@ -43,7 +43,7 @@
 			    </thead>
 			    <tbody th:each="vehicle : ${vehicles}">
 			        <tr style="border-bottom: 1px solid #ddd;">
-			            <td style="padding: 8px;" th:text="${vehicle.id}"></td>
+			            <td style="padding: 8px;"><a th:text="${vehicle.id}"></a></td>
 			            <td style="padding: 8px;"><a th:text="${vehicle.registrationNumber}"></a></td>
 			        	<td style="padding: 8px;"><a th:text="${vehicle.yearOfProduction}"></a></td>
 			        	<td th:text="${vehicle.getDateOfSaleForManager()}"></td>

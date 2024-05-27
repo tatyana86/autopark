@@ -36,7 +36,7 @@ public class Transaction {
 
 	        session.getTransaction().commit();
 		} finally {
-	        sessionFactory.close();
+	        session.close();
 	    }
 	
 	}
