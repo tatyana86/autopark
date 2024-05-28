@@ -1,4 +1,4 @@
-package ru.krivonogova.autopark.models;
+package ru.krivonogova.autopark.react;
 
 import java.util.List;
 
@@ -9,7 +9,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import reactor.core.publisher.Mono;
-
+import ru.krivonogova.autopark.models.Brand;
+import ru.krivonogova.autopark.models.Enterprise;
+import ru.krivonogova.autopark.models.PointGps;
+import ru.krivonogova.autopark.models.Trip;
+/*
 @Entity
 @Table(name = "vehicle")
 public class ReactVehicle {
@@ -48,7 +52,7 @@ public class ReactVehicle {
     
     @ManyToMany(mappedBy = "vehicles")
 	@JsonIgnore
-    private List<Driver> drivers;
+    private List<ReactDriver> drivers;
     
     @OneToOne(mappedBy = "activeVehicle")
     private ReactDriver activeDriver;
@@ -67,7 +71,7 @@ public class ReactVehicle {
 	public ReactVehicle(@NotEmpty(message = "Обязательное поле") Mono<String> registrationNumber,
 			@Min(value = 1950, message = "Допускается добавление ТС старше 1950 г.") @Max(value = 2024, message = "Недопустимое значение") Mono<Integer> yearOfProduction,
 			@Min(0) Mono<Long> price, @Min(0) Mono<Long> mileage, Mono<String> dateOfSale, Brand brand,
-			Enterprise enterprise, List<Driver> drivers, ReactDriver activeDriver, List<PointGps> pointsGps,
+			Enterprise enterprise, List<ReactDriver> drivers, ReactDriver activeDriver, List<PointGps> pointsGps,
 			List<Trip> trip) {
 		super();
 		this.registrationNumber = registrationNumber;
@@ -147,11 +151,11 @@ public class ReactVehicle {
 		this.enterprise = enterprise;
 	}
 
-	public List<Driver> getDrivers() {
+	public List<ReactDriver> getDrivers() {
 		return drivers;
 	}
 
-	public void setDrivers(List<Driver> drivers) {
+	public void setDrivers(List<ReactDriver> drivers) {
 		this.drivers = drivers;
 	}
 
@@ -179,4 +183,4 @@ public class ReactVehicle {
 		this.trip = trip;
 	}
 	
-}
+}*/

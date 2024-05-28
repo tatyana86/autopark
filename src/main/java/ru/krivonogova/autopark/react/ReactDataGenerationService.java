@@ -1,89 +1,78 @@
-package ru.krivonogova.autopark.services;
+package ru.krivonogova.autopark.react;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.models.Brand;
-import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
-import ru.krivonogova.autopark.models.ReactDriver;
-import ru.krivonogova.autopark.models.ReactVehicle;
-import ru.krivonogova.autopark.models.Vehicle;
-
+/*
 @Service
-@Transactional(readOnly = true)
 public class ReactDataGenerationService {
 
 	private final DatabaseController databaseController;
+	private final ReactDatabaseController reactDatabaseController;
 	
 	@Autowired
-	public ReactDataGenerationService(DatabaseController databaseController) {
+	public ReactDataGenerationService(DatabaseController databaseController, ReactDatabaseController reactDatabaseController) {
 		this.databaseController = databaseController;
+		this.reactDatabaseController = reactDatabaseController;
 	}
 	
-	@Transactional
+
+	
 	public void generate(DataGenerationDTO request) {
-	    for (Integer enterpriseId : request.getEnterprisesID()) {
-	        Enterprise enterprise = databaseController.findOneEnterprise(enterpriseId);
+        for (Integer enterpriseId : request.getEnterprisesID()) {
+            Enterprise enterprise = databaseController.findOneEnterprise(enterpriseId);
 
-	        List<ReactVehicle> vehicles = generateVehicles(enterprise, request.getNumberOfVehicle()).collectList().block();
-	        List<ReactDriver> drivers = generateDrivers(enterprise, request.getNumberOfDriver()).collectList().block();
+            Flux<ReactVehicle> vehicles = generateVehicles(enterprise, request.getNumberOfVehicle());
+            Flux<ReactDriver> drivers = generateDrivers(enterprise, request.getNumberOfDriver());
 
-	        assignVehicleWithDriver(vehicles, drivers, request.getIndicatorOfActiveVehicle());
+            Flux<ReactVehicle> convertedVehicles = vehicles
+                    .map(vehicle -> {
+                        ReactVehicle convertedVehicle = new ReactVehicle();
+                        convertedVehicle.setBrand(vehicle.getBrand());
+                        convertedVehicle.setEnterprise(vehicle.getEnterprise());
+                        convertedVehicle.setActiveDriver(vehicle.getActiveDriver());
+                        return convertedVehicle;
+                    });
 
-	        List<ReactDriver> convertedDrivers = drivers.stream()
-	                .map(driver -> {
-	                    ReactDriver convertedDriver = new ReactDriver();
-	                    convertedDriver.setActive(driver.isActive());
-	                    convertedDriver.setEnterprise(driver.getEnterprise());
-	                    convertedDriver.setActiveVehicle(driver.getActiveVehicle());
-	                    return convertedDriver;
-	                })
-	                .collect(Collectors.toList());
+            Flux<ReactDriver> convertedDrivers = drivers
+                    .map(driver -> {
+                        ReactDriver convertedDriver = new ReactDriver();
+                        convertedDriver.setActive(driver.isActive());
+                        convertedDriver.setEnterprise(driver.getEnterprise());
+                        convertedDriver.setActiveVehicle(driver.getActiveVehicle());
+                        return convertedDriver;
+                    });
 
-	        List<ReactVehicle> convertedVehicles = vehicles.stream()
-	                .map(vehicle -> {
-	                    ReactVehicle convertedVehicle = new ReactVehicle();
-	                    convertedVehicle.setBrand(vehicle.getBrand());
-	                    convertedVehicle.setEnterprise(vehicle.getEnterprise());
-	                    convertedVehicle.setActiveDriver(vehicle.getActiveDriver());
-	                    return convertedVehicle;
-	                })
-	                .collect(Collectors.toList());
-
-	        //databaseController.saveAllDrivers(convertedDrivers);
-	        //databaseController.saveAllVehicles(convertedVehicles);
-	    }
-	}
+            assignVehicleWithDriver(convertedVehicles, convertedDrivers, request.getIndicatorOfActiveVehicle());
+            
+            reactDatabaseController.saveAllDrivers(convertedDrivers).subscribe();
+            reactDatabaseController.saveAllVehicles(convertedVehicles).subscribe();
+        }
+    }
 	
-	private void assignVehicleWithDriver(List<ReactVehicle> vehicles, 
-            List<ReactDriver> drivers, int indicatorOfActiveVehicle) {
-		
-		int numberActiveVehicles = vehicles.size() / indicatorOfActiveVehicle;
-		
-		Flux.range(0, numberActiveVehicles)
-			.flatMap(i -> {
-				ReactDriver driver = findDisactiveDriver(drivers);
-				if (driver != null) {
-					ReactVehicle vehicle = vehicles.get(i * indicatorOfActiveVehicle);
-					vehicle.setActiveDriver(driver);
-					driver.setActive(true);
-					driver.setActiveVehicle(vehicle);
-					return Flux.just(vehicle); 
-				}				
-				return Flux.empty(); 
-			})
-			.subscribe();
-		
+	private void assignVehicleWithDriver(Flux<ReactVehicle> vehicles, Flux<ReactDriver> drivers, int indicatorOfActiveVehicle) {
+	    int numberActiveVehicles = vehicles.collectList().block().size() / indicatorOfActiveVehicle;
+
+	    Flux.range(0, numberActiveVehicles)
+	        .flatMap(i -> vehicles.elementAt(i * indicatorOfActiveVehicle)
+	            .flatMap(vehicle -> drivers.filter(driver -> !driver.isActive())
+	                .next()
+	                .map(driver -> {
+	                    vehicle.setActiveDriver(driver);
+	                    driver.setActive(true);
+	                    driver.setActiveVehicle(vehicle);
+	                    return vehicle;
+	                }))
+	        ).subscribe();
 	}
 	
 	private Flux<ReactVehicle> generateVehicles(Enterprise enterprise, int numberOfVehicle) {
@@ -213,4 +202,4 @@ public class ReactDataGenerationService {
 	    });
 	}
 	
-}
+}*/

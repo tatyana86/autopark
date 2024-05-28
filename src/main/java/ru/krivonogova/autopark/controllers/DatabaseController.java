@@ -18,7 +18,6 @@ import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Manager;
 import ru.krivonogova.autopark.models.PointGps;
-import ru.krivonogova.autopark.models.ReactDriver;
 import ru.krivonogova.autopark.models.Trip;
 import ru.krivonogova.autopark.models.Vehicle;
 import ru.krivonogova.autopark.repositories.BrandsRepository;

@@ -1,4 +1,4 @@
-package ru.krivonogova.autopark.models;
+package ru.krivonogova.autopark.react;
 
 import java.util.List;
 
@@ -17,7 +17,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import reactor.core.publisher.Mono;
-
+import ru.krivonogova.autopark.models.Enterprise;
+/*
 @Entity
 @Table(name = "driver")
 public class ReactDriver {
@@ -124,4 +125,4 @@ public class ReactDriver {
 		this.activeVehicle = vehicle;
 	}
 	
-}
+}*/
