@@ -6,110 +6,80 @@ import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.models.Brand;
+import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
-/*
+import ru.krivonogova.autopark.models.Vehicle;
+
 @Service
 public class ReactDataGenerationService {
 
 	private final DatabaseController databaseController;
-	private final ReactDatabaseController reactDatabaseController;
 	
 	@Autowired
-	public ReactDataGenerationService(DatabaseController databaseController, ReactDatabaseController reactDatabaseController) {
+	public ReactDataGenerationService(DatabaseController databaseController) {
 		this.databaseController = databaseController;
-		this.reactDatabaseController = reactDatabaseController;
 	}
 	
-
-	
+	@Transactional
 	public void generate(DataGenerationDTO request) {
-        for (Integer enterpriseId : request.getEnterprisesID()) {
-            Enterprise enterprise = databaseController.findOneEnterprise(enterpriseId);
-
-            Flux<ReactVehicle> vehicles = generateVehicles(enterprise, request.getNumberOfVehicle());
-            Flux<ReactDriver> drivers = generateDrivers(enterprise, request.getNumberOfDriver());
-
-            Flux<ReactVehicle> convertedVehicles = vehicles
-                    .map(vehicle -> {
-                        ReactVehicle convertedVehicle = new ReactVehicle();
-                        convertedVehicle.setBrand(vehicle.getBrand());
-                        convertedVehicle.setEnterprise(vehicle.getEnterprise());
-                        convertedVehicle.setActiveDriver(vehicle.getActiveDriver());
-                        return convertedVehicle;
-                    });
-
-            Flux<ReactDriver> convertedDrivers = drivers
-                    .map(driver -> {
-                        ReactDriver convertedDriver = new ReactDriver();
-                        convertedDriver.setActive(driver.isActive());
-                        convertedDriver.setEnterprise(driver.getEnterprise());
-                        convertedDriver.setActiveVehicle(driver.getActiveVehicle());
-                        return convertedDriver;
-                    });
-
-            assignVehicleWithDriver(convertedVehicles, convertedDrivers, request.getIndicatorOfActiveVehicle());
-            
-            reactDatabaseController.saveAllDrivers(convertedDrivers).subscribe();
-            reactDatabaseController.saveAllVehicles(convertedVehicles).subscribe();
-        }
-    }
-	
-	private void assignVehicleWithDriver(Flux<ReactVehicle> vehicles, Flux<ReactDriver> drivers, int indicatorOfActiveVehicle) {
-	    int numberActiveVehicles = vehicles.collectList().block().size() / indicatorOfActiveVehicle;
-
-	    Flux.range(0, numberActiveVehicles)
-	        .flatMap(i -> vehicles.elementAt(i * indicatorOfActiveVehicle)
-	            .flatMap(vehicle -> drivers.filter(driver -> !driver.isActive())
-	                .next()
-	                .map(driver -> {
-	                    vehicle.setActiveDriver(driver);
-	                    driver.setActive(true);
-	                    driver.setActiveVehicle(vehicle);
-	                    return vehicle;
-	                }))
-	        ).subscribe();
+	    for(Integer enterpriseId : request.getEnterprisesID()) {
+	        Enterprise enterprise = databaseController.findOneEnterprise(enterpriseId);
+	        
+	        List<Vehicle> vehicles = generateVehicles(enterprise, request.getNumberOfVehicle())
+	            .collectList()
+	            .block();
+	        
+	        List<Driver> drivers = generateDrivers(enterprise, request.getNumberOfDriver())
+	            .collectList()
+	            .block();
+	        
+	        databaseController.saveAllDrivers(drivers);
+	        databaseController.saveAllVehicles(vehicles);    
+	    }
 	}
-	
-	private Flux<ReactVehicle> generateVehicles(Enterprise enterprise, int numberOfVehicle) {
-	    return Flux.range(0, numberOfVehicle)
+
+	private Flux<Vehicle> generateVehicles(Enterprise enterprise, int numberOfVehicles) {
+	    return Flux.defer(() -> {
+	        List<Brand> brands = databaseController.findAllBrands();
+	        return Flux.range(0, numberOfVehicles)
 	            .flatMap(i -> newRandomVehicle()
-	                    .flatMap(vehicle -> {
-	                        List<Brand> brands = databaseController.findAllBrands();
-	                        vehicle.setBrand(brands.get(new Random().nextInt(brands.size())));
-	                        vehicle.setEnterprise(enterprise);
-	                        return Mono.just(vehicle);
-	                    }));
+	                .map(vehicle -> {
+	                    vehicle.setBrand(brands.get(new Random().nextInt(brands.size())));
+	                    vehicle.setEnterprise(enterprise);
+	                    return vehicle;
+	                }));
+	    });
 	}
 	
-	private Flux<ReactDriver> generateDrivers(Enterprise enterprise, int numberOfDriver) {
-	    return Flux.range(0, numberOfDriver)
+	private Flux<Driver> generateDrivers(Enterprise enterprise, int numberOfDrivers) {
+	    return Flux.defer(() -> {
+	        return Flux.range(0, numberOfDrivers)
 	            .flatMap(i -> newRandomDriver()
-	                    .flatMap(driver -> {
-	                        driver.setEnterprise(enterprise);
-	                        return Mono.just(driver);
-	                    }));
+	                .map(driver -> {
+	                    driver.setEnterprise(enterprise);
+	                    return driver;
+	                }));
+	    });
 	}
 	
-	private ReactDriver findDisactiveDriver(List<ReactDriver> drivers) {
-		for(ReactDriver driver : drivers) {
-			if(! driver.isActive()) {
-				return driver;
-			}
-		}
-		return null;
-	}
-		
-	private Mono<ReactDriver> newRandomDriver() {
-	    return Mono.fromCallable(() -> {
-	        ReactDriver driver = new ReactDriver();
-	        driver.setName(generateName());
-	        driver.setSalary(generateSalary());
-	        return driver;
+	private Mono<Driver> newRandomDriver() {
+	    return Mono.defer(() -> {
+	        Driver driver = new Driver();
+	        return generateName()
+	                .flatMap(name -> {
+	                    driver.setName(name);
+	                    return generateSalary();
+	                })
+	                .flatMap(salary -> {
+	                    driver.setSalary(salary);
+	                    return Mono.just(driver);
+	                });
 	    });
 	}
 	
@@ -118,88 +88,100 @@ public class ReactDataGenerationService {
 	    String[] names = {"Иван", "Петр", "Александр", "Дмитрий", "Андрей", "Михаил"};
 	    String[] patronymics = {"Иванович", "Петрович", "Александрович", "Дмитриевич", "Андреевич", "Михайлович"};
 	    Random random = new Random();
-	    
-	    return Mono.just(String.format("%s %s. %s.", surnames[random.nextInt(surnames.length)], names[random.nextInt(names.length)].charAt(0), patronymics[random.nextInt(patronymics.length)].charAt(0)));
+
+	    String surname = surnames[random.nextInt(surnames.length)];
+	    String name = names[random.nextInt(names.length)];
+	    String patronymic = patronymics[random.nextInt(patronymics.length)];
+
+	    return Mono.just(String.format("%s %s. %s.", surname, name.charAt(0), patronymic.charAt(0)));
 	}
 
-	private Mono<Long> generateSalary() {
+	private Mono<Double> generateSalary() {
 	    double maxPrice = 500000;
 	    double minPrice = 50000;
-	    
-	    Random random = new Random();
-	    double salary = random.nextDouble(maxPrice - minPrice) + minPrice;
-	    
-	    return Mono.just(Math.round(salary));
-	}
-	
-	private Mono<ReactVehicle> newRandomVehicle() {
-	    return Mono.fromCallable(() -> {
-	        ReactVehicle vehicle = new ReactVehicle();
-	        vehicle.setMileage(generateMileage());
-	        vehicle.setPrice(generatePrice());
-	        vehicle.setRegistrationNumber(generateRegistrationNumber());
-	        vehicle.setYearOfProduction(generateYearOfProduction());
-	        vehicle.setDateOfSale(generateDateOfSale());
-	        return vehicle;
+
+	    return Mono.fromSupplier(() -> {
+	        Random random = new Random();
+	        double salary = random.nextDouble() * (maxPrice - minPrice) + minPrice;
+	        return (double) Math.round(salary);
 	    });
 	}
 	
-	private Mono<Long> generateMileage() {
+	//+
+	private Mono<Vehicle> newRandomVehicle() {
+	    return Mono.defer(() -> {
+	        Vehicle vehicle = new Vehicle();
+
+	        return generateMileage()
+	                .flatMap(mileage -> {
+	                    vehicle.setMileage(mileage);
+	                    return generatePrice()
+	                            .flatMap(price -> {
+	                                vehicle.setPrice(price);
+	                                vehicle.setRegistrationNumber(generateRegistrationNumber());
+	                                vehicle.setYearOfProduction(generateYearOfProduction());
+	                                vehicle.setDateOfSale(generateDateOfSale());
+	                                return Mono.just(vehicle);
+	                            });
+	                });
+	    });
+	}
+	
+	private Mono<Double> generateMileage() {
 	    double maxMileage = 400000;
 	    double minMileage = 1;
-	    return Mono.fromCallable(() -> {
+
+	    return Mono.fromSupplier(() -> {
 	        Random random = new Random();
 	        double mileage = random.nextDouble() * (maxMileage - minMileage) + minMileage;
 	        return Math.round(mileage);
-	    });
+	    }).map(mileage -> (double) mileage); // Преобразуем значение в double
 	}
-
-	private Mono<Long> generatePrice() {
+	
+	private Mono<Double> generatePrice() {
 	    double maxPrice = 1000000;
 	    double minPrice = 100000;
-	    return Mono.fromCallable(() -> {
+
+	    return Mono.fromSupplier(() -> {
 	        Random random = new Random();
 	        double price = random.nextDouble() * (maxPrice - minPrice) + minPrice;
-	        return Math.round(price);
-	    });
-	}
-
-	private Mono<String> generateRegistrationNumber() {
-	    final String LETTERS = "АВЕКМНОРСТУХ";
-	    final int MAX_REGION = 190;
-	    
-	    return Mono.fromCallable(() -> {
-	        Random random = new Random();
-	        char firstChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
-	        char secondChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
-	        char thirdChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
-	        int number = random.nextInt(1000);
-	        int region = random.nextInt(MAX_REGION) + 1;
-	        return String.format("%c%d%c%c%02d", firstChar, number, secondChar, thirdChar, region);
-	    });
-	}
-
-	private Mono<Integer> generateYearOfProduction() {
-	    int minYear = 1950;
-	    int maxYear = 2024;
-	    return Mono.fromCallable(() -> {
-	        Random random = new Random();
-	        return minYear + random.nextInt(maxYear - minYear + 1);
-	    });
-	}
-
-	private Mono<String> generateDateOfSale() {
-	    long twentyYearsInMillis = 20L * 365 * 24 * 60 * 60 * 1000; // количество миллисекунд в 20 годах
-	    long currentTimeMillis = System.currentTimeMillis(); // текущее время в миллисекундах
-	    
-	    return Mono.fromCallable(() -> {
-	        Random random = new Random();
-	        long randomTimeMillis = currentTimeMillis - (long) (random.nextDouble() * twentyYearsInMillis);
-	        Date randomDate = new Date(randomTimeMillis);
-	        
-	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-	        return dateFormat.format(randomDate);
+	        return (double) Math.round(price);
 	    });
 	}
 	
-}*/
+	private String generateRegistrationNumber() {
+	    final String LETTERS = "АВЕКМНОРСТУХ";
+	    final int MAX_REGION = 190;
+	    
+	    Random random = new Random();
+	    
+	    char firstChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
+	    char secondChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
+	    char thirdChar = LETTERS.charAt(random.nextInt(LETTERS.length()));
+	    int number = random.nextInt(1000);
+	    int region = random.nextInt(MAX_REGION) + 1;
+	    return String.format("%c%03d%c%c%02d", firstChar, number, secondChar, thirdChar, region);
+	}
+
+	private int generateYearOfProduction() {
+	    int minYear = 1950;
+	    int maxYear = 2024;
+	    
+	    Random random = new Random();
+	    
+	    return minYear + random.nextInt(maxYear - minYear + 1);
+	}
+
+	private String generateDateOfSale() {
+	    // Генерация случайной даты за последние 20 лет
+	    long twentyYearsInMillis = 20L * 365 * 24 * 60 * 60 * 1000; // количество миллисекунд в 20 годах
+	    long currentTimeMillis = System.currentTimeMillis(); // текущее время в миллисекундах
+	    long randomTimeMillis = currentTimeMillis - (long) (Math.random() * twentyYearsInMillis); // случайное время за последние 20 лет
+	    Date randomDate = new Date(randomTimeMillis);
+
+	    // Форматирование даты в строку
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	    return dateFormat.format(randomDate);
+	}
+	
+}

@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.util.DataGenerationErrorResponse;
 import ru.krivonogova.autopark.util.DataGenerationException;
-/*
+
 @RestController
 @RequestMapping("api/react")
 public class ReactDataGenerationController {
@@ -59,4 +59,4 @@ public class ReactDataGenerationController {
         return Mono.just(new ResponseEntity<>(response, HttpStatus.BAD_REQUEST));
     }
 	
-}*/
+}

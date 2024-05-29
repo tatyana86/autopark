@@ -1,3 +1,5 @@
-22:37:00.245 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 40452 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
-22:37:00.267 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
-22:37:00.270 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
+22:41:12.394 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 73358 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
+22:41:12.404 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
+22:41:12.406 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
+22:41:26.643 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 15.114 seconds (process running for 15.918)
+22:42:34.884 [http-nio-8080-exec-5] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER2

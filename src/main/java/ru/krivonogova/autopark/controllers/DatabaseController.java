@@ -96,6 +96,11 @@ public class DatabaseController {
 	public void saveAllDrivers(List<Driver> drivers) {
 		driversRepository.saveAll(drivers);
 	}
+	
+	@Transactional
+	public void saveDriver(Driver driver) {
+		driversRepository.save(driver);
+	}
 		
 	/* Транспорт */
 	
