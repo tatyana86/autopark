@@ -1,5 +1,11 @@
-22:41:12.394 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 73358 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
-22:41:12.404 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
-22:41:12.406 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
-22:41:26.643 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 15.114 seconds (process running for 15.918)
-22:42:34.884 [http-nio-8080-exec-5] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER2
+22:48:55.811 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 18921 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
+22:48:55.816 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
+22:48:55.818 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
+22:49:07.164 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 12.268 seconds (process running for 13.027)
+22:49:20.377 [http-nio-8080-exec-2] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+22:49:30.771 [http-nio-8080-exec-5] INFO  r.krivonogova.autopark.dao.NplusOne - Get vehicles by default
+22:49:31.386 [http-nio-8080-exec-5] INFO  r.krivonogova.autopark.dao.NplusOne - Start N requests
+22:49:32.001 [http-nio-8080-exec-5] INFO  r.krivonogova.autopark.dao.NplusOne - End N requests
+22:49:32.003 [http-nio-8080-exec-5] INFO  r.krivonogova.autopark.dao.NplusOne - Get vehicles with JOIN
+22:49:32.699 [http-nio-8080-exec-5] INFO  r.krivonogova.autopark.dao.NplusOne - Start after JOIN
+22:49:32.703 [http-nio-8080-exec-5] INFO  r.krivonogova.autopark.dao.NplusOne - End after JOIN

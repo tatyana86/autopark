@@ -81,4 +81,9 @@ public class Trip {
 		this.distance = distance;
 	}
 
+	@Override
+	public String toString() {
+		return "Trip [id=" + id + "]";
+	}
+
 }

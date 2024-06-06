@@ -57,7 +57,7 @@ public class ManagerController {
 		this.reportsService = reportsService;
 		this.modelMapper = modelMapper;
 	}
-
+	
 	// CRUD для предприятий
 	
 	@GetMapping("/enterprises")

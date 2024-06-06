@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.controllers.DatabaseController;
+import ru.krivonogova.autopark.dao.NplusOne;
 import ru.krivonogova.autopark.dao.Transaction;
 import ru.krivonogova.autopark.dto.VehicleDTO;
 import ru.krivonogova.autopark.models.Brand;
@@ -44,12 +46,14 @@ public class PrimitiveController {
 	private final DatabaseController databaseController;
 	private final ModelMapper modelMapper;
 	private final Transaction transaction;
+	private final NplusOne nplusOne;
 
 	@Autowired
-	public PrimitiveController(DatabaseController databaseController, ModelMapper modelMapper, Transaction transaction) {
+	public PrimitiveController(DatabaseController databaseController, ModelMapper modelMapper, Transaction transaction, NplusOne nplusOne) {
 		this.modelMapper = modelMapper;
 		this.databaseController = databaseController;
 		this.transaction = transaction;
+		this.nplusOne = nplusOne;
 	}
 	
 	@GetMapping("/transaction")
@@ -61,6 +65,14 @@ public class PrimitiveController {
 		ModelAndView enterprises = new ModelAndView("enterprises/index_preview");
 		enterprises.addObject("enterprises", sortedEnterprises);
 		return enterprises;
+	}
+	
+	@GetMapping("/n+1")
+	public ResponseEntity<String> demonstrate() {
+
+		nplusOne.demonstrate();
+
+		return ResponseEntity.ok("hi, n+1");
 	}
 	
 	// CRUD для брендов

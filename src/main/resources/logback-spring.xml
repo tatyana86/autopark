@@ -24,6 +24,8 @@
 	<logger name="org.springframework" level="info">
    		<appender-ref ref="CONSOLE" />
 	</logger>
+	
+
 
 
 </configuration>

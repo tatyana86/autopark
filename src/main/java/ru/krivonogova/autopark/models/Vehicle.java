@@ -50,6 +50,7 @@ public class Vehicle {
     private List<Driver> drivers;
     
     @OneToOne(mappedBy = "activeVehicle")
+    @JsonIgnore // add
     private Driver activeDriver;
     
     @OneToMany(mappedBy = "vehicle")
@@ -162,6 +163,12 @@ public class Vehicle {
 		PointsGps = pointsGps;
 	}
 
-	
+	public List<Trip> getTrip() {
+		return trip;
+	}
+
+	public void setTrip(List<Trip> trip) {
+		this.trip = trip;
+	}
 	
 }
