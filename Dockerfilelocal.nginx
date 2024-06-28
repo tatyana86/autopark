@@ -1,0 +1,12 @@
+# Base image
+FROM nginx:stable-alpine-slim
+
+# Remove default nginx static assets
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy static assets from project folder
+COPY ./src/main/resources/static/ /usr/share/nginx/html
+
+# Copy Nginx config
+COPY ./nginx/localhost /etc/nginx/conf.d
+

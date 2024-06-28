@@ -3,7 +3,7 @@ package ru.krivonogova.autopark.kafka;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+/*
 @Configuration
 public class KafkaConfiguration {
 
@@ -12,4 +12,4 @@ public class KafkaConfiguration {
 		return new NewTopic("test", 1, (short) 1);
 	}
 	
-}
+}*/

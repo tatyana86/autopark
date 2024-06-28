@@ -1,0 +1,91 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfilelocal.nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+  certbot:
+    image: certbot/certbot
+    depends_on:
+      - nginx
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/app
+    command: certonly --webroot --webroot-path=/app --email tanyaridman@gmail.com --agree-tos --no-eff-email --staging -d localhost
+
+  postgresql:
+    container_name: postgresql
+    image: postgis/postgis
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"  
+    restart: always
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d/
+    networks:
+      - app-network    
+
+  autopark:
+    container_name: autopark
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/autopark
+    expose:
+      - "8080"
+    depends_on:
+      - nginx
+      - postgresql
+      - broker
+    restart: always
+    networks:
+      - app-network
+ 
+  broker:
+    image: confluentinc/cp-kafka:latest
+    expose:
+      - "9092"
+    container_name: broker
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092
+    restart: always
+    networks:
+      - app-network
+      
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    expose:
+      - "2181"
+    restart: always
+    networks:
+      - app-network
+      
+
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:        
+
+networks:
+  app-network:
+    driver: bridge

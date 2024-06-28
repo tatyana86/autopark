@@ -1,6 +1,5 @@
-23:40:55.447 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 26630 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
-23:40:55.457 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
-23:40:55.469 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
-23:41:08.668 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 14.431 seconds (process running for 15.416)
-23:42:36.393 [http-nio-8080-exec-2] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
-23:45:24.873 [http-nio-8080-exec-6] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+22:54:53.269 [main] INFO  r.k.a.config.SecurityConfigTest - Starting SecurityConfigTest using Java 17.0.9 with PID 18789 (started by tanya in /home/tanya/git/autopark)
+22:54:53.270 [main] DEBUG r.k.a.config.SecurityConfigTest - Running with Spring Boot v3.2.1, Spring v6.1.2
+22:54:53.271 [main] INFO  r.k.a.config.SecurityConfigTest - No active profile set, falling back to 1 default profile: "default"
+22:55:05.404 [main] INFO  r.k.a.config.SecurityConfigTest - Started SecurityConfigTest in 12.931 seconds (process running for 14.822)
+22:55:08.040 [main] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
