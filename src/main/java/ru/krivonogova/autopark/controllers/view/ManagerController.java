@@ -61,7 +61,7 @@ public class ManagerController {
 	// CRUD для предприятий
 	
 	@GetMapping("/enterprises")
-	public ModelAndView indexEnterprisesWOid() {
+	public ModelAndView indexEnterprises() {
 		Integer idManager = getManagerId();
 		ModelAndView enterprises = new ModelAndView("enterprises/index");
 		enterprises.addObject("enterprises", databaseController.findAllEnterprisesForManager(idManager));

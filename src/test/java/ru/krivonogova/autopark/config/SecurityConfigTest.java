@@ -63,5 +63,4 @@ public class SecurityConfigTest {
         		.andExpect(redirectedUrl("/auth/login?error"));
     }
     
-
 }
