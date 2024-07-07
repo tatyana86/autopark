@@ -1,4 +1,4 @@
-describe("Authorise user", () => {
+describe("Visit localhost", () => {
 
   it("Visit the localhost page", () => {
     cy.visit("http://localhost:8080/auth/login");

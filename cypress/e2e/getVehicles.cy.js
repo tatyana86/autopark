@@ -1,6 +1,6 @@
-describe("Authorise user", () => {
+describe("Get vehicles", () => {
 
-  it("Visit the localhost page", () => {
+  it("Get vehicles", () => {
     cy.visit("http://localhost:8080/auth/login");
     cy.get("#username").type("manager1");
     cy.get("#password").type("pass111");
