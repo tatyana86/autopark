@@ -1,20 +1,15 @@
 package ru.krivonogova.autopark.controllers.rest;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -24,9 +19,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ru.krivonogova.autopark.controllers.DatabaseController;
-import ru.krivonogova.autopark.models.Enterprise;
-
 @Testcontainers
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -35,11 +27,19 @@ public class RestManagerControllerTest {
 	@Autowired
     private MockMvc mockMvc;
 	
-	@Container
+	
+	  @Container
+	  public static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer()
+		.withDatabaseName("autopark")
+	    .withPassword("username")
+	    .withUsername("pass12345");
+	  
+	  
+	/*@Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:12.2-alpine")
             .withDatabaseName("autopark")
             .withUsername("username")
-            .withPassword("pass12345");
+            .withPassword("pass12345");*/
 	 
 	@DynamicPropertySource
 	static void postgresqlProperties(DynamicPropertyRegistry registry) {

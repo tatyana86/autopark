@@ -1,3 +1,18 @@
-23:41:21.095 [main] INFO  r.k.a.c.r.RestManagerControllerTest - Starting RestManagerControllerTest using Java 17.0.9 with PID 49369 (started by tanya in /home/tanya/git/autopark)
-23:41:21.098 [main] DEBUG r.k.a.c.r.RestManagerControllerTest - Running with Spring Boot v3.2.1, Spring v6.1.2
-23:41:21.100 [main] INFO  r.k.a.c.r.RestManagerControllerTest - No active profile set, falling back to 1 default profile: "default"
+21:54:20.953 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 48124 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
+21:54:20.971 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
+21:54:20.994 [main] INFO  r.k.autopark.AutoparkApplication - No active profile set, falling back to 1 default profile: "default"
+21:54:35.936 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 16.085 seconds (process running for 17.05)
+22:30:54.963 [http-nio-8080-exec-8] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+22:31:16.504 [http-nio-8080-exec-1] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:18:39.512 [http-nio-8080-exec-6] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:22:24.488 [http-nio-8080-exec-10] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:28:28.345 [http-nio-8080-exec-1] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:29:27.561 [http-nio-8080-exec-6] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:29:45.062 [http-nio-8080-exec-2] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:29:47.463 [http-nio-8080-exec-3] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:31:46.771 [http-nio-8080-exec-2] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:34:30.078 [http-nio-8080-exec-7] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:35:11.092 [http-nio-8080-exec-1] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:36:54.777 [http-nio-8080-exec-9] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:36:55.634 [http-nio-8080-exec-8] INFO  r.k.a.c.view.ManagerController - Report for vehicle by id: 1 was created
+23:37:13.315 [http-nio-8080-exec-2] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
