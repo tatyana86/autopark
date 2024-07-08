@@ -106,7 +106,7 @@ public class ManagerController {
 		String timezone = getManagerTimezone();   
 				
 		Page<Vehicle> vehiclesPage = databaseController.findForManagerByEnterpriseId(idManager, idEnterprise, page, itemsPerPage);
-	    
+	    		
 		model.addAttribute("vehicles", vehiclesPage.getContent().stream().map(vehicle -> convertToVehicleDTO(vehicle, timezone)).collect(Collectors.toList()));
 	    model.addAttribute("currentPage", vehiclesPage.getNumber() + 1);
 	    model.addAttribute("totalPages", vehiclesPage.getTotalPages());
@@ -237,7 +237,7 @@ public class ManagerController {
 			return "vehicles/edit";
 		}
 		
-		databaseController.updateVehicle(idVehicle, convertToVehicle(vehicle), brandId, idEnterprise);
+		databaseController.updateVehicle(idVehicle, convertToVehicle(idVehicle, vehicle), brandId, idEnterprise);
 		
 		log.warn("Vehicle by id: {} was updated", idVehicle);
 		
@@ -401,6 +401,23 @@ public class ManagerController {
 	}
 	
 	private Vehicle convertToVehicle(VehicleDTO vehicleDTO) {
-		return modelMapper.map(vehicleDTO, Vehicle.class);
+		Vehicle newVehicle = modelMapper.map(vehicleDTO, Vehicle.class);
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+		String dateOfSale = LocalDateTime.now().format(formatter);
+	    
+		newVehicle.setDateOfSale(dateOfSale);
+		return newVehicle;
+	}
+	
+	private Vehicle convertToVehicle(int idVehicle, VehicleDTO vehicleDTO) {
+		Vehicle updVehicle = databaseController.findOneVehicle(idVehicle);
+		
+		updVehicle.setRegistrationNumber(vehicleDTO.getRegistrationNumber());
+		updVehicle.setYearOfProduction(vehicleDTO.getYearOfProduction());
+		updVehicle.setPrice(vehicleDTO.getPrice());
+		updVehicle.setMileage(vehicleDTO.getMileage());
+		
+		return updVehicle;
 	}
 }

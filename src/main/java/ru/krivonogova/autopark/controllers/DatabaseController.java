@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.models.Brand;
 import ru.krivonogova.autopark.models.Driver;
@@ -300,7 +303,7 @@ public class DatabaseController {
 			Integer page,
 			Integer itemsPerPage) {
 
-		Pageable pageable = PageRequest.of(page - 1, itemsPerPage);
+		Pageable pageable = PageRequest.of(page - 1, itemsPerPage, Sort.by("id").ascending());
 		return vehiclesRepository.findVehiclesByEnterprise_id(enterpriseId, pageable);
 	}	
 	
