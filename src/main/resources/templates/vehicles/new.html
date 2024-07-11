@@ -12,7 +12,8 @@
 		
 			<form 	th:method="POST" 
 					th:action="@{/managers/enterprises/{idEnterprise}/vehicles/new(idEnterprise=${enterprise.getId()})}" 
-					th:object="${vehicle}" class="needs-validation">
+					th:object="${vehicle}" 
+					class="needs-validation">
 					
 				<div class="form-group mb-3">
 	                <label for="brand">Бренд:</label>
@@ -23,7 +24,12 @@
 			
 	            <div class="form-group mb-3">
 	                <label for="registrationNumber">Регистрационный номер:</label>
-	                <input type="text" th:field="*{registrationNumber}" id="registrationNumber" class="form-control" required/>
+	                <input 	type="text" 
+	                		th:field="*{registrationNumber}" 
+	                		id="registrationNumber" 
+	                		class="form-control" 
+	                		data-cy="registration-number" 
+	                		placeholder="Введите регистрационный номер" required/>
 	                <div class="invalid-feedback" th:if="${#fields.hasErrors('registrationNumber')}" th:errors="*{registrationNumber}">registrationNumber error</div>
 	            </div>
 				   
@@ -33,8 +39,8 @@
 					    	th:field="*{yearOfProduction}" 
 					    	id="yearOfProduction" 
 					    	class="form-control" 
+					    	data-cy="year-of-production"
 					    	placeholder="Введите год производства" required/>
-
     				<p 	th:if="${#fields.hasErrors('yearOfProduction')}" 
     					th:errors="*{yearOfProduction}" 
     					class="text-danger">Год производства некорректен</p>
@@ -45,7 +51,8 @@
 				    <input 	type="text" 
 				    		th:field="*{price}" 
 				    		id="price" 
-				    		class="form-control" 
+				    		class="form-control"
+				    		data-cy="price"
 				    		placeholder="Введите цену в рублях" 
 				    		th:value="${price}" required/>
 	                <p 	th:if="${#fields.hasErrors('price')}" 
@@ -58,7 +65,8 @@
               		<input 	type="text" 
 			    			th:field="*{mileage}"
 			    			id="mileage"
-			    			class="form-control" 
+			    			class="form-control"
+			    			data-cy="mileage"
 			    			placeholder="Введите пробег в км" required/>
 	                <p 	th:if="${#fields.hasErrors('mileage')}" 
 	                	th:errors="*{mileage}" 
@@ -68,7 +76,8 @@
 			    <input 	style="margin-bottom: 10px;"
 						type="submit" 
 						value="Сохранить ТС" 
-						class="btn btn-primary"/>    
+						class="btn btn-primary"
+						data-cy="save-vehicle"/>    
 					
 			</form>
 			
@@ -76,7 +85,8 @@
 			
 			<div>
 			    <b> <a 	th:href="@{/managers/enterprises/{id}/vehicles?page=1(id=${enterprise.getId()})}" 
-			    		class="btn btn-secondary">Назад</a> </b>
+			    		class="btn btn-secondary"
+			    		data-cy="back-button">Назад</a> </b>
 			</div>
 		
 		</div>

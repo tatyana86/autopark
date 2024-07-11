@@ -1,26 +1,37 @@
 describe("Edit vehicle", () => {
 
-  it("Edit vehicle", () => {
-	// авторизация
-    cy.visit("http://localhost:8080/auth/login");
-    cy.get("#username").type("manager1");
-    cy.get("#password").type("pass111");
-    cy.get("button[type='submit']").click();
-    
-    // список машин
-	cy.get('a[href="/managers/enterprises/1/vehicles"]').click();
-	
-	// вносим изменения в карточке
-	cy.get('tbody .icon-link').first().should('have.attr', 'title', 'Редактировать').click();
-	cy.get('#registrationNumber').clear().type('А555АА55');
-	cy.get('#yearOfProduction').clear().type('2024');
-    cy.get('input[type="submit"]').contains('Сохранить изменения').click();
-    
-    // проверяем изменения
-    cy.get('tbody tr').first().within(() => {
-      cy.get('td').eq(1).should('contain', 'А555АА55'); // проверка регистрационного номера
-      cy.get('td').eq(2).should('contain', '2024'); // проверка года выпуска
-    });
-  });
+	beforeEach(() => {
+		cy.login("manager1", "pass111");
+	});
+
+	it("Should edit first vehicle", () => {
+
+	    // переход на страницу автомобилей первого предприятия в таблице
+		cy.get('[data-cy="vehicles-link"]:first').click();
+		cy.url().should("include", "/managers/enterprises/1/vehicles");
+		
+		// функция для редактирования автомобиля
+		const editVehicle = (registrationNumber, yearOfProduction) => {
+			cy.get('tbody .icon-link').first().should('have.attr', 'title', 'Редактировать').click();
+			cy.get('[data-cy="registration-number"]').clear().type(registrationNumber);
+			cy.get('[data-cy="year-of-production"]').clear().type(yearOfProduction);
+			cy.get('[data-cy="save-vehicle"]').click();
+		};
+
+		// функция для проверки изменений
+		const checkVehicleDetails = (registrationNumber, yearOfProduction) => {
+			cy.get('tbody tr').first().within(() => {
+				cy.get('td').eq(1).should('contain', registrationNumber); // проверка регистрационного номера
+				cy.get('td').eq(2).should('contain', yearOfProduction); // проверка года выпуска
+			});
+		};
+
+		// вносим изменения в карточке
+		editVehicle('А555АА55', '2024');
+	    
+	    // проверяем изменения
+	    checkVehicleDetails('А555АА55', '2024');
+	    
+	});
 
 });

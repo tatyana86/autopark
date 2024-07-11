@@ -1,44 +1,35 @@
 describe("Delete vehicle", () => {
 
-  it("Get vehicles", () => {
-	// авторизация
-    cy.visit("http://localhost:8080/auth/login");
-    cy.get("#username").type("manager1");
-    cy.get("#password").type("pass111");
-    cy.get("button[type='submit']").click();
-    
-    // список машин
-    cy.get('a[href="/managers/enterprises/1/vehicles"]').click();
-    
-    function goToNextPage() {
-      cy.get('li.page-item').last().then(($el) => {
-        // проверка, если есть кнопка "следующая страница"
-        if (!$el.hasClass('disabled')) {
-          cy.wrap($el).find('a.page-link').click();
-          goToNextPage();
-        } else {
-			
-	      // проверяем последнюю строку таблицы на наличие созданной машины и удаляем её
-          cy.get('tbody tr').last().within(() => {
-            cy.get('td').eq(1).then(($td1) => {
-              if ($td1.text().includes('А555АА55')) {
-                cy.get('td').eq(2).then(($td2) => {
-                  if ($td2.text().includes('2024')) {
-                    // нажимаем кнопку "Удалить" только если оба условия верны
-                    cy.get('button[title="Удалить"]').click();
-                  }
-                });
-              }
-            });
-          });
+	beforeEach(() => {
+		cy.loginAndCreateTestVehicle("manager1", "pass111");
+	});
 
-        }
-      });
-    }
+	it("Delete test vehicle", () => {
+	    
+		// функция для перехода на следующую страницу
+		const goToNextPage = () => {
+			return cy.get('li.page-item').last().then(($el) => {
+				if (!$el.hasClass('disabled')) {
+					cy.wrap($el).find('a.page-link').click();
+					return goToNextPage();
+				} else {
+					return cy.wrap($el);
+				}
+			});
+		};
 
-    // запуск функции перехода на следующую страницу
-    goToNextPage();
+		// Функция для удаления последней строки
+		const deleteLastRow = () => {
+			cy.get('tbody tr').last().within(() => {
+				cy.get('td').eq(1).then(($td1) => {
+					cy.get('button[title="Удалить"]').click();
+				});
+			});
+		};
 
-  });
+		// Запуск функции перехода на следующую страницу и удаления последней строки
+		goToNextPage().then(deleteLastRow);
+
+	});
 
 });

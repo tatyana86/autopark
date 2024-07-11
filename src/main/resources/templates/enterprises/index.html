@@ -29,25 +29,11 @@
 		
 	</head>
 
-	<body>
-	
-		<!-- <b>Мои предприятия:</b>
-		
-		<div th:each="enterprise : ${enterprises}">
-			<br/>
-		    <a th:text="${enterprise.getId() + '. ' + enterprise.getName()}">enterprise</a>
-		</div>
-		
-		<hr/>
-		
-		<form th:action="@{/logout}" th:method="POST">
-		    <input type="submit" value="Выйти" />
-		</form>-->
-		
+	<body>		
 		<div class="container">
-	        <h1>Мои предприятия:</h1>
+	        <h1 id="page-title">Мои предприятия:</h1>
 		        
-	        <table style="border-collapse: collapse; width: 100%;">
+	        <table id="enterprises-table" style="border-collapse: collapse; width: 100%;">
 			    <thead>
 			        <tr style="border-bottom: 2px solid black;">
 			            <th style="padding: 8px;"><strong>id</strong></th>
@@ -63,7 +49,8 @@
 			        <tr style="border-bottom: 1px solid #ddd;">
 			            <td style="padding: 8px;" th:text="${enterprise.id}"></td>
 			            <td style="padding: 8px;"><a 	th:href="@{/managers/enterprises/{id}/vehicles(id=${enterprise.getId()})}"
-			            								th:text="${enterprise.name}"></a></td>
+			            								th:text="${enterprise.name}"
+			            								data-cy="vehicles-link"></a></td>
 			            <td style="padding: 8px;" th:text="${enterprise.city}"></td>
 			        	<td style="padding: 8px;"><a th:text="${enterprise.phone}"></a></td>
 			        	<td style="padding: 8px;"><a th:text="${enterprise.timezone}"></a></td>
@@ -84,13 +71,13 @@
 		    	</tbody>
 			</table>
 		        
-			<form th:action="@{/managers/report}" th:method="GET">
+			<form id="report-form" th:action="@{/managers/report}" th:method="GET">
 				<div class="mb-3" style="padding: 10px 20px;" >
 				<input type="submit" value="Создать отчет" class="btn btn-primary" />
 				</div>
 			</form>
 
-	        <form th:action="@{/logout}" th:method="POST">
+	        <form id="logout-form" th:action="@{/logout}" th:method="POST">
 	            <div class="mb-3" style="padding: 10px 20px;" >
 	                <input type="submit" value="Выйти" class="btn btn-danger" />
 	            </div>

@@ -45,7 +45,12 @@
 			
 			        <div class="form-group mb-3">
 			            <label for="registrationNumber">Регистрационный номер: </label>
-			            <input type="text" th:field="*{registrationNumber}" class="form-control" id="registrationNumber"/>
+			            <input 	type="text"
+			            		th:field="*{registrationNumber}"
+			            		id="registrationNumber"
+			            		class="form-control"
+			            		data-cy="registration-number" 
+			            		placeholder="Введите регистрационный номер" required/>
 			            <div style="color:darkred" th:if="${#fields.hasErrors('registrationNumber')}" th:errors="*{registrationNumber}">registrationNumber error</div>
 			        </div>
 			        
@@ -54,7 +59,8 @@
 					    <input 	type="text" 
 					    		th:field="*{yearOfProduction}" 
 					    		id="yearOfProduction" 
-					    		class="form-control" 
+					    		class="form-control"
+					    		data-cy="year-of-production"
 					    		placeholder="Введите год производства" required/>
 					    <p 	th:if="${#fields.hasErrors('yearOfProduction')}" 
     						th:errors="*{yearOfProduction}" 
@@ -66,7 +72,8 @@
 					    <input 	type="text" 
 					    		th:field="*{price}" 
 					    		id="price" 
-					    		class="form-control" 
+					    		class="form-control"
+					    		data-cy="price"
 					    		placeholder="Введите цену в рублях" required/>
 					    <p 	th:if="${#fields.hasErrors('price')}" 
 	                		th:errors="*{price}" 
@@ -78,7 +85,8 @@
 					    <input 	type="text" 
 					    		th:field="*{mileage}"
 					    		id="mileage"
-					    		class="form-control" 
+					    		class="form-control"
+					    		data-cy="mileage"
 					    		placeholder="Введите пробег в км" required/>
 					    		
 						<p 	th:if="${#fields.hasErrors('mileage')}" 
@@ -90,13 +98,15 @@
 			        <input 	style="margin-bottom: 10px;"
 			        		type="submit"
 			        		value="Сохранить изменения" 
-			        		class="btn btn-primary"/>
+			        		class="btn btn-primary"
+			        		data-cy="save-vehicle"/>
 			        		
 			</form>
 			
 			<div>
 			    <b> <a	th:href="@{/managers/enterprises/{id}/vehicles?page=1(id=${enterprise.getId()})}" 
-			    		class="btn btn-secondary">Назад</a> </b>
+			    		class="btn btn-secondary"
+			    		data-cy="back-button">Назад</a> </b>
 			</div>
 	
 		</div>
