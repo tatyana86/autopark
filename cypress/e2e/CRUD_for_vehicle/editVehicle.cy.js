@@ -6,7 +6,7 @@ describe("Edit vehicle", () => {
 
 	it("Should edit first vehicle", () => {
 
-	    // переход на страницу автомобилей первого предприятия в таблице
+		// переход на страницу автомобилей первого предприятия в таблице
 		cy.get('[data-cy="vehicles-link"]:first').click();
 		cy.url().should("include", "/managers/enterprises/1/vehicles");
 		
@@ -29,9 +29,8 @@ describe("Edit vehicle", () => {
 		// вносим изменения в карточке
 		editVehicle('А555АА55', '2024');
 	    
-	    // проверяем изменения
-	    checkVehicleDetails('А555АА55', '2024');
+		// проверяем изменения
+		checkVehicleDetails('А555АА55', '2024');
 	    
 	});
-
 });
