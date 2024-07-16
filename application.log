@@ -1,4 +1,7 @@
-23:31:24.267 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 13881 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
-23:31:24.287 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
-23:31:24.289 [main] INFO  r.k.autopark.AutoparkApplication - The following 1 profile is active: "test"
-23:31:39.999 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 16.984 seconds (process running for 18.129)
+23:40:51.092 [main] INFO  r.k.autopark.AutoparkApplication - Starting AutoparkApplication using Java 17.0.9 with PID 19251 (/home/tanya/git/autopark/target/classes started by tanya in /home/tanya/git/autopark)
+23:40:51.102 [main] DEBUG r.k.autopark.AutoparkApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
+23:40:51.103 [main] INFO  r.k.autopark.AutoparkApplication - The following 1 profile is active: "test"
+23:41:04.349 [main] INFO  r.k.autopark.AutoparkApplication - Started AutoparkApplication in 14.084 seconds (process running for 15.101)
+23:41:14.211 [http-nio-8080-exec-10] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER2
+23:43:17.169 [http-nio-8080-exec-8] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
+23:43:30.307 [http-nio-8080-exec-6] INFO  r.k.autopark.security.PersonDetails - logged in by: ROLE_MANAGER1
