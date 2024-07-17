@@ -43,7 +43,9 @@ public class SecurityConfig {
         http
         	.authenticationManager(authenticationManager)
         	.authorizeHttpRequests((authz) -> authz
-        		.requestMatchers("/h2-console/**").permitAll()  // Разрешить доступ к консоли H2
+        		.requestMatchers("/h2-console/**").permitAll()  // разрешить доступ к консоли H2
+        		.requestMatchers("/swagger-ui/**").permitAll()  // разрешить доступ к сваггеру
+        		.requestMatchers("/v3/api-docs/**").permitAll()  // разрешить доступ к OAS
         		.requestMatchers("api/managers/1/**").hasRole("MANAGER1")
         		.requestMatchers("api/managers/2/**").hasRole("MANAGER2")
         		.requestMatchers("api/managers", "api/**", "managers/**").hasAnyRole("MANAGER1", "MANAGER2")
