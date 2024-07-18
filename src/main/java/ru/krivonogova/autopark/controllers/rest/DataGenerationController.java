@@ -13,11 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.services.DataGenerationService;
 import ru.krivonogova.autopark.util.DataGenerationErrorResponse;
 import ru.krivonogova.autopark.util.DataGenerationException;
 
+@Hidden
+@Tag(name = "Секретный REST-контроллер", 
+	description = "Контроллер для генерации данных для БД")
 @RestController
 @RequestMapping("api/admin")
 public class DataGenerationController {

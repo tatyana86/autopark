@@ -15,11 +15,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Mono;
 import ru.krivonogova.autopark.dto.DataGenerationDTO;
 import ru.krivonogova.autopark.util.DataGenerationErrorResponse;
 import ru.krivonogova.autopark.util.DataGenerationException;
 
+@Hidden
+@Tag(name = "Секретный REACT-контроллер", 
+	description = "Контроллер для тестирования React.")
 @RestController
 @RequestMapping("api/react")
 public class ReactDataGenerationController {

@@ -24,6 +24,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import ru.krivonogova.autopark.controllers.DatabaseController;
@@ -41,6 +45,8 @@ import ru.krivonogova.autopark.security.PersonDetails;
 import ru.krivonogova.autopark.services.PointsGpsService;
 import ru.krivonogova.autopark.services.ReportsService;
 
+@Tag(name="Действия менеджера", 
+	description = "Контроллер содержит основные методы для работы менеджера")
 @Slf4j
 @Controller
 @RequestMapping("/managers")
@@ -60,6 +66,10 @@ public class ManagerController {
 	
 	// CRUD для предприятий
 	
+	@Operation(
+			summary = "Список предприятий.",
+			description = "Позволяет получить список всех предприятий,"
+					+ "закрепленных за авторизованным менеджером.")
 	@GetMapping("/enterprises")
 	public ModelAndView indexEnterprises() {
 		Integer idManager = getManagerId();
@@ -68,15 +78,21 @@ public class ManagerController {
 		return enterprises;
 	}
 	
+	@Operation(
+			summary = "Редактирование данных предприятия.",
+			description = "Позволяет редактировать данные выбранного предприятия.")
 	@GetMapping("/enterprises/{idEnterprise}/edit")
-	public String edit(@PathVariable("idEnterprise") int idEnterprise,
+	public String edit(@PathVariable("idEnterprise") @Parameter(description = "id менеджера") int idEnterprise,
 						Model model) {
 		model.addAttribute("enterprise", databaseController.findOneEnterprise(idEnterprise));
 		return "enterprises/edit";
 	}
 	
+	@Operation(
+			summary = "Редактирование данных предприятия.",
+			description = "Вносит изменения в БД.")
 	@PutMapping("/enterprises/{idEnterprise}")
-	public String update(@PathVariable("idEnterprise") int idEnterprise,
+	public String update(@PathVariable("idEnterprise") @Parameter(description = "id менеджера") int idEnterprise,
 						Model model,
 						@ModelAttribute("enterprise") @Valid Enterprise enterprise,
 						BindingResult bindingResult) {
@@ -96,10 +112,14 @@ public class ManagerController {
 	
 	// CRUD для транспорта
 	
+	@Operation(
+			summary = "Список автомобилей.",
+			description = "Позволяет получить список всех автомобилей,"
+					+ "принадлежащих к выбранному предприятию.")
 	@GetMapping("/enterprises/{idEnterprise}/vehicles")
 	public String indexVehicles(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 								@RequestParam(value = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
-								@PathVariable("idEnterprise") int idEnterprise,
+								@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
 								Model model) {
 
 		Integer idManager = getManagerId();
@@ -118,13 +138,16 @@ public class ManagerController {
 	}
 	
 	// проверим кэш
+	@Operation(
+			summary = "Данные об автомобиле.",
+			description = "Позволяет получить подробные данные.")
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
-	public String show(@PathVariable("idEnterprise") int idEnterprise,
-						@PathVariable("idVehicle") int idVehicle,
-						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
-						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
-						@RequestParam(value = "idTrip", required = false) Integer idTrip,
-						@RequestParam(value = "showAll", defaultValue = "false") boolean showAll,
+	public String show(@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
+						@PathVariable("idVehicle") @Parameter(description = "id автомобиля") int idVehicle,
+						@RequestParam(value = "dateFrom", defaultValue = "") @Parameter(description = "Дата начала поездок") String dateFrom,
+						@RequestParam(value = "dateTo", defaultValue = "") @Parameter(description = "Дата окончания поездок") String dateTo,
+						@RequestParam(value = "idTrip", required = false)  @Parameter(description = "id поездки") Integer idTrip,
+						@RequestParam(value = "showAll", defaultValue = "false") @Parameter(description = "Флаг выбора всех поездок с учетом даты ОТ и ДО") boolean showAll,
 						Model model) {
 			
 		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -179,9 +202,12 @@ public class ManagerController {
 		return "vehicles/show";
 	}
 	
+	@Operation(
+			summary = "Новый автомобиль.",
+			description = "Позволяет добавить новый автомобиль.")
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/new")
-	public String newVehicle(@ModelAttribute("vehicle") VehicleDTO vehicle,
-							@PathVariable("idEnterprise") int idEnterprise,
+	public String newVehicle(@ModelAttribute("vehicle") @Parameter(description = "Автомобиль") VehicleDTO vehicle,
+							@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
 							Model model) {
 		
 		model.addAttribute("brands", databaseController.findAllBrands());
@@ -191,11 +217,14 @@ public class ManagerController {
 		return "vehicles/new";
 	}
 	
+	@Operation(
+			summary = "Новый автомобиль.",
+			description = "Сохраняет в БД новый автомобиль.")
 	@PostMapping("/enterprises/{idEnterprise}/vehicles/new")
-	public String create(@RequestParam("brandId") int brandId,
-						@PathVariable("idEnterprise") int idEnterprise,
+	public String create(@RequestParam("brandId") @Parameter(description = "id бренда") int brandId,
+						@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
 						Model model,
-						@ModelAttribute("vehicle") @Valid VehicleDTO vehicle,
+						@ModelAttribute("vehicle") @Valid @Parameter(description = "Автомобиль") VehicleDTO vehicle,
 						BindingResult bindingResult) {
 				
     	if(bindingResult.hasErrors()) {
@@ -209,9 +238,12 @@ public class ManagerController {
 		return "redirect:/managers/enterprises/" + idEnterprise + "/vehicles";
 	}
 	
+	@Operation(
+			summary = "Редактирование данных автомобиля.",
+			description = "Позволяет редактировать данные выбранного автомобиля.")
 	@GetMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}/edit")
-	public String edit(@PathVariable("idEnterprise") int idEnterprise,
-						@PathVariable("idVehicle") int idVehicle,
+	public String edit(@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
+						@PathVariable("idVehicle") @Parameter(description = "id автомобиля") int idVehicle,
 						Model model) {
 		
 		model.addAttribute("enterprise", databaseController.findOneEnterprise(idEnterprise));
@@ -221,12 +253,15 @@ public class ManagerController {
 		return "vehicles/edit";
 	}
 	
+	@Operation(
+			summary = "Редактирование данных автомобиля.",
+			description = "Вносит изменения в БД.")
 	@PutMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
-	public String update(@PathVariable("idEnterprise") int idEnterprise,
-						@PathVariable("idVehicle") int idVehicle,
-						@RequestParam("brandId") int brandId,
+	public String update(@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
+						@PathVariable("idVehicle") @Parameter(description = "id автомобиля") int idVehicle,
+						@RequestParam("brandId") @Parameter(description = "id бренда") int brandId,
 						Model model,
-						@ModelAttribute("vehicle") @Valid VehicleDTO vehicle,
+						@ModelAttribute("vehicle") @Valid @Parameter(description = "Автомобиль") VehicleDTO vehicle,
 						BindingResult bindingResult) {
 		
 		if(bindingResult.hasErrors()) {
@@ -244,9 +279,12 @@ public class ManagerController {
 		return "redirect:/managers/enterprises/" + idEnterprise + "/vehicles";
 	}
 	
+	@Operation(
+			summary = "Удаление автомобиля.",
+			description = "Удаляет автомобиль.")
 	@DeleteMapping("/enterprises/{idEnterprise}/vehicles/{idVehicle}")
-	public String delete(@PathVariable("idEnterprise") int idEnterprise,
-						@PathVariable("idVehicle") int idVehicle) {
+	public String delete(@PathVariable("idEnterprise") @Parameter(description = "id предприятия") int idEnterprise,
+						@PathVariable("idVehicle") @Parameter(description = "id автомобиля") int idVehicle) {
 		
 		databaseController.deleteVehicle(idVehicle);
 		
@@ -255,12 +293,15 @@ public class ManagerController {
 	
 	// Формирование отчета
 	
+	@Operation(
+			summary = "Параметры для отчета.",
+			description = "Предоставляет форму для заполнения для получения отчета.")
 	@GetMapping("/report")
-	public String create(@RequestParam(value = "idVehicle", required = false) Integer idVehicle,
-						@RequestParam(value = "typeReport", required = false) TypeReport typeReport,
-						@RequestParam(value = "period", required = false) Period period,
-						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
-						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
+	public String create(@RequestParam(value = "idVehicle", required = false) @Parameter(description = "id автомобиля") Integer idVehicle,
+						@RequestParam(value = "typeReport", required = false) @Parameter(description = "Тип отчета") TypeReport typeReport,
+						@RequestParam(value = "period", required = false) @Parameter(description = "Период") Period period,
+						@RequestParam(value = "dateFrom", defaultValue = "") @Parameter(description = "Дата начала поездок") String dateFrom,
+						@RequestParam(value = "dateTo", defaultValue = "") @Parameter(description = "Дата окончания поездок") String dateTo,
 						Model model) {
 		
 		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -292,12 +333,15 @@ public class ManagerController {
 		return "report/new";		
 	}
 	
+	@Operation(
+			summary = "Отчет о поездке",
+			description = "Отображение отчета.")
 	@GetMapping("/report/show")
-	public String show(@RequestParam(value = "idVehicle", required = false) Integer idVehicle,
-						@RequestParam(value = "typeReport", required = false) TypeReport typeReport,
-						@RequestParam(value = "period", required = false) Period period,
-						@RequestParam(value = "dateFrom", defaultValue = "") String dateFrom,
-						@RequestParam(value = "dateTo", defaultValue = "") String dateTo,
+	public String show(@RequestParam(value = "idVehicle", required = false) @Parameter(description = "id автомобиля") Integer idVehicle,
+						@RequestParam(value = "typeReport", required = false) @Parameter(description = "Тип отчета") TypeReport typeReport,
+						@RequestParam(value = "period", required = false) @Parameter(description = "Период") Period period,
+						@RequestParam(value = "dateFrom", defaultValue = "") @Parameter(description = "Дата начала поездок") String dateFrom,
+						@RequestParam(value = "dateTo", defaultValue = "") @Parameter(description = "Дата окончания поездок") String dateTo,
 						Model model) {
 		
 		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DriverDTO;
@@ -66,6 +68,9 @@ import ru.krivonogova.autopark.util.VehicleNotCreatedException;
 import ru.krivonogova.autopark.util.VehicleNotFoundException;
 import ru.krivonogova.autopark.util.VehicleNotUpdatedException;
 
+@Hidden
+@Tag(name="REST-Контроллер менеджера", 
+description = "Контроллер содержит основные методы для работы менеджера")
 @RestController
 @RequestMapping("/api/managers")
 public class RestManagerController {

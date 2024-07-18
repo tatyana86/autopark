@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,25 +19,32 @@ import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "enterprise")
+@Schema(description = "Предприятие")
 public class Enterprise {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	//@Schema(description = "id")
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private int id;
 	
 	@Column(name = "name")
 	@NotEmpty(message = "Обязательное поле")
+	@Schema(description = "Название предприятия", example = "С ветерком")
 	private String name;
 	
     @Column(name = "city")
     @NotEmpty(message = "Обязательное поле")
+    @Schema(description = "Город", example = "Самара")
     private String city;
     
     @Column(name = "phone")
     @NotEmpty(message = "Обязательное поле")
+    @Schema(description = "Телефон", example = "1807")
     private String phone;
     
     @Column(name = "timezone")
+    @Schema(description = "Телефон", example = "-06:00")
     private String timezone;
 
 	@OneToMany(mappedBy = "enterprise")

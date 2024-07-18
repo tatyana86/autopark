@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import ru.krivonogova.autopark.controllers.DatabaseController;
 import ru.krivonogova.autopark.dto.DriverDTO;
 import ru.krivonogova.autopark.dto.VehicleDTO_forAPI;
@@ -20,6 +22,10 @@ import ru.krivonogova.autopark.models.Driver;
 import ru.krivonogova.autopark.models.Enterprise;
 import ru.krivonogova.autopark.models.Vehicle;
 
+@Hidden
+@Tag(name = "Секретный REST-контроллер", 
+	description = "Контроллер для проверки работы CRUD-репозиториев "
+			+ "без авторизации пользователей")
 @RestController
 @RequestMapping("/api")
 public class RestPrimitiveController {

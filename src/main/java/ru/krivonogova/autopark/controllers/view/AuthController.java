@@ -8,9 +8,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import ru.krivonogova.autopark.models.Person;
 import ru.krivonogova.autopark.security.RegistrationService;
 
+@Hidden
+@Tag(name = "Секретный контроллер", 
+	description = "Контроллер для авторизации пользователей")
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
