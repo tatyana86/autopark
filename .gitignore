@@ -43,7 +43,6 @@ create_DB
 docker-compose_localhost_kafka.yml
 cookie.txt
 
-jpgs_for_readme
 node_modules
 package.json
 package-lock.json
