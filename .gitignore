@@ -33,12 +33,15 @@ build/
 .vscode/
 
 # Игнорировать файлы с переменными окружения
-#.env
+.env
 
 # Эти файлы нужны для запуска локально
-Dockerfilelocal.nginx
-docker-compose_localhost.yml
+№Dockerfile.local.nginx
+№docker-compose.local.yml
+
+# это первая версия без ssl сертификата
 docker-compose_init.yml
+
 docker-compose_localhost_kafka.yml
 cookie.txt
 
