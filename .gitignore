@@ -35,14 +35,17 @@ build/
 # Игнорировать файлы с переменными окружения
 #.env
 
-
+# Эти файлы нужны для запуска локально
+Dockerfilelocal.nginx
 docker-compose_localhost.yml
 docker-compose_init.yml
-create_DB
-
 docker-compose_localhost_kafka.yml
 cookie.txt
+
+create_DB
 
 node_modules
 package.json
 package-lock.json
+
+
