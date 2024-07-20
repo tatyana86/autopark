@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.info.Info;
                 description = "System for managers", version = "1.0.0",
                 contact = @Contact(
                         name = "tatyana86",
-                        url = "https://mycar.ru"
+                        url = "https://mysweetcar.ru"
                 )
         )
 )
